@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Smart Farm Robot Automation</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #000; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
+canvas { display: block; }
+#overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 10;
+}
+#progress-bar {
+  position: fixed; bottom: 0; left: 0; height: 4px;
+  background: linear-gradient(90deg, #00ff88, #00aaff, #aa66ff);
+  z-index: 20; transition: width 0.1s linear;
+}
+#phase-label {
+  position: fixed; top: 30px; left: 50%; transform: translateX(-50%);
+  color: #fff; font-size: 22px; font-weight: 600; z-index: 20;
+  text-shadow: 0 0 20px rgba(0,170,255,0.8); letter-spacing: 2px;
+  opacity: 0; transition: opacity 0.5s;
+}
+#phase-sub {
+  position: fixed; top: 62px; left: 50%; transform: translateX(-50%);
+  color: rgba(255,255,255,0.6); font-size: 14px; z-index: 20;
+  letter-spacing: 1px; opacity: 0; transition: opacity 0.5s;
+}
+#start-btn {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  z-index: 30; background: linear-gradient(135deg, #00ff88, #00aaff);
+  border: none; color: #000; font-size: 20px; font-weight: 700;
+  padding: 18px 50px; border-radius: 50px; cursor: pointer;
+  letter-spacing: 2px;
+}
+#start-btn:hover { transform: translate(-50%, -50%) scale(1.05); }
+#timer {
+  position: fixed; top: 30px; right: 40px; color: rgba(255,255,255,0.4);
+  font-size: 14px; z-index: 20; font-family: monospace;
+}
+#logo {
+  position: fixed; bottom: 30px; right: 40px; color: rgba(255,255,255,0.15);
+  font-size: 12px; z-index: 20; letter-spacing: 3px;
+}
+.vignette {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%);
+  pointer-events: none; z-index: 5;
+}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div class="vignette"></div>
+<div id="progress-bar"></div>
+<div id="phase-label"></div>
+<div id="phase-sub"></div>
+<div id="timer"></div>
+<div id="logo">SMART FARM AI</div>
+<button id="start-btn">START</button>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let W, H;
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+const DURATION = 15000;
+let startTime = null;
+let running = false;
+
+const phases = [
+  { start: 0, end: 0.13, label: 'AI SCOUTING', sub: 'AI Drone Crop Surveillance', color: '#00ff88' },
+  { start: 0.13, end: 0.26, label: 'AI NUTRIENT', sub: 'Automated Nutrient Solution', color: '#00ddff' },
+  { start: 0.26, end: 0.40, label: 'AI HARVEST', sub: 'Robot Automated Cultivation', color: '#ffaa00' },
+  { start: 0.40, end: 0.53, label: 'AI AGV/AMR', sub: 'Autonomous Ground Vehicle', color: '#00aaff' },
+  { start: 0.53, end: 0.66, label: 'AI LOGISTICS', sub: 'Conveyor Logistics System', color: '#aa88ff' },
+  { start: 0.66, end: 0.78, label: 'AI SORTING', sub: 'Vision-based Quality Sorting', color: '#ff66aa' },
+  { start: 0.78, end: 0.90, label: 'AI PALLETIZING', sub: 'Robot Automated Stacking', color: '#ffcc00' },
+  { start: 0.90, end: 1.0, label: 'AI CONTROL CENTER', sub: 'Integrated Command System', color: '#ffffff' },
+];
+
+// Greenhouse structure
+function drawGreenhouse(t) {
+  // Glass panels background
+  ctx.save();
+  const gGrad = ctx.createLinearGradient(0, 0, 0, H);
+  gGrad.addColorStop(0, `rgba(180,220,200,${0.08 + Math.sin(t * 2) * 0.02})`);
+  gGrad.addColorStop(1, `rgba(40,80,60,${0.15})`);
+  ctx.fillStyle = gGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Glass frame lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < W; x += W / 8) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, H);
+    ctx.stroke();
+  }
+  for (let y = 0; y < H; y += H / 5) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(W, y);
+    ctx.stroke();
+  }
+
+  // Volumetric light rays
+  for (let i = 0; i < 5; i++) {
+    const rx = W * 0.15 + i * W * 0.18;
+    const grad = ctx.createLinearGradient(rx, 0, rx + 60, H);
+    grad.addColorStop(0, `rgba(255,255,220,${0.04 + Math.sin(t + i) * 0.02})`);
+    grad.addColorStop(1, 'rgba(255,255,220,0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.moveTo(rx - 20, 0);
+    ctx.lineTo(rx + 80, H);
+    ctx.lineTo(rx + 20, H);
+    ctx.lineTo(rx - 80, 0);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+// Plants/crops
+function drawPlants(t, phaseProgress) {
+  ctx.save();
+  const baseY = H * 0.65;
+  for (let row = 0; row < 4; row++) {
+    const rowY = baseY + row * 35;
+    const rowAlpha = 1 - row * 0.2;
+    for (let i = 0; i < 20; i++) {
+      const x = (i / 20) * W + Math.sin(t * 1.5 + i * 0.5) * 3;
+      const h = 25 + Math.sin(i * 0.8 + row) * 10 + Math.sin(t * 2 + i) * 3;
+      ctx.fillStyle = `rgba(${40 + row * 10},${160 + Math.sin(i) * 30},${60 + row * 10},${rowAlpha * 0.8})`;
+      // Stem
+      ctx.fillRect(x + 18, rowY - h, 3, h);
+      // Leaves
+      ctx.beginPath();
+      ctx.ellipse(x + 12, rowY - h + 5, 12, 8, -0.3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(x + 26, rowY - h + 8, 10, 7, 0.4, 0, Math.PI * 2);
+      ctx.fill();
+      // Fruit (tomato)
+      if (i % 3 === 0) {
+        ctx.fillStyle = `rgba(220,50,30,${rowAlpha * 0.9})`;
+        ctx.beginPath();
+        ctx.arc(x + 20, rowY - h + 15, 5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    // Hydroponic channel
+    ctx.fillStyle = `rgba(100,180,220,${rowAlpha * 0.3})`;
+    ctx.fillRect(0, rowY + 2, W, 4);
+  }
+  ctx.restore();
+}
+
+// Phase 1: Scouting drone
+function drawScouting(t, p) {
+  ctx.save();
+  const droneX = W * 0.15 + p * W * 0.7;
+  const droneY = H * 0.35 + Math.sin(t * 4) * 8;
+
+  // Scan beam
+  ctx.fillStyle = `rgba(0,255,100,${0.1 + Math.sin(t * 6) * 0.05})`;
+  ctx.beginPath();
+  ctx.moveTo(droneX - 5, droneY + 10);
+  ctx.lineTo(droneX - 60, H * 0.65);
+  ctx.lineTo(droneX + 60, H * 0.65);
+  ctx.lineTo(droneX + 5, droneY + 10);
+  ctx.fill();
+
+  // Scan lines
+  for (let i = 0; i < 8; i++) {
+    const sy = droneY + 20 + i * 25;
+    if (sy < H * 0.65) {
+      ctx.strokeStyle = `rgba(0,255,136,${0.3 - i * 0.03})`;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      const spread = (sy - droneY) * 0.5;
+      ctx.moveTo(droneX - spread, sy);
+      ctx.lineTo(droneX + spread, sy);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+
+  // Holographic data
+  for (let i = 0; i < 3; i++) {
+    const dx = droneX - 80 + i * 80;
+    const dy = H * 0.52 + Math.sin(t * 3 + i) * 5;
+    ctx.strokeStyle = `rgba(0,255,136,${0.5 + Math.sin(t * 4 + i) * 0.2})`;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(dx - 18, dy - 12, 36, 24);
+    ctx.fillStyle = `rgba(0,255,136,0.7)`;
+    ctx.font = '9px monospace';
+    ctx.fillText(`${(95 + Math.sin(t * 2 + i) * 4).toFixed(1)}%`, dx - 14, dy + 3);
+  }
+
+  // Drone body
+  ctx.fillStyle = '#334';
+  ctx.fillRect(droneX - 15, droneY - 5, 30, 12);
+  // Propellers
+  ctx.strokeStyle = 'rgba(200,200,200,0.6)';
+  ctx.lineWidth = 2;
+  const propAngle = t * 30;
+  for (let side of [-1, 1]) {
+    const px = droneX + side * 22;
+    ctx.beginPath();
+    ctx.ellipse(px, droneY - 2, 14, 3, propAngle * side, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  // Red sensor light
+  ctx.fillStyle = `rgba(255,0,0,${0.5 + Math.sin(t * 8) * 0.5})`;
+  ctx.beginPath();
+  ctx.arc(droneX, droneY + 8, 3, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.restore();
+}
+
+// Phase 2: Nutrient system
+function drawNutrient(t, p) {
+  ctx.save();
+  const baseX = W * 0.1;
+  const baseY = H * 0.3;
+
+  // Tanks
+  for (let i = 0; i < 3; i++) {
+    const tx = baseX + i * 100;
+    ctx.fillStyle = `rgba(0,${150 + i * 30},${200 + i * 20},0.3)`;
+    ctx.strokeStyle = `rgba(0,${180 + i * 30},255,0.6)`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(tx, baseY, 60, 80, 8);
+    ctx.fill();
+    ctx.stroke();
+
+    // Liquid level
+    const level = 0.4 + Math.sin(t * 2 + i) * 0.15;
+    ctx.fillStyle = `rgba(0,${150 + i * 40},255,${0.3 + Math.sin(t * 3 + i) * 0.1})`;
+    ctx.beginPath();
+    ctx.roundRect(tx + 4, baseY + 76 - level * 70, 52, level * 70, [0, 0, 6, 6]);
+    ctx.fill();
+
+    // Digital display
+    ctx.fillStyle = `rgba(0,255,${200 + i * 20},0.9)`;
+    ctx.font = 'bold 11px monospace';
+    ctx.fillText(`pH ${(5.8 + i * 0.3 + Math.sin(t * 2) * 0.1).toFixed(1)}`, tx + 5, baseY - 8);
+    ctx.fillText(`EC ${(1.2 + i * 0.2 + Math.sin(t * 3) * 0.1).toFixed(1)}`, tx + 5, baseY - 22);
+  }
+
+  // Pipes flowing to plants
+  const pipeY = baseY + 85;
+  for (let i = 0; i < 3; i++) {
+    const tx = baseX + i * 100 + 30;
+    ctx.strokeStyle = `rgba(0,180,255,0.4)`;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(tx, pipeY);
+    ctx.lineTo(tx, H * 0.65);
+    ctx.lineTo(tx + 200, H * 0.65);
+    ctx.stroke();
+
+    // Flow particles
+    for (let j = 0; j < 6; j++) {
+      const fp = ((t * 1.5 + j * 0.16 + i * 0.3) % 1);
+      let fx, fy;
+      if (fp < 0.5) {
+        fx = tx;
+        fy = pipeY + (H * 0.65 - pipeY) * (fp * 2);
+      } else {
+        fx = tx + 200 * ((fp - 0.5) * 2);
+        fy = H * 0.65;
+      }
+      ctx.fillStyle = `rgba(0,200,255,${0.8 - fp * 0.5})`;
+      ctx.beginPath();
+      ctx.arc(fx, fy, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // Injection indicator
+  const injectGlow = Math.sin(t * 6) * 0.5 + 0.5;
+  ctx.fillStyle = `rgba(0,255,200,${injectGlow * 0.3})`;
+  ctx.beginPath();
+  ctx.arc(baseX + 150, H * 0.65, 20 + injectGlow * 10, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.restore();
+}
+
+// Phase 3: Harvest robot
+function drawHarvest(t, p) {
+  ctx.save();
+  const baseX = W * 0.45;
+  const baseY = H * 0.55;
+
+  // Robot base
+  ctx.fillStyle = '#556';
+  ctx.fillRect(baseX - 20, baseY + 30, 40, 50);
+
+  // Arm segments
+  const angle1 = -0.8 + Math.sin(t * 2) * 0.3;
+  const angle2 = -0.5 + Math.sin(t * 2 + 1) * 0.4;
+  const len1 = 80, len2 = 70;
+
+  const j1x = baseX, j1y = baseY + 30;
+  const j2x = j1x + Math.cos(angle1) * len1;
+  const j2y = j1y + Math.sin(angle1) * len1;
+  const endX = j2x + Math.cos(angle1 + angle2) * len2;
+  const endY = j2y + Math.sin(angle1 + angle2) * len2;
+
+  ctx.strokeStyle = '#aab';
+  ctx.lineWidth = 8;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(j1x, j1y);
+  ctx.lineTo(j2x, j2y);
+  ctx.lineTo(endX, endY);
+  ctx.stroke();
+
+  // Joints
+  for (const [jx, jy] of [[j1x, j1y], [j2x, j2y]]) {
+    ctx.fillStyle = '#00aaff';
+    ctx.beginPath();
+    ctx.arc(jx, jy, 6, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Gripper
+  const gripOpen = 6 + Math.sin(t * 4) * 4;
+  ctx.strokeStyle = '#ccd';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(endX, endY);
+  ctx.lineTo(endX - gripOpen, endY + 15);
+  ctx.moveTo(endX, endY);
+  ctx.lineTo(endX + gripOpen, endY + 15);
+  ctx.stroke();
+
+  // Tomato being picked
+  if (Math.sin(t * 2) > 0) {
+    ctx.fillStyle = '#dc3220';
+    ctx.beginPath();
+    ctx.arc(endX, endY + 18, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#2a8c2a';
+    ctx.fillRect(endX - 3, endY + 10, 6, 4);
+  }
+
+  // Collection crate
+  const crateX = baseX + 60;
+  const crateY = baseY + 55;
+  ctx.strokeStyle = '#888';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(crateX, crateY, 50, 30);
+  // Tomatoes in crate
+  for (let i = 0; i < 5; i++) {
+    ctx.fillStyle = `rgb(${200 + i * 10},${40 + i * 5},20)`;
+    ctx.beginPath();
+    ctx.arc(crateX + 10 + i * 8, crateY + 20, 5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.restore();
+}
+
+// Phase 4: AGV
+function drawAGV(t, p) {
+  ctx.save();
+  const pathY = H * 0.78;
+
+  // Floor path lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([10, 10]);
+  ctx.beginPath();
+  ctx.moveTo(0, pathY);
+  ctx.lineTo(W, pathY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Multiple AGVs
+  for (let i = 0; i < 4; i++) {
+    const agvX = ((p * W * 1.5 + i * W * 0.28) % (W * 1.3)) - W * 0.15;
+    const agvY = pathY - 15 + Math.sin(t * 3 + i) * 2;
+
+    // Shadow
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    ctx.beginPath();
+    ctx.ellipse(agvX, pathY + 8, 35, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // AGV body
+    const agvGrad = ctx.createLinearGradient(agvX - 30, agvY - 10, agvX + 30, agvY + 20);
+    agvGrad.addColorStop(0, '#445');
+    agvGrad.addColorStop(1, '#334');
+    ctx.fillStyle = agvGrad;
+    ctx.beginPath();
+    ctx.roundRect(agvX - 30, agvY - 10, 60, 25, 5);
+    ctx.fill();
+
+    // Crate on top
+    ctx.fillStyle = '#665';
+    ctx.fillRect(agvX - 20, agvY - 28, 40, 18);
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.strokeRect(agvX - 20, agvY - 28, 40, 18);
+
+    // Blue LED strip
+    ctx.fillStyle = `rgba(0,170,255,${0.5 + Math.sin(t * 6 + i * 2) * 0.4})`;
+    ctx.fillRect(agvX - 28, agvY + 12, 56, 3);
+
+    // Wheels
+    ctx.fillStyle = '#222';
+    ctx.beginPath();
+    ctx.arc(agvX - 20, agvY + 17, 5, 0, Math.PI * 2);
+    ctx.arc(agvX + 20, agvY + 17, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Ground glow
+    ctx.fillStyle = `rgba(0,100,255,${0.1 + Math.sin(t * 4 + i) * 0.05})`;
+    ctx.beginPath();
+    ctx.ellipse(agvX, pathY + 5, 40, 8, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.restore();
+}
+
+// Phase 5: Logistics conveyor
+function drawLogistics(t, p) {
+  ctx.save();
+
+  // Main conveyor
+  const convY = H * 0.6;
+  ctx.fillStyle = 'rgba(80,80,90,0.8)';
+  ctx.fillRect(0, convY, W, 15);
+
+  // Conveyor belt texture
+  for (let x = 0; x < W; x += 30) {
+    const bx = (x + t * 200) % W;
+    ctx.strokeStyle = 'rgba(100,100,110,0.5)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(bx, convY);
+    ctx.lineTo(bx, convY + 15);
+    ctx.stroke();
+  }
+
+  // Branch conveyors
+  for (let i = 0; i < 3; i++) {
+    const bx = W * 0.3 + i * W * 0.2;
+    ctx.strokeStyle = 'rgba(120,120,130,0.5)';
+    ctx.lineWidth = 10;
+    ctx.beginPath();
+    ctx.moveTo(bx, convY + 7);
+    ctx.lineTo(bx + 80, convY + 60 + i * 20);
+    ctx.stroke();
+  }
+
+  // Crates on conveyor
+  for (let i = 0; i < 8; i++) {
+    const cx = ((t * 150 + i * 130) % (W + 100)) - 50;
+    ctx.fillStyle = `hsl(${30 + i * 10}, 40%, ${35 + i * 3}%)`;
+    ctx.fillRect(cx, convY - 20, 35, 20);
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.strokeRect(cx, convY - 20, 35, 20);
+  }
+
+  // Merge point indicator
+  const mergeX = W * 0.25;
+  ctx.fillStyle = `rgba(170,136,255,${0.3 + Math.sin(t * 4) * 0.2})`;
+  ctx.beginPath();
+  ctx.arc(mergeX, convY + 7, 15, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#aa88ff';
+  ctx.font = 'bold 10px monospace';
+  ctx.fillText('MERGE', mergeX - 18, convY - 8);
+
+  ctx.restore();
+}
+
+// Phase 6: Sorting
+function drawSorting(t, p) {
+  ctx.save();
+  const sortX = W * 0.3;
+  const sortY = H * 0.45;
+
+  // Conveyor
+  ctx.fillStyle = 'rgba(70,70,80,0.9)';
+  ctx.fillRect(sortX - 50, sortY, W * 0.5, 12);
+
+  // Camera unit
+  const camX = sortX + W * 0.15;
+  ctx.fillStyle = '#445';
+  ctx.fillRect(camX - 20, sortY - 60, 40, 25);
+  ctx.fillStyle = `rgba(0,255,100,${0.5 + Math.sin(t * 5) * 0.3})`;
+  ctx.beginPath();
+  ctx.arc(camX, sortY - 38, 8, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Scan beam
+  ctx.fillStyle = `rgba(0,255,100,${0.08 + Math.sin(t * 6) * 0.04})`;
+  ctx.beginPath();
+  ctx.moveTo(camX - 8, sortY - 35);
+  ctx.lineTo(camX - 40, sortY);
+  ctx.lineTo(camX + 40, sortY);
+  ctx.lineTo(camX + 8, sortY - 35);
+  ctx.fill();
+
+  // Scan line
+  const scanLineX = camX - 30 + (Math.sin(t * 8) + 1) * 30;
+  ctx.strokeStyle = `rgba(0,255,100,0.6)`;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(scanLineX, sortY - 30);
+  ctx.lineTo(scanLineX, sortY);
+  ctx.stroke();
+
+  // Items being sorted
+  const lanes = [
+    { label: 'PREMIUM', color: '#00ff88', y: sortY + 30 },
+    { label: 'STANDARD', color: '#ffaa00', y: sortY + 55 },
+    { label: 'PROCESS', color: '#ff6666', y: sortY + 80 },
+  ];
+
+  // Sort lanes
+  const laneStartX = sortX + W * 0.25;
+  lanes.forEach((lane, i) => {
+    ctx.strokeStyle = lane.color;
+    ctx.lineWidth = 2;
+    ctx.globalAlpha = 0.4;
+    ctx.beginPath();
+    ctx.moveTo(laneStartX, sortY + 6);
+    ctx.lineTo(laneStartX + 120, lane.y);
+    ctx.lineTo(laneStartX + 220, lane.y);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    ctx.fillStyle = lane.color;
+    ctx.font = '10px monospace';
+    ctx.fillText(lane.label, laneStartX + 160, lane.y - 5);
+
+    // Items in lane
+    for (let j = 0; j < 3; j++) {
+      const ix = laneStartX + 130 + ((t * 80 + j * 35) % 90);
+      ctx.fillStyle = lane.color;
+      ctx.globalAlpha = 0.7;
+      ctx.beginPath();
+      ctx.arc(ix, lane.y + 4, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+  });
+
+  // Holographic label preview
+  const items = [0, 1, 2];
+  items.forEach((item, i) => {
+    const ix = sortX + ((t * 120 + i * 140) % (W * 0.5));
+    const iy = sortY - 3;
+    ctx.fillStyle = ['#dc3220', '#e8a020', '#20a840'][i];
+    ctx.beginPath();
+    ctx.arc(ix, iy, 7, 0, Math.PI * 2);
+    ctx.fill();
+  });
+
+  ctx.restore();
+}
+
+// Phase 7: Palletizing
+function drawPalletizing(t, p) {
+  ctx.save();
+  const baseX = W * 0.55;
+  const baseY = H * 0.75;
+
+  // Robot arm (large 6-axis)
+  const a1 = -1.2 + Math.sin(t * 1.8) * 0.4;
+  const a2 = -0.3 + Math.sin(t * 1.8 + 0.8) * 0.5;
+
+  const j1x = baseX, j1y = baseY;
+  const j2x = j1x + Math.cos(a1) * 100;
+  const j2y = j1y + Math.sin(a1) * 100;
+  const ex = j2x + Math.cos(a1 + a2) * 80;
+  const ey = j2y + Math.sin(a1 + a2) * 80;
+
+  // Arm
+  ctx.strokeStyle = '#ffcc00';
+  ctx.lineWidth = 12;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(j1x, j1y);
+  ctx.lineTo(j2x, j2y);
+  ctx.stroke();
+  ctx.lineWidth = 8;
+  ctx.beginPath();
+  ctx.moveTo(j2x, j2y);
+  ctx.lineTo(ex, ey);
+  ctx.stroke();
+
+  // Joints
+  ctx.fillStyle = '#aa8800';
+  ctx.beginPath();
+  ctx.arc(j1x, j1y, 10, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(j2x, j2y, 7, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Gripper with box
+  ctx.fillStyle = '#886';
+  ctx.fillRect(ex - 15, ey, 30, 20);
+  ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+  ctx.strokeRect(ex - 15, ey, 30, 20);
+
+  // Pallet
+  const palletX = baseX + 130;
+  const palletY = baseY - 10;
+  ctx.fillStyle = '#664';
+  ctx.fillRect(palletX, palletY, 80, 8);
+  // Stacked boxes
+  const boxCount = Math.floor(((t * 0.8) % 4) + 1);
+  for (let row = 0; row < 3; row++) {
+    for (let col = 0; col < 2; col++) {
+      if (row * 2 + col < boxCount + 3) {
+        const bx = palletX + 5 + col * 38;
+        const by = palletY - 22 - row * 22;
+        ctx.fillStyle = `hsl(${30 + row * 15}, 50%, ${40 + col * 8}%)`;
+        ctx.fillRect(bx, by, 35, 20);
+        ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+        ctx.strokeRect(bx, by, 35, 20);
+      }
+    }
+  }
+
+  // Completion indicator
+  ctx.fillStyle = `rgba(255,204,0,${0.2 + Math.sin(t * 3) * 0.1})`;
+  ctx.beginPath();
+  ctx.arc(palletX + 40, palletY - 50, 40, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.restore();
+}
+
+// Phase 8: AI Control Center
+function drawControlCenter(t, p) {
+  ctx.save();
+
+  // Darken background slightly
+  ctx.fillStyle = `rgba(0,0,20,${p * 0.3})`;
+  ctx.fillRect(0, 0, W, H);
+
+  // Main display frame
+  const cx = W * 0.5;
+  const cy = H * 0.45;
+  const dw = W * 0.7;
+  const dh = H * 0.55;
+
+  // Holographic glow
+  ctx.shadowColor = 'rgba(0,170,255,0.5)';
+  ctx.shadowBlur = 30;
+  ctx.strokeStyle = `rgba(0,170,255,${0.4 + Math.sin(t * 2) * 0.2})`;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(cx - dw / 2, cy - dh / 2, dw, dh, 10);
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Background fill
+  ctx.fillStyle = 'rgba(0,20,40,0.7)';
+  ctx.beginPath();
+  ctx.roundRect(cx - dw / 2, cy - dh / 2, dw, dh, 10);
+  ctx.fill();
+
+  // Grid
+  ctx.strokeStyle = 'rgba(0,100,200,0.1)';
+  ctx.lineWidth = 1;
+  for (let gx = cx - dw / 2; gx < cx + dw / 2; gx += 40) {
+    ctx.beginPath();
+    ctx.moveTo(gx, cy - dh / 2);
+    ctx.lineTo(gx, cy + dh / 2);
+    ctx.stroke();
+  }
+  for (let gy = cy - dh / 2; gy < cy + dh / 2; gy += 40) {
+    ctx.beginPath();
+    ctx.moveTo(cx - dw / 2, gy);
+    ctx.lineTo(cx + dw / 2, gy);
+    ctx.stroke();
+  }
+
+  // Mini greenhouse map (center)
+  const mapX = cx - 100;
+  const mapY = cy - 60;
+  ctx.strokeStyle = 'rgba(0,255,136,0.3)';
+  ctx.strokeRect(mapX, mapY, 200, 120);
+  ctx.fillStyle = 'rgba(0,255,136,0.05)';
+  ctx.fillRect(mapX, mapY, 200, 120);
+
+  // Plant rows on map
+  for (let r = 0; r < 5; r++) {
+    ctx.fillStyle = 'rgba(0,180,80,0.4)';
+    ctx.fillRect(mapX + 10, mapY + 10 + r * 22, 180, 12);
+  }
+
+  // Moving robot dots on map
+  for (let i = 0; i < 6; i++) {
+    const rx = mapX + 20 + ((t * 40 + i * 35) % 170);
+    const ry = mapY + 16 + (i % 5) * 22;
+    ctx.fillStyle = `rgba(0,170,255,${0.6 + Math.sin(t * 4 + i) * 0.4})`;
+    ctx.beginPath();
+    ctx.arc(rx, ry, 3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Side panels - stats
+  const panels = [
+    { x: cx - dw / 2 + 20, y: cy - dh / 2 + 20, label: 'TEMPERATURE', value: `${(24 + Math.sin(t) * 0.5).toFixed(1)} C`, color: '#ff6644' },
+    { x: cx - dw / 2 + 20, y: cy - dh / 2 + 70, label: 'HUMIDITY', value: `${(72 + Math.sin(t * 1.5) * 2).toFixed(1)}%`, color: '#00aaff' },
+    { x: cx - dw / 2 + 20, y: cy - dh / 2 + 120, label: 'CO2 LEVEL', value: `${(850 + Math.sin(t * 2) * 20).toFixed(0)} ppm`, color: '#88ff44' },
+    { x: cx + dw / 2 - 155, y: cy - dh / 2 + 20, label: 'YIELD TODAY', value: `${(1240 + Math.floor(t * 3) % 20)} kg`, color: '#ffcc00' },
+    { x: cx + dw / 2 - 155, y: cy - dh / 2 + 70, label: 'ROBOTS ACTIVE', value: '24 / 24', color: '#00ff88' },
+    { x: cx + dw / 2 - 155, y: cy - dh / 2 + 120, label: 'EFFICIENCY', value: `${(98.2 + Math.sin(t * 3) * 0.5).toFixed(1)}%`, color: '#aa88ff' },
+  ];
+
+  panels.forEach(panel => {
+    ctx.fillStyle = 'rgba(0,20,40,0.5)';
+    ctx.beginPath();
+    ctx.roundRect(panel.x, panel.y, 135, 40, 5);
+    ctx.fill();
+    ctx.strokeStyle = `${panel.color}44`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(panel.x, panel.y, 135, 40, 5);
+    ctx.stroke();
+
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.font = '9px monospace';
+    ctx.fillText(panel.label, panel.x + 8, panel.y + 14);
+    ctx.fillStyle = panel.color;
+    ctx.font = 'bold 14px monospace';
+    ctx.fillText(panel.value, panel.x + 8, panel.y + 32);
+  });
+
+  // Bottom graph
+  const graphX = cx - dw / 2 + 20;
+  const graphY = cy + dh / 2 - 70;
+  ctx.strokeStyle = 'rgba(0,255,136,0.4)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  for (let i = 0; i < 200; i++) {
+    const gx = graphX + i * 1.8;
+    const gy = graphY + 25 + Math.sin(i * 0.08 + t * 3) * 15 + Math.sin(i * 0.03 + t) * 8;
+    if (i === 0) ctx.moveTo(gx, gy); else ctx.lineTo(gx, gy);
+  }
+  ctx.stroke();
+
+  // "AI INTEGRATED CONTROL" title
+  ctx.fillStyle = `rgba(255,255,255,${0.8 + Math.sin(t * 2) * 0.2})`;
+  ctx.font = 'bold 16px monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('AI INTEGRATED CONTROL SYSTEM', cx, cy - dh / 2 + 15);
+  ctx.textAlign = 'left';
+
+  // Pulse effect
+  ctx.strokeStyle = `rgba(0,170,255,${0.2 * Math.max(0, Math.sin(t * 3))})`;
+  ctx.lineWidth = 1;
+  const pulseR = 30 + (t * 20 % 60);
+  ctx.beginPath();
+  ctx.arc(cx, cy, pulseR, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+// Particle system
+const particles = [];
+for (let i = 0; i < 50; i++) {
+  particles.push({
+    x: Math.random() * 2000,
+    y: Math.random() * 1200,
+    vx: (Math.random() - 0.5) * 0.5,
+    vy: -Math.random() * 0.5 - 0.2,
+    size: Math.random() * 2 + 0.5,
+    alpha: Math.random() * 0.3 + 0.1,
+  });
+}
+
+function drawParticles(t) {
+  ctx.save();
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    if (p.y < 0) { p.y = H; p.x = Math.random() * W; }
+    if (p.x < 0 || p.x > W) p.x = Math.random() * W;
+
+    ctx.fillStyle = `rgba(200,240,255,${p.alpha + Math.sin(t * 3 + p.x) * 0.05})`;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.restore();
+}
+
+function getPhase(progress) {
+  for (const phase of phases) {
+    if (progress >= phase.start && progress < phase.end) {
+      return { ...phase, phaseProgress: (progress - phase.start) / (phase.end - phase.start) };
+    }
+  }
+  return { ...phases[phases.length - 1], phaseProgress: 1 };
+}
+
+function draw(timestamp) {
+  if (!running) return;
+  if (!startTime) startTime = timestamp;
+
+  const elapsed = timestamp - startTime;
+  const progress = Math.min(elapsed / DURATION, 1);
+  const t = elapsed / 1000;
+  const phase = getPhase(progress);
+
+  // Clear
+  ctx.clearRect(0, 0, W, H);
+
+  // Background
+  drawGreenhouse(t);
+
+  // Transition opacity for each phase
+  const fadeIn = Math.min(phase.phaseProgress * 5, 1);
+  const fadeOut = Math.min((1 - phase.phaseProgress) * 5, 1);
+  const phaseAlpha = Math.min(fadeIn, fadeOut);
+
+  // Always show plants (dimmed during control center)
+  ctx.globalAlpha = phase.label === 'AI CONTROL CENTER' ? 0.2 : 0.8;
+  drawPlants(t);
+  ctx.globalAlpha = 1;
+
+  // Draw current phase
+  ctx.globalAlpha = phaseAlpha;
+
+  if (progress < 0.13) drawScouting(t, phase.phaseProgress);
+  else if (progress < 0.26) drawNutrient(t, phase.phaseProgress);
+  else if (progress < 0.40) drawHarvest(t, phase.phaseProgress);
+  else if (progress < 0.53) drawAGV(t, phase.phaseProgress);
+  else if (progress < 0.66) drawLogistics(t, phase.phaseProgress);
+  else if (progress < 0.78) drawSorting(t, phase.phaseProgress);
+  else if (progress < 0.90) drawPalletizing(t, phase.phaseProgress);
+  else drawControlCenter(t, phase.phaseProgress);
+
+  ctx.globalAlpha = 1;
+
+  // Particles
+  drawParticles(t);
+
+  // UI Updates
+  document.getElementById('progress-bar').style.width = (progress * 100) + '%';
+
+  const label = document.getElementById('phase-label');
+  const sub = document.getElementById('phase-sub');
+  label.textContent = phase.label;
+  label.style.opacity = phaseAlpha;
+  label.style.color = phase.color;
+  label.style.textShadow = `0 0 20px ${phase.color}80`;
+  sub.textContent = phase.sub;
+  sub.style.opacity = phaseAlpha * 0.6;
+
+  const remaining = Math.max(0, (DURATION - elapsed) / 1000);
+  document.getElementById('timer').textContent = `${remaining.toFixed(1)}s`;
+
+  if (progress >= 1) {
+    // Show final branding
+    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 36px Segoe UI';
+    ctx.textAlign = 'center';
+    ctx.fillText('AI SMART FARM', W / 2, H / 2 - 20);
+    ctx.font = '18px Segoe UI';
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.fillText('FULLY AUTONOMOUS ROBOT AUTOMATION', W / 2, H / 2 + 20);
+    ctx.textAlign = 'left';
+    label.style.opacity = 0;
+    sub.style.opacity = 0;
+    return;
+  }
+
+  requestAnimationFrame(draw);
+}
+
+document.getElementById('start-btn').addEventListener('click', function () {
+  this.style.display = 'none';
+  running = true;
+  startTime = null;
+  requestAnimationFrame(draw);
+});
+</script>
+</body>
+</html>
