@@ -1,124 +1,2552 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>전시회 조사 보고서</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;600;800&display=swap');
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Noto Sans KR', -apple-system, sans-serif;
-            background: #f0f2f5;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
-        .container { max-width: 720px; width: 100%; }
-        .header {
-            text-align: center;
-            margin-bottom: 2.5rem;
-        }
-        .badge {
-            display: inline-block;
-            padding: 0.4rem 1.2rem;
-            border: 1.5px solid #1A478A;
-            border-radius: 50px;
-            font-size: 0.75rem;
-            letter-spacing: 3px;
-            color: #1A478A;
-            margin-bottom: 1rem;
-        }
-        h1 {
-            font-size: 2rem;
-            font-weight: 800;
-            color: #1a1a2e;
-            margin-bottom: 0.5rem;
-        }
-        .sub { font-size: 0.95rem; color: #718096; }
-        .card {
-            background: #fff;
-            border-radius: 16px;
-            padding: 2rem 2.2rem;
-            margin-bottom: 1.2rem;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-            text-decoration: none;
-            color: inherit;
-            display: block;
-            transition: transform 0.15s, box-shadow 0.15s;
-            border-left: 5px solid transparent;
-        }
-        .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-        }
-        .card-aw { border-left-color: #1A478A; }
-        .card-ites { border-left-color: #2E7D32; }
-        .card-tag {
-            display: inline-block;
-            padding: 0.2rem 0.7rem;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            margin-bottom: 0.6rem;
-        }
-        .tag-aw { background: #EBF4FF; color: #1A478A; }
-        .tag-ites { background: #E8F5E9; color: #2E7D32; }
-        .card h2 {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 0.4rem;
-            color: #1a1a2e;
-        }
-        .card p {
-            font-size: 0.88rem;
-            color: #718096;
-            line-height: 1.6;
-        }
-        .card .meta {
-            margin-top: 0.8rem;
-            font-size: 0.78rem;
-            color: #a0aec0;
-        }
-        footer {
-            text-align: center;
-            margin-top: 2rem;
-            font-size: 0.8rem;
-            color: #a0aec0;
-        }
-        @media (max-width: 480px) {
-            body { padding: 1rem; }
-            h1 { font-size: 1.5rem; }
-            .card { padding: 1.4rem 1.2rem; }
-            .card h2 { font-size: 1.05rem; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AW2026 참가업체 심층 조사 보고서</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1A478A">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AW2026">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+
+    :root {
+      --primary: #1A478A;
+      --primary-light: #2B6CC4;
+      --primary-dark: #0F2D5E;
+      --accent: #E8721C;
+      --bg: #F4F6F9;
+      --card: #FFFFFF;
+      --text: #2D3748;
+      --text-light: #718096;
+      --border: #E2E8F0;
+      --header-bg: linear-gradient(135deg, #1A478A 0%, #2B6CC4 100%);
+      --row-alt: #F7FAFC;
+      --tag-blue: #EBF4FF;
+      --tag-green: #F0FFF4;
+      --tag-orange: #FFFAF0;
+      --tag-purple: #FAF5FF;
+      --tag-red: #FFF5F5;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    /* ─── 표지 ─── */
+    .cover {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #0F2D5E 0%, #1A478A 40%, #2B6CC4 100%);
+      color: white;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cover::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 60%);
+      animation: pulse 8s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.1);
+      }
+    }
+
+    .cover-badge {
+      display: inline-block;
+      padding: 0.5rem 1.5rem;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50px;
+      font-size: 0.9rem;
+      letter-spacing: 2px;
+      margin-bottom: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cover h1 {
+      font-size: 4.5rem;
+      font-weight: 900;
+      letter-spacing: -2px;
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cover h2 {
+      font-size: 1.6rem;
+      font-weight: 300;
+      opacity: 0.9;
+      margin-bottom: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cover-info {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cover-info-item {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .cover-info-item strong {
+      display: block;
+      font-size: 1.3rem;
+    }
+
+    .cover-info-item span {
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+
+    /* ─── 네비게이션 ─── */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .nav-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      gap: 0;
+    }
+
+    .nav a {
+      display: inline-block;
+      padding: 1rem 1.2rem;
+      text-decoration: none;
+      color: var(--text-light);
+      font-size: 0.85rem;
+      font-weight: 500;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .nav a:hover {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    /* ─── 컨테이너 ─── */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* ─── 섹션 ─── */
+    .section {
+      margin-bottom: 3rem;
+    }
+
+    .section-header {
+      background: var(--header-bg);
+      color: white;
+      padding: 2rem 2.5rem;
+      border-radius: 16px 16px 0 0;
+      position: relative;
+    }
+
+    .section-header h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+
+    .section-header .section-num {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+      text-align: center;
+      border-radius: 10px;
+      font-weight: 900;
+      margin-right: 1rem;
+      font-size: 1.2rem;
+    }
+
+    .section-body {
+      background: var(--card);
+      padding: 2rem 2.5rem;
+      border-radius: 0 0 16px 16px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    }
+
+    /* ─── 서브 헤딩 ─── */
+    h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 2rem 0 1rem 0;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h3 .icon {
+      font-size: 1.2rem;
+    }
+
+    h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin: 1.5rem 0 0.8rem 0;
+    }
+
+    /* ─── 테이블 ─── */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 1rem 0 1.5rem 0;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    thead th {
+      background: var(--primary);
+      color: white;
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.82rem;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+    }
+
+    tbody td {
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    tbody tr:nth-child(even) {
+      background: var(--row-alt);
+    }
+
+    tbody tr:hover {
+      background: #EDF2F7;
+    }
+
+    td strong {
+      color: var(--primary-dark);
+    }
+
+    /* ─── 태그 ─── */
+    .tag {
+      display: inline-block;
+      padding: 0.15rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      margin: 1px 2px;
+    }
+
+    .tag-blue {
+      background: var(--tag-blue);
+      color: #2B6CB0;
+    }
+
+    .tag-green {
+      background: var(--tag-green);
+      color: #276749;
+    }
+
+    .tag-orange {
+      background: var(--tag-orange);
+      color: #C05621;
+    }
+
+    .tag-purple {
+      background: var(--tag-purple);
+      color: #6B46C1;
+    }
+
+    .tag-red {
+      background: var(--tag-red);
+      color: #C53030;
+    }
+
+    .tag-confirmed {
+      background: #C6F6D5;
+      color: #22543D;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.73rem;
+      font-weight: 600;
+    }
+
+    /* ─── 행사 개요 카드 ─── */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .overview-card {
+      background: var(--bg);
+      padding: 1.2rem 1.5rem;
+      border-radius: 10px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .overview-card .label {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    .overview-card .value {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-top: 0.3rem;
+    }
+
+    /* ─── 트렌드 카드 ─── */
+    .trend-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .trend-card {
+      background: var(--bg);
+      padding: 1.2rem 1.5rem;
+      border-radius: 10px;
+      border-left: 4px solid var(--accent);
+      transition: transform 0.2s;
+    }
+
+    .trend-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .trend-card .trend-title {
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 0.4rem;
+    }
+
+    .trend-card .trend-desc {
+      font-size: 0.88rem;
+      color: var(--text-light);
+    }
+
+    /* ─── 비교표 하이라이트 ─── */
+    .compare-table td:first-child {
+      font-weight: 600;
+      background: var(--tag-blue);
+    }
+
+    /* ─── 모바일 카드형 테이블 ─── */
+    .card-list { display: none; }
+
+    /* ─── 반응형: 태블릿 (769px ~ 1024px) ─── */
+    @media (max-width: 1024px) {
+      .container {
+        padding: 1.5rem 1rem;
+      }
+
+      .section-header {
+        padding: 1.5rem 1.5rem;
+      }
+
+      .section-body {
+        padding: 1.5rem;
+      }
+
+      .trend-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .overview-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      table { font-size: 0.82rem; }
+      thead th { padding: 0.6rem 0.7rem; font-size: 0.78rem; }
+      tbody td { padding: 0.55rem 0.7rem; }
+    }
+
+    /* ─── 반응형: 모바일 (max 768px) ─── */
+    @media (max-width: 768px) {
+      html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+      }
+
+      body {
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      /* 표지 */
+      .cover {
+        min-height: 85vh;
+        padding: 2rem 1.2rem;
+      }
+
+      .cover h1 {
+        font-size: 2.8rem;
+        letter-spacing: -1px;
+      }
+
+      .cover h2 {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .cover-badge {
+        font-size: 0.75rem;
+        padding: 0.4rem 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .cover-info {
+        gap: 0.8rem;
+        width: 100%;
+      }
+
+      .cover-info-item {
+        padding: 0.8rem 1rem;
+        flex: 1;
+        min-width: 80px;
+      }
+
+      .cover-info-item strong {
+        font-size: 1rem;
+      }
+
+      .cover-info-item span {
+        font-size: 0.75rem;
+      }
+
+      /* 네비게이션 */
+      .nav {
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+
+      .nav::-webkit-scrollbar { display: none; }
+
+      .nav-inner {
+        padding: 0 0.3rem;
+      }
+
+      .nav a {
+        padding: 0.75rem 0.7rem;
+        font-size: 0.73rem;
+        flex-shrink: 0;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+      }
+
+      /* 컨테이너 */
+      .container {
+        padding: 0.8rem 0.6rem;
+      }
+
+      /* 섹션 */
+      .section {
+        margin-bottom: 1.5rem;
+      }
+
+      .section-header {
+        padding: 1.2rem 1rem;
+        border-radius: 12px 12px 0 0;
+      }
+
+      .section-header h2 {
+        font-size: 1.05rem;
+        line-height: 1.4;
+        display: flex;
+        align-items: center;
+      }
+
+      .section-header .section-num {
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        font-size: 0.95rem;
+        margin-right: 0.5rem;
+        border-radius: 8px;
+        flex-shrink: 0;
+      }
+
+      .section-body {
+        padding: 1rem 0.8rem;
+        border-radius: 0 0 12px 12px;
+      }
+
+      /* 서브 헤딩 */
+      h3 {
+        font-size: 0.92rem;
+        margin: 1.5rem 0 0.8rem 0;
+        padding-bottom: 0.4rem;
+      }
+
+      h4 {
+        font-size: 0.88rem;
+        margin: 1.2rem 0 0.6rem 0;
+      }
+
+      /* 테이블: 가로 스크롤 + 스크롤 힌트 */
+      .table-wrap {
+        border-radius: 8px;
+        margin: 0.8rem 0 1.2rem 0;
+        position: relative;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .table-wrap::after {
+        content: '>';
+        position: sticky;
+        right: 0;
+        top: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        background: rgba(26,71,138,0.7);
+        color: white;
+        border-radius: 50%;
+        font-size: 0.7rem;
+        pointer-events: none;
+        float: right;
+        margin-top: -36px;
+        margin-right: 4px;
+        opacity: 0.6;
+        z-index: 2;
+      }
+
+      .table-wrap.scrolled::after {
+        display: none;
+      }
+
+      table { font-size: 0.78rem; }
+
+      thead th {
+        padding: 0.55rem 0.6rem;
+        font-size: 0.72rem;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+      }
+
+      tbody td {
+        padding: 0.5rem 0.6rem;
+        font-size: 0.76rem;
+        line-height: 1.45;
+      }
+
+      /* 카드형 표시: 모바일에서 테이블 대체 */
+      .card-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+        margin: 0.8rem 0 1.2rem 0;
+      }
+
+      .card-item {
+        background: var(--bg);
+        border-radius: 10px;
+        padding: 0.9rem 1rem;
+        border-left: 4px solid var(--primary);
+      }
+
+      .card-item-title {
+        font-weight: 700;
+        color: var(--primary-dark);
+        font-size: 0.88rem;
+        margin-bottom: 0.4rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+      }
+
+      .card-item-title .country {
+        font-weight: 400;
+        font-size: 0.72rem;
+        color: var(--text-light);
+        background: var(--border);
+        padding: 0.1rem 0.4rem;
+        border-radius: 3px;
+      }
+
+      .card-item-row {
+        display: flex;
+        gap: 0.3rem;
+        font-size: 0.78rem;
+        line-height: 1.5;
+        margin-top: 0.15rem;
+      }
+
+      .card-item-row .card-label {
+        color: var(--text-light);
+        font-weight: 500;
+        min-width: 52px;
+        flex-shrink: 0;
+      }
+
+      .card-item-row .card-value {
+        color: var(--text);
+      }
+
+      /* 태그 */
+      .tag {
+        font-size: 0.68rem;
+        padding: 0.12rem 0.45rem;
+      }
+
+      .tag-confirmed {
+        font-size: 0.65rem;
+        padding: 0.15rem 0.4rem;
+      }
+
+      /* 개요 그리드 */
+      .overview-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.6rem;
+      }
+
+      .overview-card {
+        padding: 0.8rem 1rem;
+      }
+
+      .overview-card .label {
+        font-size: 0.72rem;
+      }
+
+      .overview-card .value {
+        font-size: 0.85rem;
+      }
+
+      /* 트렌드 그리드 */
+      .trend-grid {
+        grid-template-columns: 1fr;
+        gap: 0.6rem;
+      }
+
+      .trend-card {
+        padding: 1rem 1.2rem;
+      }
+
+      .trend-card .trend-title {
+        font-size: 0.88rem;
+      }
+
+      .trend-card .trend-desc {
+        font-size: 0.8rem;
+      }
+
+      /* 비교표 */
+      .compare-table td:first-child {
+        font-size: 0.73rem;
+        font-weight: 600;
+      }
+    }
+
+    /* ─── 반응형: 소형 모바일 (max 420px) ─── */
+    @media (max-width: 420px) {
+      .cover {
+        min-height: 75vh;
+        padding: 1.5rem 1rem;
+      }
+
+      .cover h1 {
+        font-size: 2.2rem;
+      }
+
+      .cover h2 {
+        font-size: 0.9rem;
+      }
+
+      .cover-info {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .cover-info-item {
+        text-align: center;
+        padding: 0.6rem 0.8rem;
+      }
+
+      .nav a {
+        padding: 0.65rem 0.5rem;
+        font-size: 0.68rem;
+      }
+
+      .section-header h2 {
+        font-size: 0.92rem;
+      }
+
+      .overview-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card-item {
+        padding: 0.7rem 0.8rem;
+      }
+
+      .card-item-title {
+        font-size: 0.82rem;
+      }
+
+      .card-item-row {
+        font-size: 0.74rem;
+      }
+    }
+
+    /* ─── 터치 디바이스 최적화 ─── */
+    @media (hover: none) and (pointer: coarse) {
+      tbody tr:hover {
+        background: inherit;
+      }
+
+      tbody tr:nth-child(even):hover {
+        background: var(--row-alt);
+      }
+
+      .trend-card:hover {
+        transform: none;
+      }
+
+      /* 테이블 스크롤 시 관성 */
+      .table-wrap {
+        scroll-snap-type: x proximity;
+      }
+    }
+
+    /* ─── 인쇄 ─── */
+    @media print {
+      .nav, .card-list, #install-banner { display: none !important; }
+      .table-wrap { display: block !important; }
+
+      .cover {
+        min-height: auto;
+        padding: 3rem;
+        page-break-after: always;
+      }
+
+      .section {
+        page-break-inside: avoid;
+      }
+
+      body {
+        font-size: 11px;
+        background: white;
+      }
+    }
+  </style>
 </head>
+
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="badge">RESEARCH REPORT 2026</div>
-            <h1>전시회 참가업체 조사 보고서</h1>
-            <p class="sub">스마트 제조·자동화·스마트팜 분야 심층 분석</p>
+
+  <!-- ═══════════════ 표지 ═══════════════ -->
+  <div class="cover">
+    <div class="cover-badge">RESEARCH REPORT 2026</div>
+    <h1>AW2026</h1>
+    <h2>2026 스마트공장·자동화산업전<br>참가업체 심층 조사 보고서</h2>
+    <div class="cover-info">
+      <div class="cover-info-item"><strong>2026.3.4~6</strong><span>서울 코엑스 전관</span></div>
+      <div class="cover-info-item"><strong>500개 기업</strong><span>24개국 2,300부스</span></div>
+      <div class="cover-info-item"><strong>80,000명</strong><span>예상 참관객</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ 네비게이션 ═══════════════ -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="#overview">개요</a>
+      <a href="#s1">1.그리퍼</a>
+      <a href="#s2">2.로봇팔</a>
+      <a href="#s3">3.AGV/AMR</a>
+      <a href="#s4">4.물류</a>
+      <a href="#s5">5.AI선별</a>
+      <a href="#s6">6.비전</a>
+      <a href="#s7">7.PLC</a>
+      <a href="#trends">트렌드</a>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <!-- ═══════════════ 행사 개요 ═══════════════ -->
+    <div class="section" id="overview">
+      <div class="section-header">
+        <h2>행사 개요</h2>
+      </div>
+      <div class="section-body">
+        <div class="overview-grid">
+          <div class="overview-card">
+            <div class="label">행사명</div>
+            <div class="value">AW 2026 (제36회 스마트공장·자동화산업전)</div>
+          </div>
+          <div class="overview-card">
+            <div class="label">일시</div>
+            <div class="value">2026년 3월 4일(수) ~ 6일(금), 3일간</div>
+          </div>
+          <div class="overview-card">
+            <div class="label">장소</div>
+            <div class="value">서울 코엑스(COEX) 전관 A·B·C·D홀</div>
+          </div>
+          <div class="overview-card">
+            <div class="label">규모</div>
+            <div class="value">24개국 500개 기업, 2,300부스, 약 80,000명</div>
+          </div>
+          <div class="overview-card">
+            <div class="label">슬로건</div>
+            <div class="value">자율화, 지속가능성을 이끄는 힘</div>
+          </div>
+          <div class="overview-card">
+            <div class="label">핵심 키워드</div>
+            <div class="value">Physical AI · 휴머노이드 · 자율제조(AX) · AI 팩토리</div>
+          </div>
+          <div class="overview-card">
+            <div class="label">특별관</div>
+            <div class="value">스마트물류(D홀) · AI 팩토리 · Korea Vision Show(B홀)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ 1. 로봇 그리퍼 ═══════════════ -->
+    <div class="section" id="s1">
+      <div class="section-header">
+        <h2><span class="section-num">1</span>로봇 그리퍼 업체 및 대표 기술 (그리퍼 종류별)</h2>
+      </div>
+      <div class="section-body">
+
+        <h3>1-1. 그리퍼 종류별 비교</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>종류</th>
+                <th>작동 원리</th>
+                <th>가반하중</th>
+                <th>장점</th>
+                <th>단점</th>
+                <th>적용 분야</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>공압</strong></td>
+                <td>압축 공기 피스톤 구동</td>
+                <td>0.1~수백kg</td>
+                <td>단순, 저가, 고파지력, 빠른 사이클</td>
+                <td>2단계 제어, 공압라인, 소음</td>
+                <td>자동차, 금속가공, CNC</td>
+              </tr>
+              <tr>
+                <td><strong>전동</strong></td>
+                <td>서보모터+볼스크류</td>
+                <td>0.1~20kg</td>
+                <td>정밀 제어, 저소음, 공압라인 불필요</td>
+                <td>초기 비용 높음, 고온 제한</td>
+                <td>반도체, 전자부품, 정밀조립</td>
+              </tr>
+              <tr>
+                <td><strong>진공</strong></td>
+                <td>흡착패드+진공발생기</td>
+                <td>0.01~50+kg</td>
+                <td>물체 손상 없음, 평평/얇은 물체</td>
+                <td>다공성 불가, 불규칙 누설</td>
+                <td>식품, 웨이퍼, 유리, 물류</td>
+              </tr>
+              <tr>
+                <td><strong>자석</strong></td>
+                <td>영구/전자석 자기력</td>
+                <td>0.5~수백kg</td>
+                <td>고온(350°C), 기름/분진 가능</td>
+                <td>강자성체만, 잔류자기</td>
+                <td>프레스, 철강, 용접</td>
+              </tr>
+              <tr>
+                <td><strong>소프트</strong></td>
+                <td>실리콘 공압 팽창</td>
+                <td>0.01~3kg</td>
+                <td>깨지기 쉬운 물체, 형상 적응</td>
+                <td>파지력 낮음, 내구성 제한</td>
+                <td>식품, 제약, 농업</td>
+              </tr>
+              <tr>
+                <td><strong>다관절</strong></td>
+                <td>다관절 핑거 개별 모터</td>
+                <td>0.5~5kg</td>
+                <td>인간 수준 조작, AI 학습</td>
+                <td>매우 고가, 제어 복잡</td>
+                <td>연구, 휴머노이드</td>
+              </tr>
+              <tr>
+                <td><strong>적응형</strong></td>
+                <td>언더액추에이티드 자동적응</td>
+                <td>0.2~10kg</td>
+                <td>다품종 대응, 교체 불필요</td>
+                <td>최적 성능 낮음</td>
+                <td>물류 피킹, 다품종</td>
+              </tr>
+              <tr>
+                <td><strong>니들</strong></td>
+                <td>바늘 관통 파지</td>
+                <td>0.05~5kg</td>
+                <td>다공성 소재 대응</td>
+                <td>구멍 발생, 단단한 소재 불가</td>
+                <td>섬유, 카펫, 내장재</td>
+              </tr>
+              <tr>
+                <td><strong>툴체인저</strong></td>
+                <td>커플링 자동 교환</td>
+                <td>1~2,500kg</td>
+                <td>다공정 수행, 유연성 극대화</td>
+                <td>비용, 가반하중 차감</td>
+                <td>용접, 조립, 다공정</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
-        <a class="card card-aw" href="AW2026_참가업체_조사보고서.html">
-            <span class="card-tag tag-aw">AW2026</span>
-            <h2>AW2026 참가업체 심층 조사보고서</h2>
-            <p>제36회 스마트공장·자동화산업전 참가업체 분석 — 로봇 그리퍼, 협동로봇, AGV/AMR, AI 물류, 비전 선별, AI PLC 등 7개 분야</p>
-            <div class="meta">2026.3.4~6 | 서울 코엑스 | 24개국 500개 기업</div>
-        </a>
+        <h3>1-2. AW2026 참가 확인 — 다관절/다지 그리퍼 (휴머노이드 핸드)</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>업체명</th>
+                <th>국적</th>
+                <th>대표 모델</th>
+                <th>핵심 스펙</th>
+                <th>적용분야</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>테솔로 (TESOLLO)</strong></td>
+                <td>한국</td>
+                <td>Delto Gripper DG-5F</td>
+                <td>20DoF 5지, 1.7kg, 파지력 20kg, 250Hz, 다이렉트 드라이브, 모듈형</td>
+                <td>휴머노이드, 정밀조작</td>
+              </tr>
+              <tr>
+                <td><strong>테솔로</strong></td>
+                <td>한국</td>
+                <td>DG-5F-S (경량)</td>
+                <td>20DoF, 1kg 미만, 고해상도 자기 엔코더</td>
+                <td>경량 휴머노이드</td>
+              </tr>
+              <tr>
+                <td><strong>원익로보틱스</strong></td>
+                <td>한국</td>
+                <td>Allegro Hand V5 Sense</td>
+                <td>16DoF 4지, 16개 압력센서, 촉각 피드백, ISO 9409, CAN/이더넷</td>
+                <td>연구, AI 학습</td>
+              </tr>
+              <tr>
+                <td><strong>원익로보틱스</strong></td>
+                <td>한국</td>
+                <td>Allegro V5 4F Plus</td>
+                <td>16DoF, 기존 3배 가반하중, CE 인증</td>
+                <td>산업용 정밀파지</td>
+              </tr>
+              <tr>
+                <td><strong>티로보틱스</strong></td>
+                <td>한국</td>
+                <td>TR-WORKS 로봇 핸드</td>
+                <td>3지/2지 교체형, 클린룸 대응</td>
+                <td>반도체/디스플레이</td>
+              </tr>
+              <tr>
+                <td><strong>에이딘로보틱스</strong></td>
+                <td>한국</td>
+                <td>AIDIN Hand Gen2</td>
+                <td>16DoF 인간형, 촉각센서(ATT), 시간당 1,000개 처리</td>
+                <td>물류, 휴머노이드</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-        <a class="card card-ites" href="ITES_2026_스마트팜_조사보고서.html">
-            <span class="card-tag tag-ites">ITES 2026</span>
-            <h2>ITES 2026 스마트팜 조사보고서</h2>
-            <p>국제농업기술박람회 스마트팜 참가업체 분석 — 환경제어, 자동화 장비, AI·데이터 플랫폼, 로봇 등</p>
-            <div class="meta">2026 | 스마트팜 기술 동향</div>
-        </a>
+        <h3>1-2. AW2026 참가 확인 — 전동/공압/AI센싱/적응형</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>업체명</th>
+                <th>국적</th>
+                <th>대표 모델</th>
+                <th>종류</th>
+                <th>핵심 스펙</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>씬그립 (SEENGRIP)</strong></td>
+                <td>한국</td>
+                <td>옵티멈/이센셜/이코노미</td>
+                <td><span class="tag tag-blue">전동</span></td>
+                <td>위치 인식 기술, 힘센서 없이 부드러움 감지, 3~5kg 툴체인저</td>
+              </tr>
+              <tr>
+                <td><strong>에이딘로보틱스</strong></td>
+                <td>한국</td>
+                <td>SUSGrip 스마트 그리퍼</td>
+                <td><span class="tag tag-blue">전동</span></td>
+                <td>BLDC 모터, 6축 F/T 센서 핑거팁. CJ대한통운 공동개발</td>
+              </tr>
+              <tr>
+                <td><strong>주강로보테크</strong></td>
+                <td>한국</td>
+                <td>산업용 공압 그리퍼</td>
+                <td><span class="tag tag-green">공압</span></td>
+                <td>37년 업력, 국내 대부분 로봇업체 공급</td>
+              </tr>
+              <tr>
+                <td><strong>모베이스전자</strong></td>
+                <td>한국</td>
+                <td>택타일 센서 그리퍼</td>
+                <td><span class="tag tag-purple">AI센싱</span></td>
+                <td>미세압력 감지, 프레셔 맵 실시간 시각화. 현대차그룹</td>
+              </tr>
+              <tr>
+                <td><strong>씨메스 (CMES)</strong></td>
+                <td>한국</td>
+                <td>랜덤 팔레타이저</td>
+                <td><span class="tag tag-orange">적응형</span></td>
+                <td>3D 비전+AI 실시간 인식, 다양한 크기·재질 대응</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-        <footer>2026 전시회 조사 보고서</footer>
+        <h3>1-3. 글로벌 주요 그리퍼 업체</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>업체명</th>
+                <th>국적</th>
+                <th>대표 제품</th>
+                <th>그리퍼 종류</th>
+                <th>특징</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>SCHUNK</strong></td>
+                <td>독일</td>
+                <td>EGA, PGN-plus-P</td>
+                <td><span class="tag tag-blue">공압</span><span class="tag tag-green">전동</span></td>
+                <td>글로벌 기술 리더, 3,000종+</td>
+              </tr>
+              <tr>
+                <td><strong>OnRobot</strong></td>
+                <td>덴마크</td>
+                <td>RG2, RG6, VGC10, 소프트</td>
+                <td><span class="tag tag-blue">전동</span><span class="tag tag-orange">진공</span><span
+                    class="tag tag-purple">소프트</span></td>
+                <td>협동로봇 플러그앤플레이</td>
+              </tr>
+              <tr>
+                <td><strong>Robotiq</strong></td>
+                <td>캐나다</td>
+                <td>2F-85, Hand-E, 3-Finger</td>
+                <td><span class="tag tag-blue">전동</span><span class="tag tag-green">적응형</span></td>
+                <td>UR 호환, 적응형 선두</td>
+              </tr>
+              <tr>
+                <td><strong>Festo</strong></td>
+                <td>독일</td>
+                <td>FinGripper, DHEF</td>
+                <td><span class="tag tag-blue">공압</span><span class="tag tag-green">전동</span><span
+                    class="tag tag-purple">소프트</span></td>
+                <td>바이오닉 그리퍼 연구</td>
+              </tr>
+              <tr>
+                <td><strong>SMC</strong></td>
+                <td>일본</td>
+                <td>ZGS 진공, 전동/공압</td>
+                <td><span class="tag tag-blue">공압</span><span class="tag tag-green">전동</span><span
+                    class="tag tag-orange">진공</span></td>
+                <td>공압기기 세계 1위</td>
+              </tr>
+              <tr>
+                <td><strong>슈말츠 (Schmalz)</strong></td>
+                <td>독일</td>
+                <td>FQE, mGrip</td>
+                <td><span class="tag tag-orange">진공</span><span class="tag tag-purple">소프트</span></td>
+                <td>Soft Robotics 인수, 식품</td>
+              </tr>
+              <tr>
+                <td><strong>Zimmer Group</strong></td>
+                <td>독일</td>
+                <td>5000/6000/Magic</td>
+                <td><span class="tag tag-blue">공압</span><span class="tag tag-green">전동</span><span
+                    class="tag tag-orange">진공</span></td>
+                <td>40년+, IO-Link</td>
+              </tr>
+              <tr>
+                <td><strong>Piab</strong></td>
+                <td>스웨덴</td>
+                <td>piCOBOT Electric</td>
+                <td><span class="tag tag-orange">진공</span></td>
+                <td>완전 전동식 진공, UR/ABB 호환</td>
+              </tr>
+              <tr>
+                <td><strong>Gimatic</strong></td>
+                <td>이탈리아</td>
+                <td>GS, MPXM</td>
+                <td><span class="tag tag-blue">공압</span><span class="tag tag-green">전동</span></td>
+                <td>1,000만 사이클, FDA-H1</td>
+              </tr>
+              <tr>
+                <td><strong>SoftGripping</strong></td>
+                <td>독일</td>
+                <td>SoftGripper, Drumstick</td>
+                <td><span class="tag tag-purple">소프트</span></td>
+                <td>FDA 실리콘, 식품 전문</td>
+              </tr>
+              <tr>
+                <td><strong>Shadow Robot</strong></td>
+                <td>영국</td>
+                <td>Dexterous Hand</td>
+                <td><span class="tag tag-red">다관절</span></td>
+                <td>24DoF, 100+센서, 세계 최고</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
+
+    <!-- ═══════════════ 2. 로봇 팔 ═══════════════ -->
+    <div class="section" id="s2">
+      <div class="section-header">
+        <h2><span class="section-num">2</span>로봇 팔 업체 및 대표 기술 (로봇 암 / 협동로봇)</h2>
+      </div>
+      <div class="section-body">
+
+        <h3>2-1. 협동로봇 (Cobot) — AW2026 참가 확인</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>업체명</th>
+                <th>국적</th>
+                <th>대표 모델</th>
+                <th>핵심 스펙</th>
+                <th>적용분야</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>화낙 (FANUC)</strong></td>
+                <td>일본</td>
+                <td>CRX-5iA~CRX-30iA</td>
+                <td>6DoF, 5~30kg, 994~1889mm, ±0.03mm, 8년 무보수, NVIDIA AI</td>
+                <td>제조, 용접, 팔레타이징</td>
+              </tr>
+              <tr>
+                <td><strong>유니버설 로봇 (UR)</strong></td>
+                <td>덴마크</td>
+                <td>UR3e~UR30</td>
+                <td>6DoF, 3~30kg, 500~1750mm</td>
+                <td>제조, 조립, 머신텐딩</td>
+              </tr>
+              <tr>
+                <td><strong>테크맨로봇</strong></td>
+                <td>대만</td>
+                <td>TM5~TM20</td>
+                <td>6DoF, 4~20kg, 내장 비전+AI, DC타입, SEMI S2</td>
+                <td>반도체, 물류</td>
+              </tr>
+              <tr>
+                <td><strong>뉴로메카</strong></td>
+                <td>한국</td>
+                <td>Indy 시리즈</td>
+                <td>피지컬 AI 기반. 9년 연속 수상. 30kg/50kg 100% 국산</td>
+                <td>제조, 물류, 서비스</td>
+              </tr>
+              <tr>
+                <td><strong>인아오리엔탈모터</strong></td>
+                <td>한국/일본</td>
+                <td>KOVR (3~5축)</td>
+                <td>130×130mm 설치, Absolute Sensor, 암 길이 커스터마이징</td>
+                <td>반복 작업, 이송</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>2-2. AI 로봇 솔루션 — AW2026 참가 확인</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>업체명</th>
+                <th>국적</th>
+                <th>대표 제품</th>
+                <th>핵심 스펙</th>
+                <th>적용분야</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>씨메스 (CMES)</strong></td>
+                <td>한국</td>
+                <td>AI 디팔레타이징/피스피킹/용접</td>
+                <td>3D 비전+AI, 티칭 불필요, 피스피킹 1,200회/h</td>
+                <td>물류, 용접</td>
+              </tr>
+              <tr>
+                <td><strong>에이딘로보틱스</strong></td>
+                <td>한국</td>
+                <td>AIDIN Hand Gen2 + F/T 센서</td>
+                <td>16DoF, "One-stop Force-Aware Robotics"</td>
+                <td>정밀 파지</td>
+              </tr>
+              <tr>
+                <td><strong>원익로보틱스</strong></td>
+                <td>한국</td>
+                <td>WR-AMMR05-3F (AMMR)</td>
+                <td>6DoF 팔+AMR, 메카넘휠, 도킹 ±1mm, 비전 AI</td>
+                <td>반도체, 전자부품</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>2-3. 휴머노이드 로봇 — AW2026 참가 확인</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>업체명</th>
+                <th>국적</th>
+                <th>대표 모델</th>
+                <th>핵심 스펙</th>
+                <th>적용분야</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>보스턴 다이나믹스</strong></td>
+                <td>미국(현대차)</td>
+                <td>Atlas (전기형)</td>
+                <td>190cm, 90kg, 56DoF, 50kg(순간)/30kg(지속), -20~40°C</td>
+                <td>제조·물류 <span class="tag-confirmed">미구동 국내최초</span></td>
+              </tr>
+              <tr>
+                <td><strong>티로보틱스</strong></td>
+                <td>한국</td>
+                <td>TR-WORKS</td>
+                <td>180cm, 180kg, 20DoF, 가반 3kg, 클린룸</td>
+                <td>반도체 <span class="tag-confirmed">AW2026 첫공개</span></td>
+              </tr>
+              <tr>
+                <td><strong>현대차 로보틱스랩</strong></td>
+                <td>한국</td>
+                <td>MobED</td>
+                <td>74×115cm, 4바퀴 독립제어, CES 최고혁신상</td>
+                <td>물류, 배송 <span class="tag-confirmed">국내최초</span></td>
+              </tr>
+              <tr>
+                <td><strong>애지봇 (Agibot)</strong></td>
+                <td>중국</td>
+                <td>X2 / G2</td>
+                <td>X2: 130cm, 35kg, 31DoF, 2m/s / G2: 49+DoF 바퀴형</td>
+                <td>서비스 / 산업 <span class="tag tag-red">중국빅5</span></td>
+              </tr>
+              <tr>
+                <td><strong>유니트리 (Unitree)</strong></td>
+                <td>중국</td>
+                <td>G1</td>
+                <td>127cm, 35kg, 43DoF, 120Nm, 7km/h+, 3D 라이다</td>
+                <td>제조·물류 <span class="tag tag-red">중국빅5</span></td>
+              </tr>
+              <tr>
+                <td><strong>푸리에 (Fourier)</strong></td>
+                <td>중국</td>
+                <td>GR-3C / GR-3</td>
+                <td>165cm, 71kg, 55DoF</td>
+                <td>산업 / 돌봄 <span class="tag tag-red">중국빅5</span></td>
+              </tr>
+              <tr>
+                <td><strong>레주 (Leju)</strong></td>
+                <td>중국</td>
+                <td>Kuavo 4 Pro</td>
+                <td>~170cm, 26~30DoF, 360Nm, 화웨이 OpenHarmony</td>
+                <td>산업, 서비스 <span class="tag tag-red">중국빅5</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>2-4. 한국 대표 협동로봇 업체</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>업체명</th>
+                <th>대표 제품</th>
+                <th>특징</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>두산로보틱스</strong></td>
+                <td>M/H/A 시리즈 (6~25kg)</td>
+                <td>국내 점유율 1위, 글로벌 4위, 고가반 20kg+ 세계 1위</td>
+              </tr>
+              <tr>
+                <td><strong>한화로보틱스</strong></td>
+                <td>HCR 시리즈</td>
+                <td>국내 빅3</td>
+              </tr>
+              <tr>
+                <td><strong>레인보우로보틱스</strong></td>
+                <td>RB 시리즈, 이족보행</td>
+                <td>삼성전자 파트너, 시가총액 약 6.9조원</td>
+              </tr>
+              <tr>
+                <td><strong>HD현대로보틱스</strong></td>
+                <td>산업용/협동로봇</td>
+                <td>대형~협동 라인업 확장 중</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ 3. AGV / AMR / AGF ═══════════════ -->
+    <div class="section" id="s3">
+      <div class="section-header">
+        <h2><span class="section-num">3</span>AI 무인 자동화 이송 업체 및 대표 기술 (AGV / AMR / AGF)</h2>
+      </div>
+      <div class="section-body">
+
+        <h3>3-1. AGV vs AMR vs AGF 비교</h3>
+        <div class="table-wrap">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th>구분</th>
+                <th>AGV</th>
+                <th>AMR</th>
+                <th>AGF</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>주행 방식</td>
+                <td>고정경로 (자기테이프, QR)</td>
+                <td>자율경로 (SLAM, LiDAR)</td>
+                <td>자율/유도 하이브리드</td>
+              </tr>
+              <tr>
+                <td>경로 변경</td>
+                <td>인프라 물리 변경 필요</td>
+                <td>SW 맵 즉시 변경</td>
+                <td>SW 맵 변경 가능</td>
+              </tr>
+              <tr>
+                <td>적재용량</td>
+                <td>수백kg ~ 수톤</td>
+                <td>180kg ~ 1,500kg</td>
+                <td>1톤 ~ 4톤+</td>
+              </tr>
+              <tr>
+                <td>리프트 높이</td>
+                <td>해당 없음</td>
+                <td>해당 없음</td>
+                <td>최대 11.5m</td>
+              </tr>
+              <tr>
+                <td>도입 비용</td>
+                <td>상대적 저렴</td>
+                <td>중간 ~ 고가</td>
+                <td>고가 (1억원~)</td>
+              </tr>
+              <tr>
+                <td>대표 업체</td>
+                <td>현대무벡스</td>
+                <td>유진로봇, MiR, Geek+</td>
+                <td>BALYO, 러셀, VisionNav</td>
+              </tr>
+              <tr>
+                <td>트렌드</td>
+                <td>AMR로 전환 추세</td>
+                <td>AI 강화학습, 군집주행</td>
+                <td>비전AI + SLAM 융합</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>3-2. AMR 업체 — AW2026 참가 확인</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>업체명</th>
+                <th>국적</th>
+                <th>대표 모델</th>
+                <th>적재</th>
+                <th>내비게이션</th>
+                <th>적용분야</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>유진로봇</strong></td>
+                <td>한국</td>
+                <td>GoCart 180~1500, 300 Omni</td>
+                <td>180~1,500kg</td>
+                <td>3D ToF LiDAR SLAM, PL d</td>
+                <td>물류, 반도체</td>
+              </tr>
+              <tr>
+                <td><strong>현대무벡스</strong></td>
+                <td>한국</td>
+                <td>AMR 군집주행</td>
+                <td>다양</td>
+                <td>SLAM, 5대 군집 시연</td>
+                <td>물류, 제조</td>
+              </tr>
+              <tr>
+                <td><strong>현대글로비스</strong></td>
+                <td>한국</td>
+                <td>AMR+원키트 피킹</td>
+                <td>-</td>
+                <td>자율주행+AI 피킹</td>
+                <td>자동차, 3PL</td>
+              </tr>
+              <tr>
+                <td><strong>현대차 로보틱스랩</strong></td>
+                <td>한국</td>
+                <td>MobED</td>
+                <td>모듈형</td>
+                <td>AI+LiDAR+카메라 융합</td>
+                <td>물류, 안내</td>
+              </tr>
+              <tr>
+                <td><strong>긱플러스 (Geek+)</strong></td>
+                <td>중국</td>
+                <td>P800</td>
+                <td>1,000kg</td>
+                <td>QR+자율주행 하이브리드</td>
+                <td>이커머스</td>
+              </tr>
+              <tr>
+                <td><strong>빅웨이브로보틱스</strong></td>
+                <td>한국</td>
+                <td>마로솔/솔링크</td>
+                <td>-</td>
+                <td>이기종 통합관제 GS 1등급</td>
+                <td>공항, 병원</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h4>유진로봇 GoCart 상세 사양</h4>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>모델</th>
+                <th>적재</th>
+                <th>최대속도</th>
+                <th>적재면</th>
+                <th>안전인증</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>GoCart 180</td>
+                <td>180kg</td>
+                <td>1.0 m/s</td>
+                <td>-</td>
+                <td>PL d (EN ISO 13482)</td>
+              </tr>
+              <tr>
+                <td>GoCart 250</td>
+                <td>250kg</td>
+                <td>1.0 m/s</td>
+                <td>-</td>
+                <td>PL d</td>
+              </tr>
+              <tr>
+                <td>GoCart 500</td>
+                <td>500kg</td>
+                <td>1.0 m/s</td>
+                <td>1222×822mm</td>
+                <td>PL d</td>
+              </tr>
+              <tr>
+                <td>GoCart 1000</td>
+                <td>1,000kg</td>
+                <td>-</td>
+                <td>-</td>
+                <td>PL d</td>
+              </tr>
+              <tr>
+                <td>GoCart 1500</td>
+                <td>1,500kg</td>
+                <td>2.0 m/s</td>
+                <td>1222×822mm</td>
+                <td>PL d</td>
+              </tr>
+              <tr>
+                <td>GoCart 300 Omni</td>
+                <td>300kg</td>
+                <td>-</td>
+                <td>-</td>
+                <td>PL d (옴니)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>3-3. AGF (무인 지게차) 업체</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>업체명</th>
+                <th>국적</th>
+                <th>대표 모델</th>
+                <th>적재</th>
+                <th>리프트</th>
+                <th>특징</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>러셀로보틱스</strong></td>
+                <td>한국</td>
+                <td>AGF (기아 PV7)</td>
+                <td>-</td>
+                <td>-</td>
+                <td>기아 40대, 현대차·기아 AGF 82/84대 공급. 국내 선두</td>
+              </tr>
+              <tr>
+                <td><strong>에이로보틱스</strong></td>
+                <td>한국</td>
+                <td>AMR 포크리프트</td>
+                <td>다양</td>
+                <td>-</td>
+                <td>LiDAR SLAM, ±10mm, 24시간 무인</td>
+              </tr>
+              <tr>
+                <td><strong>두산밥캣</strong></td>
+                <td>한국</td>
+                <td>AGF 카운터밸런스</td>
+                <td>다양</td>
+                <td>다양</td>
+                <td>5개 센서, 원격 관제. 국내 지게차 1위</td>
+              </tr>
+              <tr>
+                <td><strong>비전나비 (VisionNav)</strong></td>
+                <td>중국</td>
+                <td>VNR16, VNE30~40</td>
+                <td>1.4~4톤</td>
+                <td>11.5m</td>
+                <td>비전 SLAM, 한국법인</td>
+              </tr>
+              <tr>
+                <td><strong>멀티웨이 (Multiway)</strong></td>
+                <td>중국</td>
+                <td>MW-SE15, R16</td>
+                <td>1.5~2톤</td>
+                <td>3m+</td>
+                <td>레이저 SLAM, 세계 500대 기업</td>
+              </tr>
+              <tr>
+                <td><strong>BALYO</strong></td>
+                <td>프랑스</td>
+                <td>VEENY, REACHY</td>
+                <td>다양</td>
+                <td>17m</td>
+                <td>ABI Research 1위. KION/Amazon</td>
+              </tr>
+              <tr>
+                <td><strong>Toyota Industries</strong></td>
+                <td>일본</td>
+                <td>Material Handling</td>
+                <td>다양</td>
+                <td>다양</td>
+                <td>세계 1위 지게차</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ 4. AI 물류 자동화 ═══════════════ -->
+    <div class="section" id="s4">
+      <div class="section-header">
+        <h2><span class="section-num">4</span>AI 물류 자동화 업체 및 대표 기술</h2>
+      </div>
+      <div class="section-body">
+
+        <h3>4-1. 토털 물류 자동화 솔루션 — AW2026 참가 확인</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>업체명</th>
+                <th>국적</th>
+                <th>대표 제품/플랫폼</th>
+                <th>핵심 기술</th>
+                <th>주요 고객</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>현대글로비스</strong></td>
+                <td>한국</td>
+                <td>오르카(ORCA) WCS, 팔레트 셔틀, 아틀라스</td>
+                <td>피지컬 AI, 크로스플랫폼 AMR 통합</td>
+                <td>에코프로, 현대차그룹</td>
+              </tr>
+              <tr>
+                <td><strong>현대무벡스</strong></td>
+                <td>한국</td>
+                <td>SRM, 셔틀, AS/RS, 옴니소터, 3D DT</td>
+                <td>AI 군집, 디지털트윈 웹 원격</td>
+                <td>SK테네시, LG화학, 한국타이어</td>
+              </tr>
+              <tr>
+                <td><strong>CJ올리브네트웍스</strong></td>
+                <td>한국</td>
+                <td>AI 비전, 자율운전, 에이전틱 AI</td>
+                <td>MES/RTDB 에이전틱 AI</td>
+                <td>CJ그룹, 다쏘/지멘스</td>
+              </tr>
+              <tr>
+                <td><strong>엠투아이+에스엠코어</strong></td>
+                <td>한국</td>
+                <td>스마트팩토리+물류자동화</td>
+                <td>AI 데이터 의사결정</td>
+                <td>SK하이닉스 (수주 2,000억+)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>4-2. 자동 창고 / 분류 / AI 피킹 — AW2026 참가 확인</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>업체명</th>
+                <th>분류</th>
+                <th>대표 제품</th>
+                <th>핵심 기술</th>
+                <th>처리 능력</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>긱플러스</strong></td>
+                <td><span class="tag tag-blue">자동창고</span></td>
+                <td>SkyCube, PopPick</td>
+                <td>AI 저장밀도 4배 최적화</td>
+                <td><strong>650토트/h</strong></td>
+              </tr>
+              <tr>
+                <td><strong>아세테크</strong></td>
+                <td><span class="tag tag-blue">자동창고</span></td>
+                <td>오토스토어, neXos</td>
+                <td>엔드투엔드 SI</td>
+                <td>풀 자동화 라인</td>
+              </tr>
+              <tr>
+                <td><strong>TXR로보틱스</strong></td>
+                <td><span class="tag tag-green">분류</span></td>
+                <td>휠소터, 싱귤레이터, 셀루베이어</td>
+                <td>300개 모터 개별 제어</td>
+                <td><strong>싱귤레이터 6,000+/h</strong></td>
+              </tr>
+              <tr>
+                <td><strong>미르 (MiR)</strong></td>
+                <td><span class="tag tag-green">분류</span></td>
+                <td>린콘(LINCON), iTS</td>
+                <td>리니어 모터+자기부상</td>
+                <td><strong>기존 5배 속도</strong></td>
+              </tr>
+              <tr>
+                <td><strong>씨메스</strong></td>
+                <td><span class="tag tag-orange">AI피킹</span></td>
+                <td>랜덤 팔레타이징, 피스피킹</td>
+                <td>3D 비전+AI, 무작위 인식</td>
+                <td><strong>피스피킹 1,200회/h</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>4-3. WCS / 관제 / 디지털 트윈 — AW2026 참가 확인</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>업체명</th>
+                <th>분류</th>
+                <th>대표 제품</th>
+                <th>핵심 기술</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>현대글로비스</strong></td>
+                <td>WCS</td>
+                <td>오르카(ORCA)</td>
+                <td>창고 분석→최적 배치, 다기종 AMR 통합</td>
+              </tr>
+              <tr>
+                <td><strong>빅웨이브로보틱스</strong></td>
+                <td>관제</td>
+                <td>솔링크, 마로솔</td>
+                <td>이기종 로봇 통합(GS 1등급), 5,000건 DB+500개 공급사</td>
+              </tr>
+              <tr>
+                <td><strong>현대무벡스</strong></td>
+                <td>디지털트윈</td>
+                <td>3D 디지털 트윈</td>
+                <td>AS/RS+AMR 실시간, 웹 기반 원격</td>
+              </tr>
+              <tr>
+                <td><strong>와고코리아</strong></td>
+                <td>디지털트윈</td>
+                <td>DT 통합 제어·시각화</td>
+                <td>ctrlX CORE 연동</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ 5. AI 선별 자동화 ═══════════════ -->
+    <div class="section" id="s5">
+      <div class="section-header">
+        <h2><span class="section-num">5</span>AI 선별 자동화 업체 및 대표 기술</h2>
+      </div>
+      <div class="section-body">
+
+        <h3>5-1. 딥러닝/AI 기반 품질검사·선별 — AW2026 참가 확인</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>업체명</th>
+                <th>국적</th>
+                <th>대표 제품</th>
+                <th>AI 기술</th>
+                <th>정확도/성능</th>
+                <th>적용 분야</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>세이지 (SAIGE)</strong></td>
+                <td>한국</td>
+                <td>SAIGE Vision, AI 에이전트</td>
+                <td>비지도학습, MLOps</td>
+                <td>소량 데이터 적용</td>
+                <td>반도체(삼성SDI), PCB</td>
+              </tr>
+              <tr>
+                <td><strong>뉴로클</strong></td>
+                <td>한국</td>
+                <td>Neuro-T/R/X, Engine</td>
+                <td>오토딥러닝, NPU</td>
+                <td>비전문가 고정밀</td>
+                <td>제조, 의료(25개국)</td>
+              </tr>
+              <tr>
+                <td><strong>라온피플</strong></td>
+                <td>한국</td>
+                <td>ADC, Hi FENN, ODIN</td>
+                <td>LLM+RAG, VLM</td>
+                <td>불량률 20~30%↓</td>
+                <td>반도체, 건설, 물류</td>
+              </tr>
+              <tr>
+                <td><strong>슈퍼브에이아이</strong></td>
+                <td>한국</td>
+                <td>ZERO 파운데이션 모델</td>
+                <td>제로샷(Zero-shot)</td>
+                <td>라벨링 불필요</td>
+                <td>제조, 안전, 물류</td>
+              </tr>
+              <tr>
+                <td><strong>브이원테크</strong></td>
+                <td>한국</td>
+                <td>withAI, Edge Device</td>
+                <td>자체 딥러닝</td>
+                <td>미세결함, 고속</td>
+                <td>인라인 검사</td>
+              </tr>
+              <tr>
+                <td><strong>마키나락스</strong></td>
+                <td>한국</td>
+                <td>Weld VisionX, Runway</td>
+                <td>3D AI 비전</td>
+                <td>제로 티칭 용접</td>
+                <td>조선, 중공업</td>
+              </tr>
+              <tr>
+                <td><strong>디플리 (Deeply)</strong></td>
+                <td>한국</td>
+                <td>Listen AI (음향 AI)</td>
+                <td>음향 딥러닝</td>
+                <td><strong>99.78%+, 1초 미만</strong></td>
+                <td>모터, 자동차부품</td>
+              </tr>
+              <tr>
+                <td><strong>CJ올리브네트웍스</strong></td>
+                <td>한국</td>
+                <td>비전 AI, 에이전틱 AI</td>
+                <td>딥러닝+에이전틱</td>
+                <td>실시간 이상 판단</td>
+                <td>식품, 화학</td>
+              </tr>
+              <tr>
+                <td><strong>피아이이 (PIE)</strong></td>
+                <td>한국</td>
+                <td>AI 비전+NDT</td>
+                <td>딥러닝+비파괴</td>
+                <td>비전+NDT 통합</td>
+                <td>자동차, CNC</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>5-2. 초분광 AI / 특수 선별 — AW2026 참가 확인</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>업체명</th>
+                <th>국적</th>
+                <th>대표 제품</th>
+                <th>AI 기술</th>
+                <th>핵심 스펙</th>
+                <th>적용 분야</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>오즈레이 (OZ Ray)</strong></td>
+                <td>한국</td>
+                <td>SWIR 초분광 카메라</td>
+                <td>초분광(SWIR)+AI</td>
+                <td>0.9~1.7μm, 256밴드, SDK</td>
+                <td>재질, 이물질, 식품</td>
+              </tr>
+              <tr>
+                <td><strong>비케이인스트루먼트</strong></td>
+                <td>한국</td>
+                <td>RESONON/ClydeHSI</td>
+                <td>초분광(UV~NIR)</td>
+                <td>수백 채널 분할</td>
+                <td>식품, 이차전지</td>
+              </tr>
+              <tr>
+                <td><strong>엘로이랩</strong></td>
+                <td>한국</td>
+                <td>초분광 AI 자동화</td>
+                <td>초분광+딥러닝+에어젯</td>
+                <td>수백 대역 분석</td>
+                <td>식품 이물질, 소재</td>
+              </tr>
+              <tr>
+                <td><strong>하이퍼그램</strong></td>
+                <td>한국</td>
+                <td>HG VNIR Pro</td>
+                <td>압축식 초분광(세계최초)</td>
+                <td>스캔프리 풀프레임</td>
+                <td>산업검사, 소재</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ 6. 비전 선별 ═══════════════ -->
+    <div class="section" id="s6">
+      <div class="section-header">
+        <h2><span class="section-num">6</span>비전 선별 업체 및 대표 기술 (AI 비전 / 머신비전 / 스마트 비전)</h2>
+      </div>
+      <div class="section-body">
+
+        <h3>6-1. 머신비전 카메라/센서 — AW2026 참가 확인</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>업체명</th>
+                <th>국적</th>
+                <th>대표 제품</th>
+                <th>핵심 스펙</th>
+                <th>적용 분야</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Basler</strong></td>
+                <td>독일</td>
+                <td>MDFI, TDI, DT 비전</td>
+                <td>TDI 라인스캔, 디지털트윈 시뮬레이션 데모</td>
+                <td>철도, 반도체</td>
+              </tr>
+              <tr>
+                <td><strong>비투에스 (B2S)</strong></td>
+                <td>한국</td>
+                <td>VIENEX IV CIS, 3D, AFTS</td>
+                <td>CIS 일체형, AFTS 1μm 초점, CoF 프레임그래버</td>
+                <td>반도체, 이차전지</td>
+              </tr>
+              <tr>
+                <td><strong>싸이로드 (Cylod)</strong></td>
+                <td>한국</td>
+                <td>SICK 3D, Triton SWIR</td>
+                <td>3D 마이크론/kHz, SWIR IP67, 29×44mm</td>
+                <td>정밀측정, 외관</td>
+              </tr>
+              <tr>
+                <td><strong>LUCID Vision Labs</strong></td>
+                <td>-</td>
+                <td>3D ToF, 25GigE, SWIR</td>
+                <td>고정밀 3D 센싱, 초고속 이미지</td>
+                <td>로봇 가이딩</td>
+              </tr>
+              <tr>
+                <td><strong>뷰웍스</strong></td>
+                <td>한국</td>
+                <td>초고해상도/라인스캔</td>
+                <td>에어리어/라인 풀라인업</td>
+                <td>반도체, 디스플레이</td>
+              </tr>
+              <tr>
+                <td><strong>Goermicro</strong></td>
+                <td>중국</td>
+                <td>CW-iToF, RGBD</td>
+                <td>3D ToF 산업용 (부스 B706)</td>
+                <td>스마트 제조</td>
+              </tr>
+              <tr>
+                <td><strong>넥센서</strong></td>
+                <td>한국</td>
+                <td>3D 광학 계측</td>
+                <td>반도체 Advanced Package (부스 B744)</td>
+                <td>반도체</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>6-2. 비전 조명/광학 & 엣지 AI — AW2026 참가 확인</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>업체명</th>
+                <th>국적</th>
+                <th>대표 제품</th>
+                <th>핵심 스펙</th>
+                <th>분류</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>에드몬드옵틱스</strong></td>
+                <td>미국</td>
+                <td>SilverTL 텔레센트릭</td>
+                <td>SWIR 900~1700nm, Bi-Telecentric</td>
+                <td><span class="tag tag-blue">조명/광학</span></td>
+              </tr>
+              <tr>
+                <td><strong>비투에스</strong></td>
+                <td>한국</td>
+                <td>UV~SWIR 필터, Rod Lens</td>
+                <td>전 대역 난반사 제거</td>
+                <td><span class="tag tag-blue">조명/광학</span></td>
+              </tr>
+              <tr>
+                <td><strong>젝스컴퍼니</strong></td>
+                <td>한국</td>
+                <td>JECS-1400GB</td>
+                <td>인텔 울트라 NPU, GPU 불필요</td>
+                <td><span class="tag tag-green">엣지AI</span></td>
+              </tr>
+              <tr>
+                <td><strong>에이수스</strong></td>
+                <td>대만</td>
+                <td>PE3000N, NUC 16 Pro</td>
+                <td>Jetson 기반, 7.5배 성능</td>
+                <td><span class="tag tag-green">엣지AI</span></td>
+              </tr>
+              <tr>
+                <td><strong>브이원테크</strong></td>
+                <td>한국</td>
+                <td>Edge Device</td>
+                <td>로봇암 장착, 인라인 추론</td>
+                <td><span class="tag tag-green">엣지AI</span></td>
+              </tr>
+              <tr>
+                <td><strong>뉴로클</strong></td>
+                <td>한국</td>
+                <td>Neuro-T Engine</td>
+                <td>GUI 없이 임베딩, NPU</td>
+                <td><span class="tag tag-green">엣지AI</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>6-3. 비전+로봇+AI 통합 솔루션 — AW2026 참가 확인</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>업체명</th>
+                <th>국적</th>
+                <th>대표 제품</th>
+                <th>핵심 기술</th>
+                <th>적용 분야</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>테크맨로봇</strong></td>
+                <td>대만</td>
+                <td>TM AI Cobot</td>
+                <td>내장 비전+AI 원플랫폼, 인식-판단-동작</td>
+                <td>반도체, 물류</td>
+              </tr>
+              <tr>
+                <td><strong>씨메스</strong></td>
+                <td>한국</td>
+                <td>팔레타이저/피스피킹/가이던스</td>
+                <td>3D 비전+AI 피지컬 AI</td>
+                <td>물류, 제조</td>
+              </tr>
+              <tr>
+                <td><strong>마키나락스</strong></td>
+                <td>한국</td>
+                <td>Weld VisionX</td>
+                <td>3D AI 비전 제로 티칭 자율용접</td>
+                <td>조선, 중공업</td>
+              </tr>
+              <tr>
+                <td><strong>피아이이</strong></td>
+                <td>한국</td>
+                <td>CNC 핸들러/헤드램프 검사</td>
+                <td>비전+로봇+NDT 통합</td>
+                <td>자동차, CNC</td>
+              </tr>
+              <tr>
+                <td><strong>비투에스</strong></td>
+                <td>한국</td>
+                <td>직관(JIKGWAN)</td>
+                <td>카메라+조명+필터+3D 원스톱 비교</td>
+                <td>비전 시스템 구축</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ 7. AI PLC 통합 ═══════════════ -->
+    <div class="section" id="s7">
+      <div class="section-header">
+        <h2><span class="section-num">7</span>AI PLC 통합 솔루션 업체 및 대표 기술</h2>
+      </div>
+      <div class="section-body">
+
+        <h3>7-1. AI PLC 제조사 — AW2026 참가 확인</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>업체명</th>
+                <th>국적</th>
+                <th>대표 제품</th>
+                <th>AI 기능</th>
+                <th>통신</th>
+                <th>특징</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>LS일렉트릭</strong></td>
+                <td>한국</td>
+                <td>SU-CM70</td>
+                <td>SW정의 PLC, AI팩토리 연동</td>
+                <td>EtherNet/IP, EtherCAT</td>
+                <td><strong>최대 270m², 30부스</strong></td>
+              </tr>
+              <tr>
+                <td><strong>로크웰</strong></td>
+                <td>미국</td>
+                <td>ControlLogix 5590</td>
+                <td>AI자율생산, Copilot, 에뮬레이션</td>
+                <td>EtherNet/IP, CIP</td>
+                <td>5개 존 구성</td>
+              </tr>
+              <tr>
+                <td><strong>싸이몬</strong></td>
+                <td>한국</td>
+                <td>CICON</td>
+                <td>AI Copilot, Code Converter</td>
+                <td>OPC UA, Modbus</td>
+                <td>인지형 자동화</td>
+              </tr>
+              <tr>
+                <td><strong>파나소닉</strong></td>
+                <td>일본</td>
+                <td>FP7 PLC</td>
+                <td>FA 디바이스</td>
+                <td>EtherCAT, RTEX</td>
+                <td>고속·고정밀</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>7-2. AI 기반 SCADA/HMI 플랫폼 — AW2026 참가 확인</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>업체명</th>
+                <th>국적</th>
+                <th>대표 제품</th>
+                <th>AI 기능</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>LS일렉트릭</strong></td>
+                <td>한국</td>
+                <td>AI팩토리 패키지, LS SHE, 블랙박스, LLM 진단</td>
+                <td>비전AI 안전관제, LLM 자연어 진단, 예지보전</td>
+              </tr>
+              <tr>
+                <td><strong>슈나이더 일렉트릭</strong></td>
+                <td>프랑스</td>
+                <td>EcoStruxure, AVEVA, ETAP, PME</td>
+                <td>AI 예측·최적화, 분산 AI 통합분석</td>
+              </tr>
+              <tr>
+                <td><strong>싸이몬</strong></td>
+                <td>한국</td>
+                <td>SCADA PRO</td>
+                <td>AI Assistant: 자연어→분석, 3D 자동 생성</td>
+              </tr>
+              <tr>
+                <td><strong>오토닉스</strong></td>
+                <td>한국</td>
+                <td>SCADAMaster, iTP HMI</td>
+                <td>SCADA 스마트 품질, AMR 제어</td>
+              </tr>
+              <tr>
+                <td><strong>엠투아이+에스엠코어</strong></td>
+                <td>한국</td>
+                <td>스마트팩토리 플랫폼</td>
+                <td>AI 자율제조: 제어+공정+물류 통합</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>7-3. 개방형 자동화 플랫폼 (SW 정의, 멀티벤더)</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>업체명</th>
+                <th>국적</th>
+                <th>대표 제품</th>
+                <th>핵심 기술</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>슈나이더 일렉트릭</strong></td>
+                <td>프랑스</td>
+                <td>EAE (개방형 SW 정의)</td>
+                <td>멀티벤더 호환, 기존 설비 유지 단계적 DX</td>
+              </tr>
+              <tr>
+                <td><strong>보쉬렉스로스</strong></td>
+                <td>독일</td>
+                <td>ctrlX AUTOMATION, ctrlX CORE</td>
+                <td>앱 기반 확장, 멀티벤더 통합</td>
+              </tr>
+              <tr>
+                <td><strong>LS일렉트릭</strong></td>
+                <td>한국</td>
+                <td>SU-CM70 (SW정의)</td>
+                <td>기능 추가·확장 가능 구조</td>
+              </tr>
+              <tr>
+                <td><strong>로크웰</strong></td>
+                <td>미국</td>
+                <td>FactoryTalk Design Studio, Logix Echo</td>
+                <td>클라우드 네이티브, Copilot, 에뮬레이션</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>7-4. 예지보전/설비진단 & OT 보안 — AW2026 참가 확인</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>업체명</th>
+                <th>국적</th>
+                <th>대표 제품</th>
+                <th>AI 기능</th>
+                <th>분류</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>LS일렉트릭</strong></td>
+                <td>한국</td>
+                <td>블랙박스, LLM 진단</td>
+                <td>이상 기록·분석, 자연어 진단</td>
+                <td><span class="tag tag-blue">예지보전</span></td>
+              </tr>
+              <tr>
+                <td><strong>마키나락스</strong></td>
+                <td>한국</td>
+                <td>Runway, DrawX, VisionX</td>
+                <td>GPU 동적분할, 제로티칭</td>
+                <td><span class="tag tag-blue">예지보전</span></td>
+              </tr>
+              <tr>
+                <td><strong>디플리</strong></td>
+                <td>한국</td>
+                <td>Listen AI</td>
+                <td>음향 AI 99.78%+</td>
+                <td><span class="tag tag-blue">예지보전</span></td>
+              </tr>
+              <tr>
+                <td><strong>두산 DI BU</strong></td>
+                <td>한국</td>
+                <td>AI 예지정비</td>
+                <td>Predictive Maintenance</td>
+                <td><span class="tag tag-blue">예지보전</span></td>
+              </tr>
+              <tr>
+                <td><strong>포스코DX</strong></td>
+                <td>한국</td>
+                <td>AX 융합 기술</td>
+                <td>AI 제조 혁신</td>
+                <td><span class="tag tag-blue">예지보전</span></td>
+              </tr>
+              <tr>
+                <td><strong>로크웰</strong></td>
+                <td>미국</td>
+                <td>SecureOT</td>
+                <td>OT 사이버보안 플랫폼+매니지드</td>
+                <td><span class="tag tag-red">OT보안</span></td>
+              </tr>
+              <tr>
+                <td><strong>힐셔 (Hilscher)</strong></td>
+                <td>독일</td>
+                <td>netX 900</td>
+                <td>멀티프로토콜+보안 내장</td>
+                <td><span class="tag tag-red">OT보안</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ 트렌드 ═══════════════ -->
+    <div class="section" id="trends">
+      <div class="section-header">
+        <h2>주요 트렌드 요약</h2>
+      </div>
+      <div class="section-body">
+        <div class="trend-grid">
+          <div class="trend-card">
+            <div class="trend-title">Physical AI / 자율제조(AX)</div>
+            <div class="trend-desc">올해 핵심 테마. 로봇이 물리 환경 인식 → 자율 판단·동작</div>
+          </div>
+          <div class="trend-card">
+            <div class="trend-title">휴머노이드 대거 등장</div>
+            <div class="trend-desc">아틀라스, TR-WORKS, 에이르, 중국 빅5(애지봇/유니트리/푸리에/레주/화웨이)</div>
+          </div>
+          <div class="trend-card">
+            <div class="trend-title">SW 정의 자동화(SDA)</div>
+            <div class="trend-desc">LS SU-CM70, 슈나이더 EAE, 보쉬 ctrlX — HW 아닌 SW로 기능 정의·확장</div>
+          </div>
+          <div class="trend-card">
+            <div class="trend-title">LLM/자연어 AI 통합</div>
+            <div class="trend-desc">LS(LLM 진단), 싸이몬(Assistant), 로크웰(Copilot), 벡호프(CoAgent 음성)</div>
+          </div>
+          <div class="trend-card">
+            <div class="trend-title">파운데이션 모델/제로샷</div>
+            <div class="trend-desc">슈퍼브AI ZERO, 세이지 — 라벨링 없이 즉시 비전 AI 적용</div>
+          </div>
+          <div class="trend-card">
+            <div class="trend-title">음향 AI 품질검사</div>
+            <div class="trend-desc">디플리 Listen AI — 99.78%+ 정확도, 비(非)비전 선별 기술 부상</div>
+          </div>
+          <div class="trend-card">
+            <div class="trend-title">초분광 AI</div>
+            <div class="trend-desc">오즈레이, 비케이, 엘로이랩 — 눈에 보이지 않는 화학적 차이 감지 선별</div>
+          </div>
+          <div class="trend-card">
+            <div class="trend-title">AGV → AMR 전환 가속</div>
+            <div class="trend-desc">SLAM 기반 자율경로, 군집주행, 이기종 통합 관제 확산</div>
+          </div>
+          <div class="trend-card">
+            <div class="trend-title">AGF 시장 급성장</div>
+            <div class="trend-desc">LiDAR+SLAM 무인지게차, 기존 지게차 자율주행 업그레이드 방식 등장</div>
+          </div>
+          <div class="trend-card">
+            <div class="trend-title">개방형 멀티벤더 호환</div>
+            <div class="trend-desc">슈나이더, 보쉬, LS — 타사 설비 호환 개방형 아키텍처 지향</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════ 푸터 ═══════════════ -->
+    <footer style="text-align:center; padding:3rem 1rem; color:var(--text-light); font-size:0.85rem;">
+      <p>AW2026 참가업체 심층 조사 보고서</p>
+      <p style="margin-top:0.3rem; opacity:0.6;">2026 스마트공장·자동화산업전 | 서울 코엑스</p>
+    </footer>
+
+  </div>
+  <div id="install-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#1A478A,#2B6CC4);color:#fff;padding:1rem 1.5rem;z-index:10000;box-shadow:0 -2px 10px rgba(0,0,0,0.2);font-family:'Noto Sans KR',sans-serif;">
+    <div style="display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;">
+      <div>
+        <strong>AW2026 보고서 앱 설치</strong>
+        <div style="font-size:0.85rem;opacity:0.9;margin-top:2px;">홈 화면에 추가하여 오프라인에서도 확인</div>
+      </div>
+      <div style="display:flex;gap:0.5rem;">
+        <button onclick="installPWA()" style="background:#fff;color:#1A478A;border:none;padding:0.5rem 1.2rem;border-radius:6px;font-weight:700;cursor:pointer;font-size:0.9rem;">설치</button>
+        <button onclick="dismissInstall()" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.4);padding:0.5rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.85rem;">닫기</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Service Worker 등록
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(r => console.log('SW registered:', r.scope));
+    }
+
+    // PWA 설치 프롬프트
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('install-banner').style.display = 'block';
+    });
+    function installPWA() {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => {
+        document.getElementById('install-banner').style.display = 'none';
+        deferredPrompt = null;
+      });
+    }
+    function dismissInstall() {
+      document.getElementById('install-banner').style.display = 'none';
+    }
+    window.addEventListener('appinstalled', () => {
+      document.getElementById('install-banner').style.display = 'none';
+    });
+
+    // 모바일: 테이블 → 카드 변환
+    function buildCards() {
+      const isMobile = window.innerWidth <= 768;
+      document.querySelectorAll('.table-wrap').forEach(wrap => {
+        const existing = wrap.nextElementSibling;
+        if (existing && existing.classList.contains('card-list')) {
+          existing.style.display = isMobile ? 'flex' : 'none';
+          wrap.style.display = isMobile ? 'none' : 'block';
+          return;
+        }
+        if (!isMobile) return;
+
+        const table = wrap.querySelector('table');
+        if (!table) return;
+        const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
+        const rows = table.querySelectorAll('tbody tr');
+        if (rows.length === 0 || headers.length === 0) return;
+
+        const cardList = document.createElement('div');
+        cardList.className = 'card-list';
+
+        rows.forEach(row => {
+          const cells = row.querySelectorAll('td');
+          if (cells.length === 0) return;
+
+          const card = document.createElement('div');
+          card.className = 'card-item';
+
+          // 업체명 (첫 번째 셀)
+          const titleDiv = document.createElement('div');
+          titleDiv.className = 'card-item-title';
+          titleDiv.innerHTML = cells[0].innerHTML;
+
+          // 국적이 있으면 (두 번째 셀이 국적인 경우)
+          const h0 = headers[0] || '';
+          const h1 = headers[1] || '';
+          let startIdx = 1;
+          if (h1 === '국적' && cells.length > 1) {
+            const countryText = cells[1].textContent.trim();
+            if (countryText) {
+              titleDiv.innerHTML += ' <span class="country">' + countryText + '</span>';
+            }
+            startIdx = 2;
+          }
+
+          card.appendChild(titleDiv);
+
+          // 나머지 필드
+          for (let i = startIdx; i < cells.length; i++) {
+            const val = cells[i].innerHTML.trim();
+            if (!val || val === '-') continue;
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'card-item-row';
+            rowDiv.innerHTML = '<span class="card-label">' + headers[i] + '</span><span class="card-value">' + val + '</span>';
+            card.appendChild(rowDiv);
+          }
+
+          cardList.appendChild(card);
+        });
+
+        wrap.style.display = 'none';
+        wrap.parentNode.insertBefore(cardList, wrap.nextSibling);
+      });
+    }
+
+    // 테이블 스크롤 힌트 제거
+    document.querySelectorAll('.table-wrap').forEach(wrap => {
+      wrap.addEventListener('scroll', function() {
+        if (this.scrollLeft > 10) this.classList.add('scrolled');
+        else this.classList.remove('scrolled');
+      });
+    });
+
+    // 네비게이션 활성 표시
+    function updateNav() {
+      const sections = document.querySelectorAll('.section');
+      const navLinks = document.querySelectorAll('.nav a');
+      const scrollY = window.scrollY + 120;
+
+      sections.forEach((sec, i) => {
+        const top = sec.offsetTop;
+        const bottom = top + sec.offsetHeight;
+        if (scrollY >= top && scrollY < bottom && navLinks[i]) {
+          navLinks.forEach(a => a.style.borderBottomColor = 'transparent');
+          navLinks[i].style.borderBottomColor = '#1A478A';
+          navLinks[i].style.color = '#1A478A';
+        } else if (navLinks[i]) {
+          navLinks[i].style.color = '';
+        }
+      });
+    }
+
+    // 초기화 및 이벤트
+    buildCards();
+    window.addEventListener('resize', buildCards);
+    window.addEventListener('scroll', updateNav, { passive: true });
+
+    // 부드러운 스크롤 (nav 높이 보정)
+    document.querySelectorAll('.nav a').forEach(a => {
+      a.addEventListener('click', e => {
+        const href = a.getAttribute('href');
+        const target = document.querySelector(href);
+        if (target) {
+          e.preventDefault();
+          const navH = document.querySelector('.nav').offsetHeight;
+          window.scrollTo({ top: target.offsetTop - navH - 8, behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
 </body>
+
 </html>
