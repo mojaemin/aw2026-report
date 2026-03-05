@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ITES 2026 스마트팜 참가업체 조사보고서</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0e17;
+  --bg2: #111827;
+  --bg3: #1a2332;
+  --card: #151e2d;
+  --border: #1e2d42;
+  --text: #c8d6e5;
+  --text2: #8899aa;
+  --white: #e8f0fe;
+  --accent: #00d4aa;
+  --accent2: #00b894;
+  --blue: #4facfe;
+  --purple: #a855f7;
+  --orange: #ff6b35;
+  --red: #ff4757;
+  --yellow: #ffd32a;
+  --pink: #ff6b9d;
+  --cyan: #00e5ff;
+  --env: #00d4aa;
+  --scout: #4facfe;
+  --spray: #ff6b9d;
+  --harvest: #ffd32a;
+  --move: #a855f7;
+  --sort: #00e5ff;
+  --logistics: #ff6b35;
+  --font: 'Noto Sans KR', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --display: 'Playfair Display', serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+
+/* Hero */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  padding: 2rem;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 600px 400px at 20% 50%, rgba(0,212,170,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 500px at 80% 30%, rgba(79,172,254,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 400px 300px at 50% 80%, rgba(168,85,247,0.05) 0%, transparent 70%);
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,212,170,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,170,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: gridMove 20s linear infinite;
+}
+
+@keyframes gridMove {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(60px, 60px); }
+}
+
+.hero-badge {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--accent);
+  background: rgba(0,212,170,0.1);
+  border: 1px solid rgba(0,212,170,0.2);
+  padding: 0.4rem 1.2rem;
+  border-radius: 100px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  position: relative;
+  animation: fadeUp 0.8s ease both;
+}
+
+.hero h1 {
+  font-family: var(--display);
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.1;
+  margin-bottom: 0.5rem;
+  position: relative;
+  animation: fadeUp 0.8s ease 0.15s both;
+}
+
+.hero h1 span {
+  background: linear-gradient(135deg, var(--accent), var(--blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-sub {
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  color: var(--text2);
+  font-weight: 300;
+  margin-bottom: 2.5rem;
+  position: relative;
+  animation: fadeUp 0.8s ease 0.3s both;
+}
+
+.hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  position: relative;
+  animation: fadeUp 0.8s ease 0.45s both;
+}
+
+.hero-meta-item {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--text2);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hero-meta-item strong {
+  color: var(--white);
+  font-size: 0.9rem;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Navigation */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10,14,23,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 1rem;
+  overflow-x: auto;
+}
+
+.nav-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  gap: 0;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  color: var(--text2);
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 1rem 1.2rem;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s;
+}
+
+.nav-btn:hover { color: var(--white); }
+.nav-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* Sections */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+section {
+  padding: 4rem 0;
+}
+
+.section-header {
+  margin-bottom: 3rem;
+}
+
+.section-tag {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
+}
+
+.section-title {
+  font-family: var(--display);
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 900;
+  color: var(--white);
+  margin-bottom: 0.75rem;
+}
+
+.section-desc {
+  font-size: 1rem;
+  color: var(--text2);
+  max-width: 700px;
+  font-weight: 300;
+}
+
+/* Category cards */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 1.5rem;
+}
+
+.cat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+
+.cat-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.cat-card-header {
+  padding: 1.5rem 1.5rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.cat-card-header h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--white);
+}
+
+.cat-card-header p {
+  font-size: 0.78rem;
+  color: var(--text2);
+  margin-top: 2px;
+}
+
+.cat-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.cat-table th {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text2);
+  padding: 0.6rem 1rem;
+  text-align: left;
+  background: rgba(0,0,0,0.2);
+  border-top: 1px solid var(--border);
+}
+
+.cat-table td {
+  font-size: 0.82rem;
+  padding: 0.65rem 1rem;
+  border-top: 1px solid rgba(255,255,255,0.03);
+  vertical-align: top;
+}
+
+.cat-table tr:hover td { background: rgba(0,212,170,0.03); }
+
+.company-name {
+  font-weight: 600;
+  color: var(--white);
+  font-size: 0.82rem;
+}
+
+.company-product { color: var(--text2); font-size: 0.78rem; }
+.company-apply { color: var(--text); font-size: 0.78rem; }
+
+.cat-tip {
+  padding: 1rem 1.5rem;
+  background: rgba(0,212,170,0.04);
+  border-top: 1px solid var(--border);
+  font-size: 0.78rem;
+  color: var(--text2);
+  line-height: 1.6;
+}
+
+.cat-tip strong { color: var(--accent); }
+
+/* Architecture */
+.arch-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-width: 900px;
+  margin: 0 auto 3rem;
+}
+
+.arch-layer {
+  padding: 1.5rem 2rem;
+  border: 1px solid var(--border);
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.arch-layer:first-child { border-radius: 16px 16px 0 0; }
+.arch-layer:last-child { border-radius: 0 0 16px 16px; }
+.arch-layer + .arch-layer { border-top: none; }
+
+.arch-label {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  min-width: 120px;
+  flex-shrink: 0;
+}
+
+.arch-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.arch-chip {
+  font-size: 0.78rem;
+  padding: 0.35rem 0.8rem;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--white);
+  font-weight: 500;
+}
+
+/* TOP 10 */
+.top10-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.top10-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.2rem 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  transition: all 0.3s;
+}
+
+.top10-item:hover {
+  border-color: var(--yellow);
+  transform: translateY(-2px);
+}
+
+.top10-rank {
+  font-family: var(--display);
+  font-size: 1.8rem;
+  font-weight: 900;
+  line-height: 1;
+  min-width: 36px;
+}
+
+.top10-info h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--white);
+}
+
+.top10-info .flag { font-size: 0.85rem; }
+
+.top10-info p {
+  font-size: 0.78rem;
+  color: var(--text2);
+  margin-top: 4px;
+}
+
+.top10-field {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background: rgba(0,212,170,0.1);
+  color: var(--accent);
+  display: inline-block;
+  margin-top: 6px;
+}
+
+/* Schedule */
+.schedule-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.schedule-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.schedule-card:hover {
+  border-color: var(--blue);
+  transform: translateY(-3px);
+}
+
+.schedule-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+
+.schedule-card:nth-child(1)::before { background: var(--accent); }
+.schedule-card:nth-child(2)::before { background: var(--blue); }
+.schedule-card:nth-child(3)::before { background: var(--purple); }
+.schedule-card:nth-child(4)::before { background: var(--orange); }
+
+.schedule-day {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.schedule-card h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 0.75rem;
+}
+
+.schedule-card p {
+  font-size: 0.85rem;
+  color: var(--text2);
+  line-height: 1.7;
+}
+
+/* 2026 New */
+.new-badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  padding: 0.15rem 0.5rem;
+  background: linear-gradient(135deg, var(--orange), var(--red));
+  color: #fff;
+  border-radius: 4px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  vertical-align: middle;
+  margin-left: 0.3rem;
+}
+
+/* Footer */
+.footer {
+  padding: 3rem 0;
+  text-align: center;
+  border-top: 1px solid var(--border);
+  margin-top: 2rem;
+}
+
+.footer p {
+  font-size: 0.8rem;
+  color: var(--text2);
+}
+
+.footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cat-grid { grid-template-columns: 1fr; }
+  .top10-list { grid-template-columns: 1fr; }
+  .arch-layer { flex-direction: column; gap: 0.75rem; }
+  .arch-label { min-width: auto; }
+  .nav-btn { padding: 0.8rem 0.8rem; font-size: 0.75rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-badge">제27회 · 참관 조사 보고서</div>
+  <h1>ITES <span>2026</span></h1>
+  <div class="hero-sub">로봇 기반 자동화 스마트팜 운영 플랫폼을 위한 참가업체 조사</div>
+  <div class="hero-meta">
+    <div class="hero-meta-item">📅 <strong>2026.3.31 ~ 4.3</strong></div>
+    <div class="hero-meta-item">📍 <strong>심천 국제컨벤션센터</strong></div>
+    <div class="hero-meta-item">🏢 <strong>1,500+ 참가업체</strong></div>
+    <div class="hero-meta-item">🤖 <strong>구현지능 전용구역</strong> <span class="new-badge">NEW</span></div>
+    <div class="hero-meta-item">🧠 <strong>AI 에이전트 5개 병렬조사</strong></div>
+  </div>
+</div>
+
+<!-- Navigation -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <button class="nav-btn active" onclick="scrollTo_('#overview')">개요</button>
+    <button class="nav-btn" onclick="scrollTo_('#env')">🌡️ 환경제어</button>
+    <button class="nav-btn" onclick="scrollTo_('#scout')">🔍 예찰</button>
+    <button class="nav-btn" onclick="scrollTo_('#spray')">💧 방역</button>
+    <button class="nav-btn" onclick="scrollTo_('#harvest')">🍅 수확</button>
+    <button class="nav-btn" onclick="scrollTo_('#move')">🚗 이동</button>
+    <button class="nav-btn" onclick="scrollTo_('#sort')">📦 분류</button>
+    <button class="nav-btn" onclick="scrollTo_('#logistics')">🏭 물류</button>
+    <button class="nav-btn" onclick="scrollTo_('#strategy')">🏆 종합전략</button>
+    <button class="nav-btn" onclick="scrollTo_('#schedule')">📅 참관일정</button>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- Overview -->
+<section id="overview">
+  <div class="section-header">
+    <div class="section-tag" style="background:rgba(0,212,170,0.1);color:var(--accent);">Exhibition Overview</div>
+    <div class="section-title">전시회 개요 & 조사 방법</div>
+    <div class="section-desc">ITES 2026은 정밀 제조 + 산업급 AI 응용 + 구현지능(Embodied Intelligence) 산업체인을 핵심 테마로 내걸었습니다.</div>
+  </div>
+
+  <div class="cat-grid">
+    <div class="cat-card">
+      <div class="cat-card-header">
+        <div class="cat-icon" style="background:rgba(0,212,170,0.1);">🏭</div>
+        <div><h3>2026년 4대 하이라이트</h3><p>전년 대비 주요 변화</p></div>
+      </div>
+      <table class="cat-table">
+        <tr><td class="company-name">🤖 구현지능 전용구역 <span class="new-badge">NEW</span></td><td class="company-apply">인형 로봇 40+사, 핵심 부품~완성품 전시</td></tr>
+        <tr><td class="company-name">🚀 120+ 신제품 프리미어</td><td class="company-apply">60+ 브랜드 월드 최초 공개</td></tr>
+        <tr><td class="company-name">🧠 산업급 AI 응용</td><td class="company-apply">디지털 트윈, AI 공정 최적화</td></tr>
+        <tr><td class="company-name">🔗 1-Stop 바이어 매칭</td><td class="company-apply">산업체인 직접 연결 + 80+ 포럼</td></tr>
+      </table>
+    </div>
+
+    <div class="cat-card">
+      <div class="cat-card-header">
+        <div class="cat-icon" style="background:rgba(79,172,254,0.1);">🧠</div>
+        <div><h3>AI 병렬 에이전트 조사</h3><p>5개 에이전트 동시 탐색</p></div>
+      </div>
+      <table class="cat-table">
+        <tr><td class="company-name">Agent 1</td><td class="company-apply">환경제어 + 예찰 (IoT, 비전)</td></tr>
+        <tr><td class="company-name">Agent 2</td><td class="company-apply">방역 + 수확 (협동로봇, 그리퍼)</td></tr>
+        <tr><td class="company-name">Agent 3</td><td class="company-apply">이동 (AGV, AMR, 자율주행)</td></tr>
+        <tr><td class="company-name">Agent 4</td><td class="company-apply">분류 + 물류 (비전분류, 팔레타이징)</td></tr>
+        <tr><td class="company-name">Agent 5</td><td class="company-apply">통합 플랫폼 (MES, 디지털 트윈, AI)</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 7 Categories -->
+<section id="env"></section>
+<section id="scout"></section>
+<section id="spray"></section>
+<section id="harvest"></section>
+<section id="move"></section>
+<section id="sort"></section>
+<section id="logistics"></section>
+
+<div id="categories-container"></div>
+
+<!-- Strategy -->
+<section id="strategy">
+  <div class="section-header">
+    <div class="section-tag" style="background:rgba(255,211,42,0.1);color:var(--yellow);">Strategy</div>
+    <div class="section-title">플랫폼 아키텍처 & TOP 10</div>
+    <div class="section-desc">ITES 2026 참가업체 기술 기반 '로봇 자동화 스마트팜 운영 플랫폼' 기술 스택</div>
+  </div>
+
+  <div class="arch-stack">
+    <div class="arch-layer" style="background:rgba(168,85,247,0.08);">
+      <div class="arch-label" style="color:var(--purple);">Platform</div>
+      <div class="arch-content">
+        <span class="arch-chip">Siemens MindSphere</span>
+        <span class="arch-chip">Advantech WISE</span>
+        <span class="arch-chip">자체 AI 플랫폼</span>
+      </div>
+    </div>
+    <div class="arch-layer" style="background:rgba(255,75,87,0.06);">
+      <div class="arch-label" style="color:var(--red);">Execution</div>
+      <div class="arch-content">
+        <span class="arch-chip">FANUC CRX</span>
+        <span class="arch-chip">KUKA KMP</span>
+        <span class="arch-chip">Flexiv Rizon</span>
+        <span class="arch-chip">Geek+ AMR</span>
+      </div>
+    </div>
+    <div class="arch-layer" style="background:rgba(255,107,53,0.06);">
+      <div class="arch-label" style="color:var(--orange);">Perception</div>
+      <div class="arch-content">
+        <span class="arch-chip">Cognex In-Sight</span>
+        <span class="arch-chip">Hikrobot MV</span>
+        <span class="arch-chip">Basler Hyperspectral</span>
+        <span class="arch-chip">Keyence CV-X</span>
+      </div>
+    </div>
+    <div class="arch-layer" style="background:rgba(0,212,170,0.06);">
+      <div class="arch-label" style="color:var(--accent);">Edge</div>
+      <div class="arch-content">
+        <span class="arch-chip">Siemens SIMATIC</span>
+        <span class="arch-chip">Mitsubishi MELSEC</span>
+        <span class="arch-chip">Delta PLC</span>
+        <span class="arch-chip">Advantech WISE</span>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-family:var(--display);font-size:1.5rem;color:var(--white);margin-bottom:1.5rem;">🏆 핵심 주목 기업 TOP 10</h3>
+  <div class="top10-list" id="top10"></div>
+</section>
+
+<!-- Schedule -->
+<section id="schedule">
+  <div class="section-header">
+    <div class="section-tag" style="background:rgba(79,172,254,0.1);color:var(--blue);">Schedule</div>
+    <div class="section-title">📅 4일 참관 전략</div>
+  </div>
+  <div class="schedule-grid">
+    <div class="schedule-card">
+      <div class="schedule-day" style="color:var(--accent);">Day 1 · 3/31 화</div>
+      <h4>🤖 로봇·자동화 + 구현지능</h4>
+      <p>FANUC, KUKA, Flexiv 부스 방문. 구현지능 전용 구역에서 인형 로봇 40+사 탐색. 영민손(灵巧手) 기술의 스마트팜 수확 적용 가능성 집중 확인.</p>
+    </div>
+    <div class="schedule-card">
+      <div class="schedule-day" style="color:var(--blue);">Day 2 · 4/1 수</div>
+      <h4>👁️ 비전·센서 + 물류 자동화</h4>
+      <p>Cognex, Keyence, Hikrobot 비전 솔루션 비교. AGV/AMR 시연 확인. 예찰·분류용 AI 카메라 기술 상담.</p>
+    </div>
+    <div class="schedule-card">
+      <div class="schedule-day" style="color:var(--purple);">Day 3 · 4/2 목</div>
+      <h4>📡 제어·IoT + AI 포럼</h4>
+      <p>Siemens, Mitsubishi, Delta, Advantech 부스 방문. 80+ 포럼 중 AI·디지털 트윈 관련 세션 참석. 스마트팜 적용 사례 상담.</p>
+    </div>
+    <div class="schedule-card">
+      <div class="schedule-day" style="color:var(--orange);">Day 4 · 4/3 금</div>
+      <h4>🤝 종합 미팅 + 후속 조치</h4>
+      <p>핵심 업체 후속 미팅 확정. 샘플·견적 요청. 파트너십 MOU 논의. 현장 도면 기반 기술 상담.</p>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <p>ITES 2026 스마트팜 참가업체 조사보고서 · AI 에이전트 5개 병렬 조사 · 2026.02.25 작성</p>
+  <p style="margin-top:0.5rem;">공식 사이트: <a href="https://global.iteschina.com" target="_blank">global.iteschina.com</a> · 참관 등록 진행 중 (무료)</p>
+</div>
+
+<script>
+// Data
+const categories = [
+  {
+    id:'env', icon:'🌡️', title:'환경제어', sub:'Environment Control', color:'var(--env)',
+    desc:'온실 내 온도, 습도, CO2, 광량, 양액 등을 자동 제어',
+    companies:[
+      {name:'Siemens (지멘스)',prod:'SIMATIC PLC, MindSphere IoT',apply:'온실 통합 환경제어, SCADA 원격 모니터링'},
+      {name:'Mitsubishi Electric',prod:'MELSEC PLC, GOT HMI',apply:'양액 제어, 환기/차광 자동 제어'},
+      {name:'Delta Electronics',prod:'DVP/AS PLC, 인버터',apply:'냉난방, 순환팬·양액 펌프 제어'},
+      {name:'Huichuan (汇川)',prod:'서보, PLC, IoT 모듈',apply:'환기 모터 인버터, 양액 펌프 서보'},
+      {name:'Advantech (어드밴텍)',prod:'WISE IoT, Edge AI 모듈',apply:'환경 데이터 수집·분석, 로컬 AI 제어'}
+    ],
+    tip:'Siemens MindSphere + SIMATIC으로 클라우드 통합 관리. Delta는 중소규모에 가성비 우수.'
+  },
+  {
+    id:'scout', icon:'🔍', title:'예찰', sub:'Pest/Disease Scouting', color:'var(--scout)',
+    desc:'머신비전, AI 카메라, 센서로 병해충 예찰 및 생육 모니터링',
+    companies:[
+      {name:'Cognex (코그넥스)',prod:'In-Sight 비전, ViDi AI',apply:'작물 병반 검출, 해충 자동 식별'},
+      {name:'Keyence (키엔스)',prod:'CV-X AI 비전, IV3 센서',apply:'병해충 AI 분석, 엽면적 계측'},
+      {name:'Hikrobot (海康)',prod:'MV 카메라, 3D 비전',apply:'해충 트랩 촬영·분석, 생육 판별'},
+      {name:'Basler (바슬러)',prod:'하이퍼스펙트럴 카메라',apply:'다분광 조기 병해 감지, NDVI 분석'},
+      {name:'Daheng (大恒图像)',prod:'MER 카메라, 비전 솔루션',apply:'엽면 촬영, 해충 자동 카운팅'}
+    ],
+    tip:'Basler 하이퍼스펙트럴은 육안 불가 초기 병해 감지. Hikrobot은 비전+AGV로 이동형 예찰 로봇 구현.'
+  },
+  {
+    id:'spray', icon:'💧', title:'방역', sub:'Pest Control & Spraying', color:'var(--spray)',
+    desc:'자동 방제(약액 분사), UV 살균, 소독 로봇 자동화',
+    companies:[
+      {name:'FANUC (화낙)',prod:'CRX 협동로봇 (6축 힘 제어)',apply:'정밀 노즐 분사 로봇, 국소 방제'},
+      {name:'Universal Robots',prod:'UR5e/UR10e 협동로봇',apply:'이동 플랫폼 탑재 방제 로봇'},
+      {name:'Flexiv (非夕)',prod:'Rizon 적응형 로봇',apply:'힘 제어 기반 노즐 조향, 자동 분사'},
+      {name:'DJI (大疆)',prod:'Agras T60 농업 드론',apply:'대형 시설 상부 드론 방제'},
+      {name:'XAG (极飞)',prod:'R150 지상 로봇',apply:'자율주행 지상 방제, AI 변량 분사'}
+    ],
+    tip:'XAG R150은 농업 검증된 지상 방제 로봇. 2026 구현지능 구역에서 농업 적용 인형 로봇 탐색 가능.'
+  },
+  {
+    id:'harvest', icon:'🍅', title:'수확', sub:'Harvesting', color:'var(--harvest)',
+    desc:'로봇 팔, 소프트 그리퍼, AI 비전 기반 수확 자동화',
+    companies:[
+      {name:'FANUC (화낙)',prod:'CRX + 6축 힘 제어',apply:'과실 수확 (소프트 그리핑 + 절단)'},
+      {name:'KOMO (科盟创新)',prod:'하모닉 감속기, 관절 모듈',apply:'수확 로봇 관절, 경량 팔 부품'},
+      {name:'OnRobot',prod:'소프트/진공/적응형 그리퍼',apply:'과실 무손상 그리핑'},
+      {name:'Leishen (雷赛)',prod:'서보 드라이버, 모션 컨트롤러',apply:'수확 팔 정밀 모션, 다축 경로'},
+      {name:'Keli (柯力传感)',prod:'6축 힘/토크/마이크로 센서',apply:'과실 파지력 제어, 절단력 피드백'}
+    ],
+    tip:'핵심은 소프트 그리퍼 + 비전 + 힘 센서 삼위일체. 2026 구현지능 구역의 영민손 기술 주목.'
+  },
+  {
+    id:'move', icon:'🚗', title:'이동', sub:'Mobility & Transport', color:'var(--move)',
+    desc:'AGV, AMR 자율주행 이동로봇으로 온실 내 운반',
+    companies:[
+      {name:'KUKA (쿠카)',prod:'KMP 모바일 플랫폼',apply:'온실 자율주행, 복합 이동 매니퓰레이터'},
+      {name:'Geek+ (极智嘉)',prod:'M 시리즈 AMR',apply:'수확물 자동 운반, 온실↔저장고'},
+      {name:'Hikrobot (海康)',prod:'잠입형 AGV, AMR',apply:'수확 박스 수거, 궤도 없는 자율 이동'},
+      {name:'TOYO (东洋)',prod:'리니어 모듈, 직교 로봇',apply:'레일 기반 이동 플랫폼 (고설재배)'},
+      {name:'Standard Robots',prod:'Oasis AMR, Fleet 관리',apply:'다대 AMR 플릿, 구역별 배차'}
+    ],
+    tip:'온실은 GPS 불가 → SLAM 자율주행 필수. KUKA KMP는 로봇 팔 탑재로 이동+작업 복합.'
+  },
+  {
+    id:'sort', icon:'📦', title:'분류', sub:'Sorting & Grading', color:'var(--sort)',
+    desc:'AI 비전 기반 품질 분류, 무게 선별, 등급 판정',
+    companies:[
+      {name:'Cognex (코그넥스)',prod:'In-Sight + ViDi AI 딥러닝',apply:'크기·색상·흠집 자동 등급 분류'},
+      {name:'Keyence (키엔스)',prod:'CV-X AI, FD 센서',apply:'실시간 분류, 중량·크기 계측'},
+      {name:'Epson Robots',prod:'T 시리즈 SCARA',apply:'고속 피킹 + 등급별 배치'},
+      {name:'GSK CNC (广州数控)',prod:'델타 로봇',apply:'고속 과실 픽앤플레이스'},
+      {name:'Hexagon (해사곤)',prod:'3D 스캐너, 慧质云 플랫폼',apply:'3D 형상 기반 정밀 등급 분류'}
+    ],
+    tip:'Cognex ViDi는 수십 장 이미지로 학습 가능 → 다품종 소량에 유리. GSK 델타는 가성비 우수.'
+  },
+  {
+    id:'logistics', icon:'🏭', title:'물류', sub:'Logistics & Warehousing', color:'var(--logistics)',
+    desc:'포장, 팔레타이징, 저온 저장, 출하 물류 자동화',
+    companies:[
+      {name:'Siemens (지멘스)',prod:'SIMATIC WMS, MES',apply:'저온 저장고 관리, 출하 통합 플랫폼'},
+      {name:'KUKA (쿠카)',prod:'KR QUANTEC, KMP AGV',apply:'자동 팔레타이징, 냉장 물류'},
+      {name:'Geek+ (极智嘉)',prod:'RoboShuttle, 분류 로봇',apply:'자동 피킹·분류·출하, G2P'},
+      {name:'SMC (에스엠씨)',prod:'공압 실린더, 진공 패드',apply:'포장 라인 구동, 박스 이송'},
+      {name:'Festo (페스토)',prod:'바이오닉 솔루션',apply:'소프트 그리핑 포장, 적응형 물류'}
+    ],
+    tip:'콜드체인 자동화가 핵심. Siemens MES + KUKA 팔레타이징 + Geek+ AMR로 전 과정 자동화.'
+  }
+];
+
+const top10 = [
+  {rank:1, name:'FANUC', flag:'🇯🇵', field:'수확·방역', reason:'CRX 힘 제어 + ITES 직접 참가'},
+  {rank:2, name:'Siemens', flag:'🇩🇪', field:'환경제어·물류', reason:'PLC~MES 통합, MindSphere IoT'},
+  {rank:3, name:'Cognex', flag:'🇺🇸', field:'예찰·분류', reason:'ViDi AI 딥러닝 비전 실적'},
+  {rank:4, name:'KUKA', flag:'🇩🇪', field:'이동·물류', reason:'KMP AMR + 팔레타이징 통합'},
+  {rank:5, name:'Hikrobot', flag:'🇨🇳', field:'예찰·이동', reason:'비전+AGV 이원화 포트폴리오'},
+  {rank:6, name:'Flexiv', flag:'🇨🇳', field:'방역·수확', reason:'적응형 힘 제어, 비정형 특화'},
+  {rank:7, name:'Geek+', flag:'🇨🇳', field:'이동·물류', reason:'대규모 AMR 플릿 관리 강점'},
+  {rank:8, name:'XAG', flag:'🇨🇳', field:'방역', reason:'농업 특화 드론·지상 로봇 선도'},
+  {rank:9, name:'Advantech', flag:'🇹🇼', field:'환경제어', reason:'Edge AI + IoT 플랫폼 전문'},
+  {rank:10, name:'Keyence', flag:'🇯🇵', field:'예찰·분류', reason:'고정밀 비전 센서 + 계측'}
+];
+
+// Render categories
+const container = document.getElementById('categories-container');
+categories.forEach(cat => {
+  const rows = cat.companies.map(c => `
+    <tr>
+      <td class="company-name">${c.name}</td>
+      <td class="company-product">${c.prod}</td>
+      <td class="company-apply">${c.apply}</td>
+    </tr>`).join('');
+
+  container.innerHTML += `
+    <section>
+      <div class="section-header">
+        <div class="section-tag" style="background:${cat.color}15;color:${cat.color};">${cat.sub}</div>
+        <div class="section-title">${cat.icon} ${cat.title}</div>
+        <div class="section-desc">${cat.desc}</div>
+      </div>
+      <div class="cat-card" style="max-width:900px;">
+        <table class="cat-table">
+          <thead><tr><th>기업명</th><th>주요 제품/기술</th><th>스마트팜 적용 방안</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+        <div class="cat-tip">💡 <strong>Tip:</strong> ${cat.tip}</div>
+      </div>
+    </section>`;
+});
+
+// Render TOP 10
+const top10El = document.getElementById('top10');
+const rankColors = ['var(--yellow)','#C0C0C0','#CD7F32','var(--accent)','var(--blue)','var(--purple)','var(--orange)','var(--pink)','var(--cyan)','var(--text2)'];
+top10.forEach((t,i) => {
+  top10El.innerHTML += `
+    <div class="top10-item">
+      <div class="top10-rank" style="color:${rankColors[i]}">${t.rank}</div>
+      <div class="top10-info">
+        <h4>${t.flag} ${t.name}</h4>
+        <p>${t.reason}</p>
+        <span class="top10-field">${t.field}</span>
+      </div>
+    </div>`;
+});
+
+// Navigation scroll
+function scrollTo_(sel) {
+  document.querySelector(sel)?.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// Active nav on scroll
+const sections = ['overview','env','scout','spray','harvest','move','sort','logistics','strategy','schedule'];
+const navBtns = document.querySelectorAll('.nav-btn');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY + 120;
+  let current = 0;
+  sections.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el && el.offsetTop <= y) current = i;
+  });
+  navBtns.forEach((b,i) => b.classList.toggle('active', i === current));
+});
+</script>
+
+</body>
+</html>
