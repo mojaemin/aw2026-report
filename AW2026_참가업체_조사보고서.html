@@ -5,6 +5,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AW2026 참가업체 심층 조사 보고서</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1A478A">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AW2026">
+  <link rel="apple-touch-icon" href="icon-192.png">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
 
@@ -392,35 +398,392 @@
       background: var(--tag-blue);
     }
 
-    /* ─── 반응형 ─── */
-    @media (max-width: 768px) {
-      .cover h1 {
-        font-size: 2.8rem;
-      }
+    /* ─── 모바일 카드형 테이블 ─── */
+    .card-list { display: none; }
 
-      .cover h2 {
-        font-size: 1.1rem;
-      }
-
+    /* ─── 반응형: 태블릿 (769px ~ 1024px) ─── */
+    @media (max-width: 1024px) {
       .container {
-        padding: 1rem;
+        padding: 1.5rem 1rem;
+      }
+
+      .section-header {
+        padding: 1.5rem 1.5rem;
       }
 
       .section-body {
-        padding: 1rem;
+        padding: 1.5rem;
+      }
+
+      .trend-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .overview-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      table { font-size: 0.82rem; }
+      thead th { padding: 0.6rem 0.7rem; font-size: 0.78rem; }
+      tbody td { padding: 0.55rem 0.7rem; }
+    }
+
+    /* ─── 반응형: 모바일 (max 768px) ─── */
+    @media (max-width: 768px) {
+      html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+      }
+
+      body {
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      /* 표지 */
+      .cover {
+        min-height: 85vh;
+        padding: 2rem 1.2rem;
+      }
+
+      .cover h1 {
+        font-size: 2.8rem;
+        letter-spacing: -1px;
+      }
+
+      .cover h2 {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .cover-badge {
+        font-size: 0.75rem;
+        padding: 0.4rem 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .cover-info {
+        gap: 0.8rem;
+        width: 100%;
+      }
+
+      .cover-info-item {
+        padding: 0.8rem 1rem;
+        flex: 1;
+        min-width: 80px;
+      }
+
+      .cover-info-item strong {
+        font-size: 1rem;
+      }
+
+      .cover-info-item span {
+        font-size: 0.75rem;
+      }
+
+      /* 네비게이션 */
+      .nav {
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+
+      .nav::-webkit-scrollbar { display: none; }
+
+      .nav-inner {
+        padding: 0 0.3rem;
       }
 
       .nav a {
-        padding: 0.8rem 0.8rem;
+        padding: 0.75rem 0.7rem;
+        font-size: 0.73rem;
+        flex-shrink: 0;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+      }
+
+      /* 컨테이너 */
+      .container {
+        padding: 0.8rem 0.6rem;
+      }
+
+      /* 섹션 */
+      .section {
+        margin-bottom: 1.5rem;
+      }
+
+      .section-header {
+        padding: 1.2rem 1rem;
+        border-radius: 12px 12px 0 0;
+      }
+
+      .section-header h2 {
+        font-size: 1.05rem;
+        line-height: 1.4;
+        display: flex;
+        align-items: center;
+      }
+
+      .section-header .section-num {
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        font-size: 0.95rem;
+        margin-right: 0.5rem;
+        border-radius: 8px;
+        flex-shrink: 0;
+      }
+
+      .section-body {
+        padding: 1rem 0.8rem;
+        border-radius: 0 0 12px 12px;
+      }
+
+      /* 서브 헤딩 */
+      h3 {
+        font-size: 0.92rem;
+        margin: 1.5rem 0 0.8rem 0;
+        padding-bottom: 0.4rem;
+      }
+
+      h4 {
+        font-size: 0.88rem;
+        margin: 1.2rem 0 0.6rem 0;
+      }
+
+      /* 테이블: 가로 스크롤 + 스크롤 힌트 */
+      .table-wrap {
+        border-radius: 8px;
+        margin: 0.8rem 0 1.2rem 0;
+        position: relative;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .table-wrap::after {
+        content: '>';
+        position: sticky;
+        right: 0;
+        top: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        background: rgba(26,71,138,0.7);
+        color: white;
+        border-radius: 50%;
+        font-size: 0.7rem;
+        pointer-events: none;
+        float: right;
+        margin-top: -36px;
+        margin-right: 4px;
+        opacity: 0.6;
+        z-index: 2;
+      }
+
+      .table-wrap.scrolled::after {
+        display: none;
+      }
+
+      table { font-size: 0.78rem; }
+
+      thead th {
+        padding: 0.55rem 0.6rem;
+        font-size: 0.72rem;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+      }
+
+      tbody td {
+        padding: 0.5rem 0.6rem;
+        font-size: 0.76rem;
+        line-height: 1.45;
+      }
+
+      /* 카드형 표시: 모바일에서 테이블 대체 */
+      .card-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+        margin: 0.8rem 0 1.2rem 0;
+      }
+
+      .card-item {
+        background: var(--bg);
+        border-radius: 10px;
+        padding: 0.9rem 1rem;
+        border-left: 4px solid var(--primary);
+      }
+
+      .card-item-title {
+        font-weight: 700;
+        color: var(--primary-dark);
+        font-size: 0.88rem;
+        margin-bottom: 0.4rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+      }
+
+      .card-item-title .country {
+        font-weight: 400;
+        font-size: 0.72rem;
+        color: var(--text-light);
+        background: var(--border);
+        padding: 0.1rem 0.4rem;
+        border-radius: 3px;
+      }
+
+      .card-item-row {
+        display: flex;
+        gap: 0.3rem;
         font-size: 0.78rem;
+        line-height: 1.5;
+        margin-top: 0.15rem;
+      }
+
+      .card-item-row .card-label {
+        color: var(--text-light);
+        font-weight: 500;
+        min-width: 52px;
+        flex-shrink: 0;
+      }
+
+      .card-item-row .card-value {
+        color: var(--text);
+      }
+
+      /* 태그 */
+      .tag {
+        font-size: 0.68rem;
+        padding: 0.12rem 0.45rem;
+      }
+
+      .tag-confirmed {
+        font-size: 0.65rem;
+        padding: 0.15rem 0.4rem;
+      }
+
+      /* 개요 그리드 */
+      .overview-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 0.6rem;
+      }
+
+      .overview-card {
+        padding: 0.8rem 1rem;
+      }
+
+      .overview-card .label {
+        font-size: 0.72rem;
+      }
+
+      .overview-card .value {
+        font-size: 0.85rem;
+      }
+
+      /* 트렌드 그리드 */
+      .trend-grid {
+        grid-template-columns: 1fr;
+        gap: 0.6rem;
+      }
+
+      .trend-card {
+        padding: 1rem 1.2rem;
+      }
+
+      .trend-card .trend-title {
+        font-size: 0.88rem;
+      }
+
+      .trend-card .trend-desc {
+        font-size: 0.8rem;
+      }
+
+      /* 비교표 */
+      .compare-table td:first-child {
+        font-size: 0.73rem;
+        font-weight: 600;
+      }
+    }
+
+    /* ─── 반응형: 소형 모바일 (max 420px) ─── */
+    @media (max-width: 420px) {
+      .cover {
+        min-height: 75vh;
+        padding: 1.5rem 1rem;
+      }
+
+      .cover h1 {
+        font-size: 2.2rem;
+      }
+
+      .cover h2 {
+        font-size: 0.9rem;
+      }
+
+      .cover-info {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .cover-info-item {
+        text-align: center;
+        padding: 0.6rem 0.8rem;
+      }
+
+      .nav a {
+        padding: 0.65rem 0.5rem;
+        font-size: 0.68rem;
+      }
+
+      .section-header h2 {
+        font-size: 0.92rem;
+      }
+
+      .overview-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card-item {
+        padding: 0.7rem 0.8rem;
+      }
+
+      .card-item-title {
+        font-size: 0.82rem;
+      }
+
+      .card-item-row {
+        font-size: 0.74rem;
+      }
+    }
+
+    /* ─── 터치 디바이스 최적화 ─── */
+    @media (hover: none) and (pointer: coarse) {
+      tbody tr:hover {
+        background: inherit;
+      }
+
+      tbody tr:nth-child(even):hover {
+        background: var(--row-alt);
+      }
+
+      .trend-card:hover {
+        transform: none;
+      }
+
+      /* 테이블 스크롤 시 관성 */
+      .table-wrap {
+        scroll-snap-type: x proximity;
       }
     }
 
     /* ─── 인쇄 ─── */
     @media print {
-      .nav {
-        display: none;
-      }
+      .nav, .card-list, #install-banner { display: none !important; }
+      .table-wrap { display: block !important; }
 
       .cover {
         min-height: auto;
@@ -434,6 +797,7 @@
 
       body {
         font-size: 11px;
+        background: white;
       }
     }
   </style>
@@ -456,14 +820,14 @@
   <!-- ═══════════════ 네비게이션 ═══════════════ -->
   <nav class="nav">
     <div class="nav-inner">
-      <a href="#overview">행사 개요</a>
-      <a href="#s1">1. 로봇 그리퍼</a>
-      <a href="#s2">2. 로봇 팔</a>
-      <a href="#s3">3. AGV/AMR/AGF</a>
-      <a href="#s4">4. AI 물류 자동화</a>
-      <a href="#s5">5. AI 선별 자동화</a>
-      <a href="#s6">6. 비전 선별</a>
-      <a href="#s7">7. AI PLC 통합</a>
+      <a href="#overview">개요</a>
+      <a href="#s1">1.그리퍼</a>
+      <a href="#s2">2.로봇팔</a>
+      <a href="#s3">3.AGV/AMR</a>
+      <a href="#s4">4.물류</a>
+      <a href="#s5">5.AI선별</a>
+      <a href="#s6">6.비전</a>
+      <a href="#s7">7.PLC</a>
       <a href="#trends">트렌드</a>
     </div>
   </nav>
@@ -2033,6 +2397,156 @@
     </footer>
 
   </div>
+  <div id="install-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#1A478A,#2B6CC4);color:#fff;padding:1rem 1.5rem;z-index:10000;box-shadow:0 -2px 10px rgba(0,0,0,0.2);font-family:'Noto Sans KR',sans-serif;">
+    <div style="display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;">
+      <div>
+        <strong>AW2026 보고서 앱 설치</strong>
+        <div style="font-size:0.85rem;opacity:0.9;margin-top:2px;">홈 화면에 추가하여 오프라인에서도 확인</div>
+      </div>
+      <div style="display:flex;gap:0.5rem;">
+        <button onclick="installPWA()" style="background:#fff;color:#1A478A;border:none;padding:0.5rem 1.2rem;border-radius:6px;font-weight:700;cursor:pointer;font-size:0.9rem;">설치</button>
+        <button onclick="dismissInstall()" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.4);padding:0.5rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.85rem;">닫기</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Service Worker 등록
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(r => console.log('SW registered:', r.scope));
+    }
+
+    // PWA 설치 프롬프트
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('install-banner').style.display = 'block';
+    });
+    function installPWA() {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => {
+        document.getElementById('install-banner').style.display = 'none';
+        deferredPrompt = null;
+      });
+    }
+    function dismissInstall() {
+      document.getElementById('install-banner').style.display = 'none';
+    }
+    window.addEventListener('appinstalled', () => {
+      document.getElementById('install-banner').style.display = 'none';
+    });
+
+    // 모바일: 테이블 → 카드 변환
+    function buildCards() {
+      const isMobile = window.innerWidth <= 768;
+      document.querySelectorAll('.table-wrap').forEach(wrap => {
+        const existing = wrap.nextElementSibling;
+        if (existing && existing.classList.contains('card-list')) {
+          existing.style.display = isMobile ? 'flex' : 'none';
+          wrap.style.display = isMobile ? 'none' : 'block';
+          return;
+        }
+        if (!isMobile) return;
+
+        const table = wrap.querySelector('table');
+        if (!table) return;
+        const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
+        const rows = table.querySelectorAll('tbody tr');
+        if (rows.length === 0 || headers.length === 0) return;
+
+        const cardList = document.createElement('div');
+        cardList.className = 'card-list';
+
+        rows.forEach(row => {
+          const cells = row.querySelectorAll('td');
+          if (cells.length === 0) return;
+
+          const card = document.createElement('div');
+          card.className = 'card-item';
+
+          // 업체명 (첫 번째 셀)
+          const titleDiv = document.createElement('div');
+          titleDiv.className = 'card-item-title';
+          titleDiv.innerHTML = cells[0].innerHTML;
+
+          // 국적이 있으면 (두 번째 셀이 국적인 경우)
+          const h0 = headers[0] || '';
+          const h1 = headers[1] || '';
+          let startIdx = 1;
+          if (h1 === '국적' && cells.length > 1) {
+            const countryText = cells[1].textContent.trim();
+            if (countryText) {
+              titleDiv.innerHTML += ' <span class="country">' + countryText + '</span>';
+            }
+            startIdx = 2;
+          }
+
+          card.appendChild(titleDiv);
+
+          // 나머지 필드
+          for (let i = startIdx; i < cells.length; i++) {
+            const val = cells[i].innerHTML.trim();
+            if (!val || val === '-') continue;
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'card-item-row';
+            rowDiv.innerHTML = '<span class="card-label">' + headers[i] + '</span><span class="card-value">' + val + '</span>';
+            card.appendChild(rowDiv);
+          }
+
+          cardList.appendChild(card);
+        });
+
+        wrap.style.display = 'none';
+        wrap.parentNode.insertBefore(cardList, wrap.nextSibling);
+      });
+    }
+
+    // 테이블 스크롤 힌트 제거
+    document.querySelectorAll('.table-wrap').forEach(wrap => {
+      wrap.addEventListener('scroll', function() {
+        if (this.scrollLeft > 10) this.classList.add('scrolled');
+        else this.classList.remove('scrolled');
+      });
+    });
+
+    // 네비게이션 활성 표시
+    function updateNav() {
+      const sections = document.querySelectorAll('.section');
+      const navLinks = document.querySelectorAll('.nav a');
+      const scrollY = window.scrollY + 120;
+
+      sections.forEach((sec, i) => {
+        const top = sec.offsetTop;
+        const bottom = top + sec.offsetHeight;
+        if (scrollY >= top && scrollY < bottom && navLinks[i]) {
+          navLinks.forEach(a => a.style.borderBottomColor = 'transparent');
+          navLinks[i].style.borderBottomColor = '#1A478A';
+          navLinks[i].style.color = '#1A478A';
+        } else if (navLinks[i]) {
+          navLinks[i].style.color = '';
+        }
+      });
+    }
+
+    // 초기화 및 이벤트
+    buildCards();
+    window.addEventListener('resize', buildCards);
+    window.addEventListener('scroll', updateNav, { passive: true });
+
+    // 부드러운 스크롤 (nav 높이 보정)
+    document.querySelectorAll('.nav a').forEach(a => {
+      a.addEventListener('click', e => {
+        const href = a.getAttribute('href');
+        const target = document.querySelector(href);
+        if (target) {
+          e.preventDefault();
+          const navH = document.querySelector('.nav').offsetHeight;
+          window.scrollTo({ top: target.offsetTop - navH - 8, behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
 </body>
 
 </html>
