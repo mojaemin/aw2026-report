@@ -5,6 +5,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AW2026 참가업체 심층 조사 보고서</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1A478A">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AW2026">
+  <link rel="apple-touch-icon" href="icon-192.png">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
 
@@ -2033,6 +2039,45 @@
     </footer>
 
   </div>
+  <div id="install-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#1A478A,#2B6CC4);color:#fff;padding:1rem 1.5rem;z-index:10000;box-shadow:0 -2px 10px rgba(0,0,0,0.2);font-family:'Noto Sans KR',sans-serif;">
+    <div style="display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;">
+      <div>
+        <strong>AW2026 보고서 앱 설치</strong>
+        <div style="font-size:0.85rem;opacity:0.9;margin-top:2px;">홈 화면에 추가하여 오프라인에서도 확인</div>
+      </div>
+      <div style="display:flex;gap:0.5rem;">
+        <button onclick="installPWA()" style="background:#fff;color:#1A478A;border:none;padding:0.5rem 1.2rem;border-radius:6px;font-weight:700;cursor:pointer;font-size:0.9rem;">설치</button>
+        <button onclick="dismissInstall()" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.4);padding:0.5rem 0.8rem;border-radius:6px;cursor:pointer;font-size:0.85rem;">닫기</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Service Worker 등록
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(r => console.log('SW registered:', r.scope));
+    }
+    // PWA 설치 프롬프트
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('install-banner').style.display = 'block';
+    });
+    function installPWA() {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(r => {
+        document.getElementById('install-banner').style.display = 'none';
+        deferredPrompt = null;
+      });
+    }
+    function dismissInstall() {
+      document.getElementById('install-banner').style.display = 'none';
+    }
+    window.addEventListener('appinstalled', () => {
+      document.getElementById('install-banner').style.display = 'none';
+    });
+  </script>
 </body>
 
 </html>
