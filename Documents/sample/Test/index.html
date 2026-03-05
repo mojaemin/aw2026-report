@@ -32,6 +32,40 @@
     .card .emoji { font-size: 2.4rem; margin-bottom: 12px; }
     .card .title { font-size: 1.05rem; font-weight: 600; }
     .card .sub { font-size: 0.85rem; color: #999; margin-top: 4px; }
+
+    /* ─── 반응형: 태블릿 (1024px 이하) ─── */
+    @media (max-width: 1024px) {
+      .container { padding: 40px 24px; }
+      h1 { font-size: 1.4rem; }
+      .cards { gap: 16px; }
+      .card { padding: 28px 32px; min-width: 180px; }
+    }
+
+    /* ─── 반응형: 모바일 (768px 이하) ─── */
+    @media (max-width: 768px) {
+      .container { padding: 32px 16px; }
+      h1 { font-size: 1.3rem; }
+      p { font-size: 0.88rem; margin-bottom: 28px; }
+      .cards { flex-direction: column; align-items: center; gap: 12px; }
+      .card { padding: 24px 28px; min-width: 0; width: 100%; max-width: 300px; }
+      .card .emoji { font-size: 2rem; margin-bottom: 8px; }
+      .card .title { font-size: 0.95rem; }
+      .card .sub { font-size: 0.8rem; }
+    }
+
+    /* ─── 반응형: 소형 모바일 (480px 이하) ─── */
+    @media (max-width: 480px) {
+      .container { padding: 24px 12px; }
+      h1 { font-size: 1.15rem; }
+      p { font-size: 0.82rem; margin-bottom: 24px; }
+      .card { padding: 20px 24px; max-width: 260px; }
+      .card .emoji { font-size: 1.8rem; }
+    }
+
+    /* ─── 터치 디바이스: hover 효과 제거 ─── */
+    @media (hover: none) and (pointer: coarse) {
+      .card:hover { transform: none; box-shadow: 0 2px 16px rgba(0,0,0,0.08); }
+    }
   </style>
 </head>
 <body>

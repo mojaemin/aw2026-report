@@ -49,6 +49,33 @@ canvas { display: block; }
   background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%);
   pointer-events: none; z-index: 5;
 }
+
+/* ─── 반응형: 태블릿 (1024px 이하) ─── */
+@media (max-width: 1024px) {
+  #phase-label { font-size: 18px; top: 24px; }
+  #phase-sub { font-size: 12px; top: 50px; }
+  #timer { top: 24px; right: 24px; font-size: 13px; }
+  #logo { bottom: 20px; right: 24px; font-size: 11px; }
+  #start-btn { font-size: 18px; padding: 16px 40px; }
+}
+
+/* ─── 반응형: 모바일 (768px 이하) ─── */
+@media (max-width: 768px) {
+  #phase-label { font-size: 15px; top: 18px; letter-spacing: 1px; }
+  #phase-sub { font-size: 11px; top: 40px; }
+  #timer { top: 18px; right: 16px; font-size: 12px; }
+  #logo { bottom: 14px; right: 16px; font-size: 10px; letter-spacing: 2px; }
+  #start-btn { font-size: 16px; padding: 14px 36px; letter-spacing: 1px; }
+}
+
+/* ─── 반응형: 소형 모바일 (480px 이하) ─── */
+@media (max-width: 480px) {
+  #phase-label { font-size: 13px; top: 14px; }
+  #phase-sub { font-size: 10px; top: 34px; }
+  #timer { top: 14px; right: 12px; font-size: 11px; }
+  #logo { bottom: 10px; right: 12px; font-size: 9px; }
+  #start-btn { font-size: 14px; padding: 12px 30px; }
+}
 </style>
 </head>
 <body>
