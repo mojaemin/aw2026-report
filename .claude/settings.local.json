@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:www.automationworld.co.kr)",
+      "WebFetch(domain:aw.micehub-gov.com)",
+      "WebFetch(domain:www.newswire.co.kr)",
+      "WebFetch(domain:www.etoday.co.kr)",
+      "WebFetch(domain:www.neuromeka.com)",
+      "WebFetch(domain:robotfarm.kr)",
+      "WebFetch(domain:showala.com)",
+      "WebFetch(domain:www.hellot.net)",
+      "WebFetch(domain:www.coex.co.kr)",
+      "WebFetch(domain:www.nextunicorn.kr)",
+      "WebFetch(domain:www.farmily.ai)",
+      "WebFetch(domain:sfkorea.kr)",
+      "WebFetch(domain:blog.cmesrobotics.ai)",
+      "WebFetch(domain:hadarobot.com)",
+      "Bash(cp:*)"
+    ]
+  }
+}
