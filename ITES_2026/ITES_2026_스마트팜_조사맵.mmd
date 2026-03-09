@@ -5,101 +5,126 @@ title: ITES 2026 스마트팜 자동화 플랫폼 — 참가업체 조사 맵
 graph TB
     subgraph HEADER["🏭 ITES 2026 선전 국제 산업제조 기술 및 장비 전시회"]
         direction LR
-        INFO["📅 2026.3.31~4.3 | 📍 심천 국제컨벤션센터(보안)\n🏢 1,500+ 참가업체 | 🤖 구현지능 전용구역 신설"]
+        INFO["📅 2026.3.31~4.3 | 📍 심천 국제컨벤션센터(보안)\n🏢 1,658 참가업체 | 🤖 구현지능 전용구역 신설"]
     end
 
-    subgraph PLATFORM["🧠 Platform Layer — 통합 운영 플랫폼"]
+    subgraph PLATFORM["🧠 AI Platform — 통합 운영 플랫폼"]
         P1["Siemens\nMindSphere + SCADA"]
-        P2["Advantech\nWISE IoT 플랫폼"]
-        P3["자체 개발\nAI 에이전트 플랫폼"]
+        P2["Advantech\nWISE-PaaS IoT"]
+        P3["SmartMore\nViMo AI 플랫폼"]
     end
 
-    subgraph EXECUTION["⚙️ Execution Layer — 실행 계층"]
+    subgraph EXECUTION["⚙️ Execution — 실행 계층"]
         direction LR
         E1["FANUC CRX\n협동로봇"]
-        E2["KUKA KMP\n모바일 플랫폼"]
-        E3["Flexiv Rizon\n적응형 로봇"]
-        E4["Geek+ AMR\n자율이동로봇"]
+        E2["Flexiv Rizon\n적응형 7축"]
+        E3["Realman RM75\n초경량 7축"]
+        E4["KUKA KMR iiwa\n이동+협동로봇"]
     end
 
-    subgraph PERCEPTION["👁️ Perception Layer — 인지 계층"]
+    subgraph PERCEPTION["👁️ Perception — 인지 계층"]
         direction LR
-        V1["Cognex\nIn-Sight + ViDi AI"]
-        V2["Hikrobot\nMV 카메라 + 3D"]
+        V1["Cognex\nViDi AI 딥러닝"]
+        V2["Hikrobot\nMV + 3D 비전"]
         V3["Basler\n하이퍼스펙트럴"]
-        V4["Keyence\nCV-X AI 비전"]
+        V4["LMI Technologies\nGocator 3D"]
     end
 
-    subgraph EDGE["📡 Edge Layer — 현장 제어"]
+    subgraph MOBILITY["🚗 Mobility — 이동 계층"]
         direction LR
-        C1["Siemens\nSIMATIC PLC"]
-        C2["Mitsubishi\nMELSEC PLC"]
-        C3["Delta\nPLC + 인버터"]
-        C4["Huichuan\n서보 + IoT"]
+        MB1["Hikrobot\nAMR Q7"]
+        MB2["Geek+\nP500 AMR"]
+        MB3["SEER Robotics\nSRC 제어기"]
+        MB4["KUKA\nKMP 플랫폼"]
+    end
+
+    subgraph EDGE["📡 Edge Control — 현장 제어"]
+        direction LR
+        C1["Siemens\nSIMATIC S7"]
+        C2["Mitsubishi\nMELSEC iQ"]
+        C3["Inovance\nAC800 (256축)"]
+        C4["Delta\nPLC + 인버터"]
     end
 
     HEADER --> PLATFORM
     PLATFORM --> EXECUTION
     EXECUTION --> PERCEPTION
-    PERCEPTION --> EDGE
+    PERCEPTION --> MOBILITY
+    MOBILITY --> EDGE
 
-    subgraph FARM["🌿 스마트팜 7대 운영 영역"]
+    subgraph FARM["🌿 스마트팜 8대 기술 항목"]
         direction LR
 
-        subgraph ENV["🌡️ 환경제어"]
-            ENV1["Siemens SIMATIC"]
-            ENV2["Mitsubishi MELSEC"]
-            ENV3["Delta DVP/AS"]
-            ENV4["Huichuan 서보"]
-            ENV5["Advantech WISE"]
+        subgraph GRIPPER["🤏 로봇 그리퍼"]
+            G1["Schmalz 진공"]
+            G2["Inspire 영민손"]
+            G3["DH-Robotics AG"]
+            G4["RoChU 소프트"]
+            G5["OnRobot Soft"]
+            G6["ZG Robot 적응형"]
         end
 
-        subgraph SCOUT["🔍 예찰"]
-            SC1["Cognex In-Sight"]
-            SC2["Keyence CV-X"]
-            SC3["Hikrobot MV"]
-            SC4["Basler ace"]
-            SC5["Daheng MER"]
+        subgraph COBOT["🦾 로봇팔/협동로봇"]
+            CB1["FANUC CRX"]
+            CB2["Flexiv Rizon"]
+            CB3["Dobot CR"]
+            CB4["Realman RM75"]
+            CB5["Kawasaki duAro"]
+            CB6["HSR CR605"]
         end
 
-        subgraph SPRAY["💧 방역"]
-            SP1["FANUC CRX"]
-            SP2["Universal Robots"]
-            SP3["Flexiv Rizon"]
-            SP4["DJI Agras"]
-            SP5["XAG R150"]
+        subgraph AMR["🚗 AMR/AGF/AGV"]
+            A1["Hikrobot Q7"]
+            A2["Geek+ P500"]
+            A3["SEER SRC"]
+            A4["KUKA KMR"]
+            A5["Standard Robots"]
+            A6["OKAGV"]
         end
 
-        subgraph HARVEST["🍅 수확"]
-            H1["FANUC CRX"]
-            H2["KOMO 감속기"]
-            H3["OnRobot 그리퍼"]
-            H4["Leishen 모션"]
-            H5["Keli 힘센서"]
+        subgraph AILOG["📦 AI 물류 자동화"]
+            AL1["KUKA 팔레타이징"]
+            AL2["Geek+ RoboShuttle"]
+            AL3["Siemens WMS"]
+            AL4["Hikrobot iWMS"]
+            AL5["SMC 공압"]
+            AL6["Festo 바이오닉"]
         end
 
-        subgraph MOVE["🚗 이동"]
-            M1["KUKA KMP"]
-            M2["Geek+ AMR"]
-            M3["Hikrobot AGV"]
-            M4["TOYO 리니어"]
-            M5["Standard Robots"]
+        subgraph AISORT["🎯 AI 선별 자동화"]
+            AS1["Cognex ViDi"]
+            AS2["Keyence CV-X"]
+            AS3["SmartMore ViMo"]
+            AS4["EPSON SCARA"]
+            AS5["GSK 델타로봇"]
+            AS6["CKVision 노코드"]
         end
 
-        subgraph SORT["📦 분류"]
-            SO1["Cognex ViDi"]
-            SO2["Keyence CV-X"]
-            SO3["Epson SCARA"]
-            SO4["GSK 델타로봇"]
-            SO5["Hexagon 3D"]
+        subgraph VISION["👁️ 비전 선별 기술"]
+            VS1["Keyence LJ-X8000"]
+            VS2["Hikrobot MV"]
+            VS3["Basler 하이퍼스펙트럴"]
+            VS4["LMI Gocator 3D"]
+            VS5["Cognex 3D-A5000"]
+            VS6["Daheng MER"]
         end
 
-        subgraph LOGISTICS["🏭 물류"]
-            L1["Siemens WMS"]
-            L2["KUKA 팔레타이징"]
-            L3["Geek+ RoboShuttle"]
-            L4["SMC 공압"]
-            L5["Festo 바이오닉"]
+        subgraph AIPLC["⚙️ AI PLC 통합"]
+            AP1["Siemens S7-1200"]
+            AP2["Mitsubishi iQ-R"]
+            AP3["Inovance AC800"]
+            AP4["Delta DVP/AS"]
+            AP5["Advantech WISE"]
+            AP6["ZMotion ZMC"]
+        end
+
+        subgraph SMARTFARM["🌱 스마트팜 기술"]
+            SF1["Siemens 디지털트윈"]
+            SF2["Advantech Edge AI"]
+            SF3["DJI Agras T60"]
+            SF4["XAG R150"]
+            SF5["Festo 비례밸브"]
+            SF6["Keli 힘센서"]
         end
     end
 
@@ -107,26 +132,26 @@ graph TB
 
     subgraph TOP10["🏆 핵심 주목 기업 TOP 10"]
         direction LR
-        T1["1. FANUC 🇯🇵\n수확·방역"]
-        T2["2. Siemens 🇩🇪\n환경제어·물류"]
-        T3["3. Cognex 🇺🇸\n예찰·분류"]
-        T4["4. KUKA 🇩🇪\n이동·물류"]
-        T5["5. Hikrobot 🇨🇳\n예찰·이동"]
-        T6["6. Flexiv 🇨🇳\n방역·수확"]
-        T7["7. Geek+ 🇨🇳\n이동·물류"]
-        T8["8. XAG 🇨🇳\n방역"]
-        T9["9. Advantech 🇹🇼\n환경제어"]
-        T10["10. Keyence 🇯🇵\n예찰·분류"]
+        T1["1. Flexiv 🇨🇳\n로봇팔·그리퍼"]
+        T2["2. Siemens 🇩🇪\nAI PLC·물류·스마트팜"]
+        T3["3. Hikrobot 🇨🇳\nAMR·비전·물류"]
+        T4["4. Cognex 🇺🇸\nAI선별·비전"]
+        T5["5. FANUC 🇯🇵\n로봇팔"]
+        T6["6. Realman 🇨🇳\n로봇팔"]
+        T7["7. SEER 🇨🇳\nAMR"]
+        T8["8. SmartMore 🇨🇳\nAI선별·비전"]
+        T9["9. RoChU 🇨🇳\n로봇 그리퍼"]
+        T10["10. Inovance 🇨🇳\nAI PLC"]
     end
 
     FARM --> TOP10
 
     subgraph SCHEDULE["📅 4일 참관 전략"]
         direction LR
-        D1["Day1 3/31\n🤖 로봇·자동화\n+ 구현지능 구역"]
-        D2["Day2 4/1\n👁️ 비전·센서\n+ 물류 자동화"]
-        D3["Day3 4/2\n📡 제어·IoT\n+ AI 포럼"]
-        D4["Day4 4/3\n🤝 종합 미팅\n+ 견적 요청"]
+        D1["Day1 3/31\n🦾 로봇팔·그리퍼\n+ 구현지능 구역"]
+        D2["Day2 4/1\n👁️ 비전·AI 선별\n+ AMR/AGV"]
+        D3["Day3 4/2\n⚙️ AI PLC·IoT\n+ 물류·포럼"]
+        D4["Day4 4/3\n🌱 스마트팜 기술\n+ 종합 미팅"]
         D1 --> D2 --> D3 --> D4
     end
 
@@ -137,15 +162,17 @@ graph TB
     style PLATFORM fill:#7D3C98,stroke:#7D3C98,color:#fff
     style EXECUTION fill:#C0392B,stroke:#C0392B,color:#fff
     style PERCEPTION fill:#E67E22,stroke:#E67E22,color:#fff
+    style MOBILITY fill:#2980B9,stroke:#2980B9,color:#fff
     style EDGE fill:#27AE60,stroke:#27AE60,color:#fff
     style FARM fill:#F4F6F7,stroke:#566573,color:#2C3E50
-    style ENV fill:#D5F5E3,stroke:#27AE60,color:#1B4F72
-    style SCOUT fill:#D6EAF8,stroke:#2E86C1,color:#1B4F72
-    style SPRAY fill:#FADBD8,stroke:#E74C3C,color:#1B4F72
-    style HARVEST fill:#FCF3CF,stroke:#F1C40F,color:#1B4F72
-    style MOVE fill:#E8DAEF,stroke:#8E44AD,color:#1B4F72
-    style SORT fill:#D5F5E3,stroke:#1ABC9C,color:#1B4F72
-    style LOGISTICS fill:#FDEBD0,stroke:#E67E22,color:#1B4F72
+    style GRIPPER fill:#D5F5E3,stroke:#27AE60,color:#1B4F72
+    style COBOT fill:#D6EAF8,stroke:#2E86C1,color:#1B4F72
+    style AMR fill:#E8DAEF,stroke:#8E44AD,color:#1B4F72
+    style AILOG fill:#FDEBD0,stroke:#E67E22,color:#1B4F72
+    style AISORT fill:#FCF3CF,stroke:#F1C40F,color:#1B4F72
+    style VISION fill:#D1F2EB,stroke:#1ABC9C,color:#1B4F72
+    style AIPLC fill:#FADBD8,stroke:#E74C3C,color:#1B4F72
+    style SMARTFARM fill:#D5F5E3,stroke:#2ECC71,color:#1B4F72
     style TOP10 fill:#FEF9E7,stroke:#F39C12,color:#1B4F72
     style SCHEDULE fill:#EBF5FB,stroke:#3498DB,color:#1B4F72
     style P1 fill:#A569BD,stroke:#7D3C98,color:#fff
@@ -159,6 +186,10 @@ graph TB
     style V2 fill:#F0B27A,stroke:#E67E22,color:#1B4F72
     style V3 fill:#F0B27A,stroke:#E67E22,color:#1B4F72
     style V4 fill:#F0B27A,stroke:#E67E22,color:#1B4F72
+    style MB1 fill:#5DADE2,stroke:#2980B9,color:#fff
+    style MB2 fill:#5DADE2,stroke:#2980B9,color:#fff
+    style MB3 fill:#5DADE2,stroke:#2980B9,color:#fff
+    style MB4 fill:#5DADE2,stroke:#2980B9,color:#fff
     style C1 fill:#58D68D,stroke:#27AE60,color:#1B4F72
     style C2 fill:#58D68D,stroke:#27AE60,color:#1B4F72
     style C3 fill:#58D68D,stroke:#27AE60,color:#1B4F72

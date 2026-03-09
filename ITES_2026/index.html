@@ -2,7 +2,10 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0a0e17">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>ITES 2026 스마트팜 참가업체 조사보고서</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -24,13 +27,14 @@
   --yellow: #ffd32a;
   --pink: #ff6b9d;
   --cyan: #00e5ff;
-  --env: #00d4aa;
-  --scout: #4facfe;
-  --spray: #ff6b9d;
-  --harvest: #ffd32a;
-  --move: #a855f7;
-  --sort: #00e5ff;
-  --logistics: #ff6b35;
+  --gripper: #00d4aa;
+  --cobot: #4facfe;
+  --amr: #a855f7;
+  --ailogistics: #ff6b35;
+  --aisorting: #ffd32a;
+  --vision: #00e5ff;
+  --aiplc: #ff6b9d;
+  --smartfarm: #7bed9f;
   --font: 'Noto Sans KR', sans-serif;
   --mono: 'JetBrains Mono', monospace;
   --display: 'Playfair Display', serif;
@@ -38,12 +42,19 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font);
   line-height: 1.7;
   overflow-x: hidden;
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
 /* Scrollbar */
@@ -166,9 +177,18 @@ body {
   background: rgba(10,14,23,0.85);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
-  padding: 0 1rem;
-  overflow-x: auto;
+  padding: 0;
 }
+
+.nav-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 0 1rem;
+  position: relative;
+}
+
+.nav-scroll::-webkit-scrollbar { display: none; }
 
 .nav-inner {
   max-width: 1400px;
@@ -176,6 +196,30 @@ body {
   display: flex;
   gap: 0;
 }
+
+.nav-fade-left,
+.nav-fade-right {
+  display: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.nav-fade-left {
+  left: 0;
+  background: linear-gradient(90deg, rgba(10,14,23,0.95), transparent);
+}
+
+.nav-fade-right {
+  right: 0;
+  background: linear-gradient(-90deg, rgba(10,14,23,0.95), transparent);
+}
+
+.nav-fade-left.visible,
+.nav-fade-right.visible { display: block; }
 
 .nav-btn {
   background: none;
@@ -189,6 +233,7 @@ body {
   white-space: nowrap;
   border-bottom: 2px solid transparent;
   transition: all 0.3s;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .nav-btn:hover { color: var(--white); }
@@ -331,6 +376,51 @@ section {
 }
 
 .cat-tip strong { color: var(--accent); }
+
+/* Table scroll wrapper */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Scroll to top button */
+.scroll-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.3s;
+  z-index: 99;
+  box-shadow: 0 4px 20px rgba(0,212,170,0.3);
+  -webkit-tap-highlight-color: transparent;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.scroll-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Empty anchor sections — remove padding */
+section:empty {
+  padding: 0;
+  margin: 0;
+  min-height: 0;
+}
 
 /* Architecture */
 .arch-stack {
@@ -525,82 +615,211 @@ section {
   text-decoration: none;
 }
 
-/* ─── 반응형: 태블릿 (1024px 이하) ─── */
+/* ═══════════════════════════════════════════
+   반응형: 태블릿 (1024px 이하)
+   ═══════════════════════════════════════════ */
 @media (max-width: 1024px) {
   .container { padding: 0 1rem; }
   section { padding: 3rem 0; }
-  .cat-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+  .cat-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
   .schedule-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
   .hero-meta { gap: 1rem; }
   .arch-layer { padding: 1.2rem 1.5rem; gap: 1rem; }
+  .top10-list { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
 }
 
-/* ─── 반응형: 모바일 (768px 이하) ─── */
+/* ═══════════════════════════════════════════
+   반응형: 모바일 (768px 이하)
+   — 테이블 → 카드형 레이아웃 전환
+   ═══════════════════════════════════════════ */
 @media (max-width: 768px) {
   section { padding: 2rem 0; }
-  .hero { min-height: 80vh; padding: 2rem 1.2rem; }
-  .hero-sub { margin-bottom: 1.5rem; }
+  section:empty { padding: 0; }
+
+  /* Hero */
+  .hero { min-height: 85vh; padding: 2rem 1.2rem; }
+  .hero-sub { margin-bottom: 1.5rem; font-size: clamp(0.9rem, 3vw, 1.2rem); }
   .hero-meta { gap: 0.6rem; flex-direction: column; align-items: center; }
   .hero-meta-item { font-size: 0.75rem; }
   .hero-meta-item strong { font-size: 0.82rem; }
+
+  /* Section */
   .section-header { margin-bottom: 2rem; }
   .section-desc { font-size: 0.9rem; }
+
+  /* Navigation */
+  .nav-scroll { padding: 0 0.5rem; }
+  .nav-btn { padding: 0.8rem 0.7rem; font-size: 0.73rem; min-height: 44px; }
+
+  /* Cards */
   .cat-grid { grid-template-columns: 1fr; gap: 1rem; }
   .cat-card-header { padding: 1.2rem 1rem 0.8rem; }
   .cat-card-header h3 { font-size: 1rem; }
-  .cat-table th { padding: 0.5rem 0.8rem; font-size: 0.6rem; }
-  .cat-table td { padding: 0.55rem 0.8rem; font-size: 0.78rem; }
+
+  /* 테이블 → 카드형 전환 */
+  .cat-table thead { display: none; }
+  .cat-table,
+  .cat-table tbody,
+  .cat-table tr,
+  .cat-table td {
+    display: block;
+    width: 100%;
+  }
+  .cat-table tr {
+    padding: 0.8rem 1rem;
+    border-top: 1px solid var(--border);
+    position: relative;
+  }
+  .cat-table td {
+    padding: 0.15rem 0;
+    border: none;
+  }
+  .cat-table td.company-name {
+    font-size: 0.85rem;
+    margin-bottom: 0.3rem;
+  }
+  .cat-table td.company-product {
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+  .cat-table td.company-product::before {
+    content: '제품 ';
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-right: 0.3rem;
+  }
+  .cat-table td.company-apply {
+    font-size: 0.75rem;
+    line-height: 1.5;
+    margin-top: 0.2rem;
+  }
+  .cat-table td.company-apply::before {
+    content: '적용 ';
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-right: 0.3rem;
+  }
+  .cat-table tr:hover td { background: none; }
+
   .cat-tip { padding: 0.8rem 1rem; font-size: 0.75rem; }
+
+  /* TOP 10 */
   .top10-list { grid-template-columns: 1fr; gap: 0.8rem; }
   .top10-item { padding: 1rem 1.2rem; }
   .top10-rank { font-size: 1.5rem; }
+
+  /* Architecture */
   .arch-layer { flex-direction: column; gap: 0.75rem; padding: 1rem 1.2rem; }
   .arch-label { min-width: auto; }
   .arch-chip { font-size: 0.72rem; padding: 0.3rem 0.6rem; }
+
+  /* Schedule */
   .schedule-grid { grid-template-columns: 1fr; }
   .schedule-card { padding: 1.5rem; }
-  .nav { -webkit-overflow-scrolling: touch; }
-  .nav-btn { padding: 0.8rem 0.7rem; font-size: 0.73rem; }
-  .footer { padding: 2rem 0; }
+
+  /* Footer */
+  .footer { padding: 2rem 0; padding-bottom: calc(2rem + env(safe-area-inset-bottom)); }
+
+  /* Scroll to top */
+  .scroll-top {
+    bottom: 1.5rem;
+    right: 1.5rem;
+    bottom: calc(1.5rem + env(safe-area-inset-bottom));
+  }
 }
 
-/* ─── 반응형: 소형 모바일 (480px 이하) ─── */
+/* ═══════════════════════════════════════════
+   반응형: 소형 모바일 (480px 이하)
+   ═══════════════════════════════════════════ */
 @media (max-width: 480px) {
-  .hero { min-height: 70vh; padding: 1.5rem 1rem; }
-  .hero-badge { font-size: 0.65rem; padding: 0.3rem 0.8rem; }
+  .hero { min-height: 75vh; padding: 1.5rem 1rem; }
+  .hero-badge { font-size: 0.65rem; padding: 0.3rem 0.8rem; margin-bottom: 1.5rem; }
   .container { padding: 0 0.8rem; }
+
   .cat-card-header { gap: 0.7rem; }
   .cat-icon { width: 40px; height: 40px; font-size: 1.2rem; border-radius: 10px; }
-  .cat-table th { padding: 0.4rem 0.6rem; }
-  .cat-table td { padding: 0.45rem 0.6rem; font-size: 0.73rem; }
-  .company-name { font-size: 0.78rem; }
-  .company-product, .company-apply { font-size: 0.72rem; }
+
+  .cat-table tr { padding: 0.7rem 0.8rem; }
+  .cat-table td.company-name { font-size: 0.8rem; }
+  .cat-table td.company-product,
+  .cat-table td.company-apply { font-size: 0.72rem; }
+
   .top10-item { gap: 0.7rem; padding: 0.9rem 1rem; }
   .top10-rank { font-size: 1.3rem; min-width: 28px; }
   .top10-info h4 { font-size: 0.88rem; }
   .top10-info p { font-size: 0.73rem; }
+
   .nav-btn { padding: 0.7rem 0.5rem; font-size: 0.68rem; }
+
   .schedule-card { padding: 1.2rem; }
   .schedule-card h4 { font-size: 1rem; }
   .schedule-card p { font-size: 0.8rem; }
+
+  .arch-chip { font-size: 0.68rem; padding: 0.25rem 0.5rem; }
+  .arch-label { font-size: 0.65rem; }
+
+  .section-title { font-size: clamp(1.4rem, 5vw, 2rem); }
+
+  .scroll-top { width: 40px; height: 40px; font-size: 1rem; bottom: calc(1rem + env(safe-area-inset-bottom)); right: 1rem; }
 }
 
-/* ─── 터치 디바이스: hover 효과 제거 ─── */
+/* ═══════════════════════════════════════════
+   반응형: 초소형 모바일 (360px 이하)
+   ═══════════════════════════════════════════ */
+@media (max-width: 360px) {
+  .hero { min-height: 70vh; padding: 1.2rem 0.8rem; }
+  .hero h1 { font-size: 2rem; }
+  .hero-sub { font-size: 0.85rem; }
+  .container { padding: 0 0.6rem; }
+  .cat-table tr { padding: 0.6rem; }
+  .nav-btn { padding: 0.6rem 0.4rem; font-size: 0.62rem; }
+  .top10-list { gap: 0.6rem; }
+}
+
+/* ═══════════════════════════════════════════
+   태블릿 가로 (landscape 768~1024px)
+   ═══════════════════════════════════════════ */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+  .top10-list { grid-template-columns: repeat(2, 1fr); }
+  .schedule-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ═══════════════════════════════════════════
+   터치 디바이스: hover 효과 제거 + 터치 최적화
+   ═══════════════════════════════════════════ */
 @media (hover: none) and (pointer: coarse) {
   .cat-card:hover { border-color: var(--border); transform: none; box-shadow: none; }
   .top10-item:hover { border-color: var(--border); transform: none; }
   .schedule-card:hover { border-color: var(--border); transform: none; }
   .cat-table tr:hover td { background: none; }
+  .nav-btn:hover { color: var(--text2); }
+  .nav-btn.active:hover { color: var(--accent); }
+
+  /* 터치 타겟 최소 44px */
+  .nav-btn { min-height: 44px; min-width: 44px; }
 }
 
-/* ─── 인쇄 ─── */
+/* ═══════════════════════════════════════════
+   인쇄
+   ═══════════════════════════════════════════ */
 @media print {
-  .nav { display: none; }
+  .nav, .scroll-top { display: none !important; }
   .hero { min-height: auto; padding: 2rem; }
   .hero-grid, .hero::before { display: none; }
   body { background: #fff; color: #222; }
-  .cat-card, .top10-item, .schedule-card, .arch-layer { border-color: #ccc; }
+  .cat-card, .top10-item, .schedule-card, .arch-layer { border-color: #ccc; background: #fff; }
+  .company-name { color: #111; }
+  .cat-table thead { display: table-header-group; }
+  .cat-table, .cat-table tbody, .cat-table tr, .cat-table td { display: revert; }
+  .cat-table td::before { display: none; }
   section { page-break-inside: avoid; }
+  .footer { padding-bottom: 1rem; }
 }
 </style>
 </head>
@@ -615,26 +834,31 @@ section {
   <div class="hero-meta">
     <div class="hero-meta-item">📅 <strong>2026.3.31 ~ 4.3</strong></div>
     <div class="hero-meta-item">📍 <strong>심천 국제컨벤션센터</strong></div>
-    <div class="hero-meta-item">🏢 <strong>1,500+ 참가업체</strong></div>
+    <div class="hero-meta-item">🏢 <strong>1,658 참가업체</strong></div>
     <div class="hero-meta-item">🤖 <strong>구현지능 전용구역</strong> <span class="new-badge">NEW</span></div>
-    <div class="hero-meta-item">🧠 <strong>AI 에이전트 5개 병렬조사</strong></div>
+    <div class="hero-meta-item">🧠 <strong>AI 에이전트 병렬조사</strong></div>
   </div>
 </div>
 
 <!-- Navigation -->
 <nav class="nav" id="nav">
-  <div class="nav-inner">
-    <button class="nav-btn active" onclick="scrollTo_('#overview')">개요</button>
-    <button class="nav-btn" onclick="scrollTo_('#env')">🌡️ 환경제어</button>
-    <button class="nav-btn" onclick="scrollTo_('#scout')">🔍 예찰</button>
-    <button class="nav-btn" onclick="scrollTo_('#spray')">💧 방역</button>
-    <button class="nav-btn" onclick="scrollTo_('#harvest')">🍅 수확</button>
-    <button class="nav-btn" onclick="scrollTo_('#move')">🚗 이동</button>
-    <button class="nav-btn" onclick="scrollTo_('#sort')">📦 분류</button>
-    <button class="nav-btn" onclick="scrollTo_('#logistics')">🏭 물류</button>
-    <button class="nav-btn" onclick="scrollTo_('#strategy')">🏆 종합전략</button>
-    <button class="nav-btn" onclick="scrollTo_('#schedule')">📅 참관일정</button>
+  <div class="nav-fade-left" id="navFadeL"></div>
+  <div class="nav-scroll" id="navScroll">
+    <div class="nav-inner">
+      <button class="nav-btn active" onclick="scrollTo_('#overview')">개요</button>
+      <button class="nav-btn" onclick="scrollTo_('#gripper')">🤏 그리퍼</button>
+      <button class="nav-btn" onclick="scrollTo_('#cobot')">🦾 로봇팔</button>
+      <button class="nav-btn" onclick="scrollTo_('#amr')">🚗 AMR/AGV</button>
+      <button class="nav-btn" onclick="scrollTo_('#ailogistics')">📦 AI물류</button>
+      <button class="nav-btn" onclick="scrollTo_('#aisorting')">🎯 AI선별</button>
+      <button class="nav-btn" onclick="scrollTo_('#vision')">👁️ 비전</button>
+      <button class="nav-btn" onclick="scrollTo_('#aiplc')">⚙️ AI PLC</button>
+      <button class="nav-btn" onclick="scrollTo_('#smartfarm')">🌱 스마트팜</button>
+      <button class="nav-btn" onclick="scrollTo_('#strategy')">🏆 종합전략</button>
+      <button class="nav-btn" onclick="scrollTo_('#schedule')">📅 참관일정</button>
+    </div>
   </div>
+  <div class="nav-fade-right visible" id="navFadeR"></div>
 </nav>
 
 <div class="container">
@@ -664,27 +888,28 @@ section {
     <div class="cat-card">
       <div class="cat-card-header">
         <div class="cat-icon" style="background:rgba(79,172,254,0.1);">🧠</div>
-        <div><h3>AI 병렬 에이전트 조사</h3><p>5개 에이전트 동시 탐색</p></div>
+        <div><h3>AI 병렬 에이전트 조사</h3><p>8개 기술 항목 동시 탐색</p></div>
       </div>
       <table class="cat-table">
-        <tr><td class="company-name">Agent 1</td><td class="company-apply">환경제어 + 예찰 (IoT, 비전)</td></tr>
-        <tr><td class="company-name">Agent 2</td><td class="company-apply">방역 + 수확 (협동로봇, 그리퍼)</td></tr>
-        <tr><td class="company-name">Agent 3</td><td class="company-apply">이동 (AGV, AMR, 자율주행)</td></tr>
-        <tr><td class="company-name">Agent 4</td><td class="company-apply">분류 + 물류 (비전분류, 팔레타이징)</td></tr>
-        <tr><td class="company-name">Agent 5</td><td class="company-apply">통합 플랫폼 (MES, 디지털 트윈, AI)</td></tr>
+        <tr><td class="company-name">Agent 1</td><td class="company-apply">로봇 그리퍼 + 로봇팔/협동로봇</td></tr>
+        <tr><td class="company-name">Agent 2</td><td class="company-apply">AMR/AGF/AGV + AI 물류 자동화</td></tr>
+        <tr><td class="company-name">Agent 3</td><td class="company-apply">AI 선별 자동화 + 비전 선별 기술</td></tr>
+        <tr><td class="company-name">Agent 4</td><td class="company-apply">AI PLC 통합 플랫폼</td></tr>
+        <tr><td class="company-name">Agent 5</td><td class="company-apply">스마트팜 관련 기술 (환경제어, 방제, 디지털 트윈)</td></tr>
       </table>
     </div>
   </div>
 </section>
 
-<!-- 7 Categories -->
-<section id="env"></section>
-<section id="scout"></section>
-<section id="spray"></section>
-<section id="harvest"></section>
-<section id="move"></section>
-<section id="sort"></section>
-<section id="logistics"></section>
+<!-- 8 Category anchor sections -->
+<section id="gripper"></section>
+<section id="cobot"></section>
+<section id="amr"></section>
+<section id="ailogistics"></section>
+<section id="aisorting"></section>
+<section id="vision"></section>
+<section id="aiplc"></section>
+<section id="smartfarm"></section>
 
 <div id="categories-container"></div>
 
@@ -698,38 +923,47 @@ section {
 
   <div class="arch-stack">
     <div class="arch-layer" style="background:rgba(168,85,247,0.08);">
-      <div class="arch-label" style="color:var(--purple);">Platform</div>
+      <div class="arch-label" style="color:var(--purple);">AI Platform</div>
       <div class="arch-content">
         <span class="arch-chip">Siemens MindSphere</span>
-        <span class="arch-chip">Advantech WISE</span>
-        <span class="arch-chip">자체 AI 플랫폼</span>
+        <span class="arch-chip">Advantech WISE-PaaS</span>
+        <span class="arch-chip">SmartMore ViMo</span>
       </div>
     </div>
     <div class="arch-layer" style="background:rgba(255,75,87,0.06);">
       <div class="arch-label" style="color:var(--red);">Execution</div>
       <div class="arch-content">
         <span class="arch-chip">FANUC CRX</span>
-        <span class="arch-chip">KUKA KMP</span>
         <span class="arch-chip">Flexiv Rizon</span>
-        <span class="arch-chip">Geek+ AMR</span>
+        <span class="arch-chip">Realman RM75</span>
+        <span class="arch-chip">KUKA KMR iiwa</span>
       </div>
     </div>
     <div class="arch-layer" style="background:rgba(255,107,53,0.06);">
       <div class="arch-label" style="color:var(--orange);">Perception</div>
       <div class="arch-content">
-        <span class="arch-chip">Cognex In-Sight</span>
+        <span class="arch-chip">Cognex ViDi</span>
         <span class="arch-chip">Hikrobot MV</span>
         <span class="arch-chip">Basler Hyperspectral</span>
-        <span class="arch-chip">Keyence CV-X</span>
+        <span class="arch-chip">LMI Gocator 3D</span>
+      </div>
+    </div>
+    <div class="arch-layer" style="background:rgba(0,229,255,0.06);">
+      <div class="arch-label" style="color:var(--cyan);">Mobility</div>
+      <div class="arch-content">
+        <span class="arch-chip">Hikrobot AMR</span>
+        <span class="arch-chip">Geek+ P500</span>
+        <span class="arch-chip">SEER SRC</span>
+        <span class="arch-chip">KUKA KMP</span>
       </div>
     </div>
     <div class="arch-layer" style="background:rgba(0,212,170,0.06);">
-      <div class="arch-label" style="color:var(--accent);">Edge</div>
+      <div class="arch-label" style="color:var(--accent);">Edge Control</div>
       <div class="arch-content">
         <span class="arch-chip">Siemens SIMATIC</span>
         <span class="arch-chip">Mitsubishi MELSEC</span>
+        <span class="arch-chip">Inovance AC800</span>
         <span class="arch-chip">Delta PLC</span>
-        <span class="arch-chip">Advantech WISE</span>
       </div>
     </div>
   </div>
@@ -747,32 +981,35 @@ section {
   <div class="schedule-grid">
     <div class="schedule-card">
       <div class="schedule-day" style="color:var(--accent);">Day 1 · 3/31 화</div>
-      <h4>🤖 로봇·자동화 + 구현지능</h4>
-      <p>FANUC, KUKA, Flexiv 부스 방문. 구현지능 전용 구역에서 인형 로봇 40+사 탐색. 영민손(灵巧手) 기술의 스마트팜 수확 적용 가능성 집중 확인.</p>
+      <h4>🦾 로봇팔/협동로봇 + 그리퍼 + 구현지능</h4>
+      <p>FANUC, Flexiv, Dobot, Realman 부스 방문. 구현지능 전용 구역에서 Inspire Robots 영민손 탐색. RoChU, DH-Robotics 소프트 그리퍼 시연 확인.</p>
     </div>
     <div class="schedule-card">
       <div class="schedule-day" style="color:var(--blue);">Day 2 · 4/1 수</div>
-      <h4>👁️ 비전·센서 + 물류 자동화</h4>
-      <p>Cognex, Keyence, Hikrobot 비전 솔루션 비교. AGV/AMR 시연 확인. 예찰·분류용 AI 카메라 기술 상담.</p>
+      <h4>👁️ 비전·AI 선별 + AMR/AGV</h4>
+      <p>Cognex, Keyence, Hikrobot, LMI Technologies 비전 비교. SmartMore AI 대형모델 상담. SEER, Geek+ AMR 시연 확인.</p>
     </div>
     <div class="schedule-card">
       <div class="schedule-day" style="color:var(--purple);">Day 3 · 4/2 목</div>
-      <h4>📡 제어·IoT + AI 포럼</h4>
-      <p>Siemens, Mitsubishi, Delta, Advantech 부스 방문. 80+ 포럼 중 AI·디지털 트윈 관련 세션 참석. 스마트팜 적용 사례 상담.</p>
+      <h4>⚙️ AI PLC·IoT + 물류 자동화 + 포럼</h4>
+      <p>Siemens, Mitsubishi, Inovance, Advantech 부스. KUKA 팔레타이징. 80+ 포럼 중 AI/디지털 트윈 세션 참석.</p>
     </div>
     <div class="schedule-card">
       <div class="schedule-day" style="color:var(--orange);">Day 4 · 4/3 금</div>
-      <h4>🤝 종합 미팅 + 후속 조치</h4>
-      <p>핵심 업체 후속 미팅 확정. 샘플·견적 요청. 파트너십 MOU 논의. 현장 도면 기반 기술 상담.</p>
+      <h4>🌱 스마트팜 기술 + 종합 미팅</h4>
+      <p>Festo 바이오닉, Basler 하이퍼스펙트럴 상담. 핵심 업체 후속 미팅 확정, 샘플·견적 요청, 파트너십 논의.</p>
     </div>
   </div>
 </section>
 
 </div>
 
+<!-- Scroll to top -->
+<button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="맨 위로">↑</button>
+
 <!-- Footer -->
 <div class="footer">
-  <p>ITES 2026 스마트팜 참가업체 조사보고서 · AI 에이전트 5개 병렬 조사 · 2026.02.25 작성</p>
+  <p>ITES 2026 스마트팜 참가업체 조사보고서 · AI 에이전트 병렬 조사 · 2026.03.09 작성</p>
   <p style="margin-top:0.5rem;">공식 사이트: <a href="https://global.iteschina.com" target="_blank">global.iteschina.com</a> · 참관 등록 진행 중 (무료)</p>
 </div>
 
@@ -780,102 +1017,128 @@ section {
 // Data
 const categories = [
   {
-    id:'env', icon:'🌡️', title:'환경제어', sub:'Environment Control', color:'var(--env)',
-    desc:'온실 내 온도, 습도, CO2, 광량, 양액 등을 자동 제어',
+    id:'gripper', icon:'🤏', title:'로봇 그리퍼', sub:'Robot Grippers', color:'var(--gripper)',
+    desc:'소프트 그리퍼, 진공 그리퍼, 적응형 그리퍼 — 작물 손상 없는 수확 및 핸들링',
     companies:[
-      {name:'Siemens (지멘스)',prod:'SIMATIC PLC, MindSphere IoT',apply:'온실 통합 환경제어, SCADA 원격 모니터링'},
-      {name:'Mitsubishi Electric',prod:'MELSEC PLC, GOT HMI',apply:'양액 제어, 환기/차광 자동 제어'},
-      {name:'Delta Electronics',prod:'DVP/AS PLC, 인버터',apply:'냉난방, 순환팬·양액 펌프 제어'},
-      {name:'Huichuan (汇川)',prod:'서보, PLC, IoT 모듈',apply:'환기 모터 인버터, 양액 펌프 서보'},
-      {name:'Advantech (어드밴텍)',prod:'WISE IoT, Edge AI 모듈',apply:'환경 데이터 수집·분석, 로컬 AI 제어'}
+      {name:'Schmalz (시마츠)',prod:'FXCB/FMCB 진공 그리퍼 (ISO TS 15066, 8kg, IO-Link)',apply:'과일/채소 박스 진공 흡착 이송, 포장 Pick & Place'},
+      {name:'Inspire Robots (因时)',prod:'FTP 5지 영민손(灵巧手), 마이크로 서보, 촉각 피드백',apply:'딸기/토마토 섬세 파지, 인형 로봇 수확 핸드'},
+      {name:'DH-Robotics (大寰)',prod:'AG 적응형 전동 그리퍼 (145mm 스트로크), PGE 박형 (0.8~400N)',apply:'과실 크기별 자동 적응 파지, 정밀 힘 제어 손상 방지'},
+      {name:'RoChU (柔触)',prod:'소프트 그리퍼 (FDA/EC-1935 식품 인증), 2/4/6핑거, 65~155mm',apply:'연약 과실 무손상 수확, 식품 등급 직접 접촉'},
+      {name:'OnRobot (온로봇)',prod:'Soft Gripper (실리콘 컵, FDA 21 CFR, 2.2kg), VG10 진공',apply:'과일/채소 무손상 Pick & Place, 외부 에어 불필요'},
+      {name:'ZG Robot (增广)',prod:'전동 평행 그리퍼, 적응형 3핑거 그리퍼',apply:'다양한 크기 농산물 적응형 파지, 협동로봇 탑재'}
     ],
-    tip:'Siemens MindSphere + SIMATIC으로 클라우드 통합 관리. Delta는 중소규모에 가성비 우수.'
+    tip:'RoChU/OnRobot은 FDA 식품 인증 소프트 그리퍼 보유. Inspire 5지 영민손은 비정형 과실 수확 차세대 기술. DH-Robotics AG는 145mm 스트로크로 다양한 크기 대응.'
   },
   {
-    id:'scout', icon:'🔍', title:'예찰', sub:'Pest/Disease Scouting', color:'var(--scout)',
-    desc:'머신비전, AI 카메라, 센서로 병해충 예찰 및 생육 모니터링',
+    id:'cobot', icon:'🦾', title:'로봇팔/협동로봇', sub:'Robot Arms & Cobots', color:'var(--cobot)',
+    desc:'수확, 방제, 전정 등 농작업에 적합한 협동로봇 팔',
     companies:[
-      {name:'Cognex (코그넥스)',prod:'In-Sight 비전, ViDi AI',apply:'작물 병반 검출, 해충 자동 식별'},
-      {name:'Keyence (키엔스)',prod:'CV-X AI 비전, IV3 센서',apply:'병해충 AI 분석, 엽면적 계측'},
-      {name:'Hikrobot (海康)',prod:'MV 카메라, 3D 비전',apply:'해충 트랩 촬영·분석, 생육 판별'},
-      {name:'Basler (바슬러)',prod:'하이퍼스펙트럴 카메라',apply:'다분광 조기 병해 감지, NDVI 분석'},
-      {name:'Daheng (大恒图像)',prod:'MER 카메라, 비전 솔루션',apply:'엽면 촬영, 해충 자동 카운팅'}
+      {name:'FANUC (화낙)',prod:'CRX 시리즈 (6축 힘 제어, 5~25kg), LR Mate 200iD',apply:'CRX 힘 제어 과실 수확, LR Mate 소형 온실 방제'},
+      {name:'Flexiv (非夕)',prod:'Rizon 4/4s/10 적응형 7축 (0.03N 힘 감지, IP65)',apply:'적응형 비정형 수확, 온실 습윤 환경 대응, 방제 노즐 조향'},
+      {name:'Dobot (越疆)',prod:'CR 시리즈 (3~16kg, ±0.02mm), CRS 안전 스킨 (15cm 감지)',apply:'수확/방제, 안전 스킨 작업자 근접 협동'},
+      {name:'Realman (睿尔曼)',prod:'RM75-B (7축, 5kg, 7.8kg 자중), ROS2, 24V DC',apply:'초경량 AMR 탑재 이동형 수확, 7축 장애물 회피'},
+      {name:'Kawasaki (가와사키)',prod:'duAro 듀얼암, RS 시리즈 소형 로봇',apply:'양손 수확 (파지+절단 동시), 소형 로봇 방제'},
+      {name:'HSR (华数)',prod:'HSR-CR605 협동로봇, JR 시리즈, MD 팔레타이징',apply:'소형 로봇 농작업, MD410 수확물 팔레타이징'},
+      {name:'EPSON (엡손)',prod:'T 시리즈 SCARA, 6축 C 시리즈, 비전 가이드',apply:'SCARA 고속 분류/포장, 6축 소형 온실 작업'}
     ],
-    tip:'Basler 하이퍼스펙트럴은 육안 불가 초기 병해 감지. Hikrobot은 비전+AGV로 이동형 예찰 로봇 구현.'
+    tip:'Flexiv Rizon: 7축+적응형 힘 제어+IP65 → 온실 수확 최적. Realman RM75-B: 7.8kg 초경량 → AMR 탑재 이상적. Dobot CRS 안전 스킨(15cm 비접촉) → 안전 협동.'
   },
   {
-    id:'spray', icon:'💧', title:'방역', sub:'Pest Control & Spraying', color:'var(--spray)',
-    desc:'자동 방제(약액 분사), UV 살균, 소독 로봇 자동화',
+    id:'amr', icon:'🚗', title:'AMR/AGF/AGV', sub:'Autonomous Mobile Robots', color:'var(--amr)',
+    desc:'온실 내 자율이동 운반 로봇, 물류 자동화',
     companies:[
-      {name:'FANUC (화낙)',prod:'CRX 협동로봇 (6축 힘 제어)',apply:'정밀 노즐 분사 로봇, 국소 방제'},
-      {name:'Universal Robots',prod:'UR5e/UR10e 협동로봇',apply:'이동 플랫폼 탑재 방제 로봇'},
-      {name:'Flexiv (非夕)',prod:'Rizon 적응형 로봇',apply:'힘 제어 기반 노즐 조향, 자동 분사'},
-      {name:'DJI (大疆)',prod:'Agras T60 농업 드론',apply:'대형 시설 상부 드론 방제'},
-      {name:'XAG (极飞)',prod:'R150 지상 로봇',apply:'자율주행 지상 방제, AI 변량 분사'}
+      {name:'Hikrobot (海康)',prod:'잠입형 AMR Q7 (1,500kg, 1.5m/s), 포크리프트 AMR, iWMS-1000',apply:'SLAM 온실 운반, iWMS 수확량 관리, 포크 팔레트 이송'},
+      {name:'Geek+ (极智嘉)',prod:'P500 AMR (600kg, 2m/s), RoboShuttle, S 분류 로봇',apply:'수확물 자동 운반, G2P 피킹, 포장 라인 공급'},
+      {name:'SEER Robotics (仙工)',prod:'SRC 범용 AMR 제어기 (SLAM), SJV 전방향 AMR',apply:'SRC로 자체 농업용 AMR 개발, 옴니 이동 좁은 통로 주행'},
+      {name:'KUKA (쿠카)',prod:'KMP 모바일 플랫폼, KMR iiwa (이동+협동로봇)',apply:'KMR iiwa 이동+수확 복합 작업'},
+      {name:'Standard Robots (斯坦德)',prod:'Oasis AMR, Fleet 관리 시스템',apply:'다대 AMR 플릿, 온실 구역별 자율 배차'},
+      {name:'OKAGV (欧铠)',prod:'잠입형 AGV, 전방향 AGV, 자체 제어 시스템',apply:'온실 내 경로 자재 운반, 양액 공급 이동'}
     ],
-    tip:'XAG R150은 농업 검증된 지상 방제 로봇. 2026 구현지능 구역에서 농업 적용 인형 로봇 탐색 가능.'
+    tip:'SEER Robotics: ITES 3년+ 연속 참가, SRC 범용 제어기로 농업용 맞춤 AMR 개발 가능. 온실 GPS 불가 → SLAM 자율주행 필수.'
   },
   {
-    id:'harvest', icon:'🍅', title:'수확', sub:'Harvesting', color:'var(--harvest)',
-    desc:'로봇 팔, 소프트 그리퍼, AI 비전 기반 수확 자동화',
+    id:'ailogistics', icon:'📦', title:'AI 물류 자동화', sub:'AI Logistics Automation', color:'var(--ailogistics)',
+    desc:'AI 기반 물류, 팔레타이징, 콜드체인 자동화, WMS',
     companies:[
-      {name:'FANUC (화낙)',prod:'CRX + 6축 힘 제어',apply:'과실 수확 (소프트 그리핑 + 절단)'},
-      {name:'KOMO (科盟创新)',prod:'하모닉 감속기, 관절 모듈',apply:'수확 로봇 관절, 경량 팔 부품'},
-      {name:'OnRobot',prod:'소프트/진공/적응형 그리퍼',apply:'과실 무손상 그리핑'},
-      {name:'Leishen (雷赛)',prod:'서보 드라이버, 모션 컨트롤러',apply:'수확 팔 정밀 모션, 다축 경로'},
-      {name:'Keli (柯力传感)',prod:'6축 힘/토크/마이크로 센서',apply:'과실 파지력 제어, 절단력 피드백'}
+      {name:'KUKA (쿠카)',prod:'KR QUANTEC 팔레타이징 (120~300kg), KUKA.AppTech',apply:'수확물 자동 팔레타이징, 냉장 물류 자동화'},
+      {name:'Geek+ (极智嘉)',prod:'P 시리즈 피킹 AMR, RoboShuttle, AI 스케줄링',apply:'G2P 주문별 자동 출하, AI 최적 경로'},
+      {name:'Siemens (지멘스)',prod:'SIMATIC WMS, MES, MindSphere IoT',apply:'저온 저장고 WMS, 수확~출하 MES 트래킹, 콜드체인'},
+      {name:'Hikrobot (海康)',prod:'iWMS-1000, RCS-2000, 포크리프트 AMR',apply:'재고/위치 실시간 관리, ERP/MES 연동'},
+      {name:'SMC (에스엠씨)',prod:'공압 실린더, 진공 패드, 전동 액추에이터',apply:'포장 라인 공압 구동, 박스 이송, 라벨 부착'},
+      {name:'Festo (페스토)',prod:'바이오닉 소프트 그리퍼, VTEM 모션 터미널',apply:'다양한 형태 농산물 포장, 유연 포장 시스템'},
+      {name:'HSR (华数)',prod:'HSR-MD410 팔레타이징 (10kg, ±0.08mm)',apply:'가성비 팔레타이징, 수확물 박스 적재'}
     ],
-    tip:'핵심은 소프트 그리퍼 + 비전 + 힘 센서 삼위일체. 2026 구현지능 구역의 영민손 기술 주목.'
+    tip:'Siemens WMS + KUKA 팔레타이징 + Geek+ AMR → 수확-포장-출하 전 과정 자동화. 콜드체인 자동화가 핵심.'
   },
   {
-    id:'move', icon:'🚗', title:'이동', sub:'Mobility & Transport', color:'var(--move)',
-    desc:'AGV, AMR 자율주행 이동로봇으로 온실 내 운반',
+    id:'aisorting', icon:'🎯', title:'AI 선별 자동화', sub:'AI Sorting Automation', color:'var(--aisorting)',
+    desc:'AI 기반 농산물 선별, 등급 판정, 품질 검사',
     companies:[
-      {name:'KUKA (쿠카)',prod:'KMP 모바일 플랫폼',apply:'온실 자율주행, 복합 이동 매니퓰레이터'},
-      {name:'Geek+ (极智嘉)',prod:'M 시리즈 AMR',apply:'수확물 자동 운반, 온실↔저장고'},
-      {name:'Hikrobot (海康)',prod:'잠입형 AGV, AMR',apply:'수확 박스 수거, 궤도 없는 자율 이동'},
-      {name:'TOYO (东洋)',prod:'리니어 모듈, 직교 로봇',apply:'레일 기반 이동 플랫폼 (고설재배)'},
-      {name:'Standard Robots',prod:'Oasis AMR, Fleet 관리',apply:'다대 AMR 플릿, 구역별 배차'}
+      {name:'Cognex (코그넥스)',prod:'In-Sight D900 (ViDi AI 딥러닝), VisionPro Deep Learning',apply:'과실 외관 등급 분류 (크기/색상/흠집), 소량 학습 고정확도'},
+      {name:'Keyence (키엔스)',prod:'CV-X AI 비전, IV3 AI 센서, FD 센서, LJ-X 프로파일러',apply:'실시간 분류, 중량/크기 계측, AI 외관 검사'},
+      {name:'SmartMore (思谋)',prod:'SMore ViMo AI 플랫폼, 멀티모달 대형모델, AI-AOI',apply:'대형모델 비정형 결함 검출, 자동 선별 라인 통합'},
+      {name:'EPSON (엡손)',prod:'T 시리즈 SCARA + 비전 가이드, IntelliFlex',apply:'SCARA 고속 Pick & Place 분류, 등급별 레인 배분'},
+      {name:'GSK CNC (广州数控)',prod:'RB 산업 로봇, 델타 로봇, GSK-RC 제어',apply:'델타 로봇 고속 과실 Pick & Place 선별'},
+      {name:'Hexagon (해사곤)',prod:'3D 스캐너, 慧质云 품질 클라우드',apply:'3D 형상 정밀 등급 분류, 품질 클라우드 관리'},
+      {name:'CKVision (创科)',prod:'CKVisionBuilder 노코드 머신비전',apply:'프로그래밍 없이 검사 시스템 구축, 빠른 품종 변경'}
     ],
-    tip:'온실은 GPS 불가 → SLAM 자율주행 필수. KUKA KMP는 로봇 팔 탑재로 이동+작업 복합.'
+    tip:'Cognex ViDi: 수십 장 학습으로 고정확도 → 다품종 소량에 유리. SmartMore: 300+ 기업 실적, 대형 모델 비정형 결함. CKVision 노코드 → 농업 현장 빠른 도입.'
   },
   {
-    id:'sort', icon:'📦', title:'분류', sub:'Sorting & Grading', color:'var(--sort)',
-    desc:'AI 비전 기반 품질 분류, 무게 선별, 등급 판정',
+    id:'vision', icon:'👁️', title:'비전 선별 기술', sub:'Vision Sorting Technology', color:'var(--vision)',
+    desc:'머신비전 카메라, 하이퍼스펙트럴 이미징, 3D 스캐닝',
     companies:[
-      {name:'Cognex (코그넥스)',prod:'In-Sight + ViDi AI 딥러닝',apply:'크기·색상·흠집 자동 등급 분류'},
-      {name:'Keyence (키엔스)',prod:'CV-X AI, FD 센서',apply:'실시간 분류, 중량·크기 계측'},
-      {name:'Epson Robots',prod:'T 시리즈 SCARA',apply:'고속 피킹 + 등급별 배치'},
-      {name:'GSK CNC (广州数控)',prod:'델타 로봇',apply:'고속 과실 픽앤플레이스'},
-      {name:'Hexagon (해사곤)',prod:'3D 스캐너, 慧质云 플랫폼',apply:'3D 형상 기반 정밀 등급 분류'}
+      {name:'Keyence (키엔스)',prod:'CV-X AI (딥러닝), LJ-X8000 3D 프로파일러, IM 화상 측정',apply:'작물 3D 계측, AI 병해충 판별, 과실 크기/무게 추정'},
+      {name:'Hikrobot (海康)',prod:'MV 산업용 카메라, SC 스마트 카메라, 3D 비전, VisionMaster',apply:'해충 트랩 분석, 컬러 기반 생육 판별, 비전 가이드 수확'},
+      {name:'Basler (바슬러)',prod:'ace2/boost 카메라, 하이퍼스펙트럴, pylon SDK',apply:'다분광 조기 병해 감지, NDVI 분석, 잠복 병해 발견'},
+      {name:'LMI Technologies',prod:'Gocator 3D 센서 (라인 스캔/스냅샷), 인라인 100% 검사',apply:'과실 3D 전수검사 (체적/표면 결함), 등급 자동 판정'},
+      {name:'Cognex (코그넥스)',prod:'In-Sight 2800, 3D-A5000, DataMan, Edge Intelligence',apply:'3D 입체 검사, 포장 추적성, 분산 비전 관리'},
+      {name:'SmartMore (思谋)',prod:'SMore ViMo, 감지-결정-실행 폐루프, 멀티모달 대형모델',apply:'전통 비전 한계 극복 비정형 결함 검출'},
+      {name:'Daheng (大恒图像)',prod:'MER 산업용 카메라, 머신비전 솔루션',apply:'고해상도 엽면 촬영, 해충 자동 카운팅, 저비용 비전'}
     ],
-    tip:'Cognex ViDi는 수십 장 이미지로 학습 가능 → 다품종 소량에 유리. GSK 델타는 가성비 우수.'
+    tip:'LMI Technologies: ITES 2026 참가 공식 확인 → 3D 전수검사 최적. Basler 하이퍼스펙트럴 → 육안 불가 초기 병해 감지. SmartMore 멀티모달 대형모델 → 비정형 결함.'
   },
   {
-    id:'logistics', icon:'🏭', title:'물류', sub:'Logistics & Warehousing', color:'var(--logistics)',
-    desc:'포장, 팔레타이징, 저온 저장, 출하 물류 자동화',
+    id:'aiplc', icon:'⚙️', title:'AI PLC 통합 플랫폼', sub:'AI PLC Integration Platform', color:'var(--aiplc)',
+    desc:'AI 기능 내장 PLC, IoT 플랫폼, SCADA, MES — 온실 통합 제어',
     companies:[
-      {name:'Siemens (지멘스)',prod:'SIMATIC WMS, MES',apply:'저온 저장고 관리, 출하 통합 플랫폼'},
-      {name:'KUKA (쿠카)',prod:'KR QUANTEC, KMP AGV',apply:'자동 팔레타이징, 냉장 물류'},
-      {name:'Geek+ (极智嘉)',prod:'RoboShuttle, 분류 로봇',apply:'자동 피킹·분류·출하, G2P'},
-      {name:'SMC (에스엠씨)',prod:'공압 실린더, 진공 패드',apply:'포장 라인 구동, 박스 이송'},
-      {name:'Festo (페스토)',prod:'바이오닉 솔루션',apply:'소프트 그리핑 포장, 적응형 물류'}
+      {name:'Siemens (지멘스)',prod:'S7-1500 (AI 확장), S7-1200 (온실 예제 공식 제공), TIA Portal, MindSphere, WinCC',apply:'온실 환경 통합 제어, MindSphere 원격 모니터링/예측 분석'},
+      {name:'Mitsubishi (미쓰비시)',prod:'MELSEC iQ-R/iQ-F, GOT2000 HMI, CC-Link IE TSN, MELIPC 엣지',apply:'양액 제어, CC-Link 온실 네트워크 통합, 엣지 AI 분석'},
+      {name:'Inovance (汇川)',prod:'AC800 IPC (EtherCAT, 256축, 500us), 서보, 인버터, IoT',apply:'AC800 대규모 온실 통합, 인버터 환기/순환, 서보 양액 정밀'},
+      {name:'Delta (델타)',prod:'DVP/AS PLC, DOP HMI, 인버터, DIACloud IoT',apply:'냉난방, 순환팬/환기, 가성비 중소규모 솔루션'},
+      {name:'Advantech (어드밴텍)',prod:'WISE-PaaS IoT, UNO/TPC PC, ADAM 수집, WebAccess SCADA',apply:'Edge AI 실시간 제어, 센서 수집, 원격 관제'},
+      {name:'Leisai (雷赛)',prod:'DMC3000 모션 제어 (1~12축, 4MHz), EtherCAT 버스 컨트롤러',apply:'수확 로봇 다축 모션, EtherCAT 온실 장비 네트워크'},
+      {name:'ZMotion (正运动)',prod:'ZMC EtherCAT 제어기, ZMIO 확장, ZDevelop 개발환경',apply:'온실 다축 제어, 분산 IO 네트워크'}
     ],
-    tip:'콜드체인 자동화가 핵심. Siemens MES + KUKA 팔레타이징 + Geek+ AMR로 전 과정 자동화.'
+    tip:'Siemens: S7-1200 온실 제어 예제 공식 제공 → 레퍼런스 확보 용이. Inovance AC800: 256축+EtherCAT → 대규모 식물공장. Delta: 가성비 → 중소규모 최적.'
+  },
+  {
+    id:'smartfarm', icon:'🌱', title:'스마트팜 관련 기술', sub:'Smart Farm Technologies', color:'var(--smartfarm)',
+    desc:'환경 제어, 양액 시스템, 병해충 모니터링, 드론 방제, 디지털 트윈',
+    companies:[
+      {name:'Siemens (지멘스)',prod:'디지털 트윈 (NX, Tecnomatix), MindSphere, S7-1200 온실 제어',apply:'온실 디지털 트윈 구축, 가상 시뮬레이션→최적 제어'},
+      {name:'Advantech (어드밴텍)',prod:'WISE-PaaS Edge AI, ADAM-6000, 환경 센서 게이트웨이',apply:'환경 센서(온/습/CO2/광/EC/pH) 수집, 엣지 AI, 원격 모니터링'},
+      {name:'DJI (大疆)',prod:'Agras T60 (60L, RTK, AI 처방도), T25P (25L 경량)',apply:'대형 시설 드론 방제, AI 변량 분사, 다분광 모니터링'},
+      {name:'XAG (极飞)',prod:'P150 드론, R150 자율주행 지상 로봇, AI 처방도',apply:'R150 온실 내 지상 방제, AI 변량 분사, 무인농장'},
+      {name:'Festo (페스토)',prod:'바이오닉 (BionicSoftArm), 비례 밸브, 공압/전동 하이브리드',apply:'소프트 액추에이터, 비례 밸브 양액 정밀 유량 제어'},
+      {name:'Basler (바슬러)',prod:'하이퍼스펙트럴 카메라, ace2, dart 임베디드',apply:'조기 병해충 감지 (NDVI/NDRE), 수분 스트레스 분석'},
+      {name:'Keli Sensing (柯力传感)',prod:'6축 힘/토크 센서, 마이크로 센서, 로드셀',apply:'수확 로봇 파지력 센싱, 양액 계량, 토양 수분 측정'}
+    ],
+    tip:'Siemens 디지털 트윈 → 온실 가상 시뮬레이션 후 최적 제어. XAG R150 → 검증된 자율주행 지상 방제. Basler 하이퍼스펙트럴 → 조기 병해 감지 핵심.'
   }
 ];
 
 const top10 = [
-  {rank:1, name:'FANUC', flag:'🇯🇵', field:'수확·방역', reason:'CRX 힘 제어 + ITES 직접 참가'},
-  {rank:2, name:'Siemens', flag:'🇩🇪', field:'환경제어·물류', reason:'PLC~MES 통합, MindSphere IoT'},
-  {rank:3, name:'Cognex', flag:'🇺🇸', field:'예찰·분류', reason:'ViDi AI 딥러닝 비전 실적'},
-  {rank:4, name:'KUKA', flag:'🇩🇪', field:'이동·물류', reason:'KMP AMR + 팔레타이징 통합'},
-  {rank:5, name:'Hikrobot', flag:'🇨🇳', field:'예찰·이동', reason:'비전+AGV 이원화 포트폴리오'},
-  {rank:6, name:'Flexiv', flag:'🇨🇳', field:'방역·수확', reason:'적응형 힘 제어, 비정형 특화'},
-  {rank:7, name:'Geek+', flag:'🇨🇳', field:'이동·물류', reason:'대규모 AMR 플릿 관리 강점'},
-  {rank:8, name:'XAG', flag:'🇨🇳', field:'방역', reason:'농업 특화 드론·지상 로봇 선도'},
-  {rank:9, name:'Advantech', flag:'🇹🇼', field:'환경제어', reason:'Edge AI + IoT 플랫폼 전문'},
-  {rank:10, name:'Keyence', flag:'🇯🇵', field:'예찰·분류', reason:'고정밀 비전 센서 + 계측'}
+  {rank:1, name:'Flexiv', flag:'🇨🇳', field:'로봇팔·그리퍼', reason:'7축 적응형 힘 제어 + IP65, 수확 로봇 최적'},
+  {rank:2, name:'Siemens', flag:'🇩🇪', field:'AI PLC·물류·스마트팜', reason:'S7-1200 온실 예제 공식 제공, MindSphere 디지털 트윈'},
+  {rank:3, name:'Hikrobot', flag:'🇨🇳', field:'AMR·비전·물류', reason:'비전+AMR 이원 포트폴리오, iWMS 통합 관리'},
+  {rank:4, name:'Cognex', flag:'🇺🇸', field:'AI선별·비전', reason:'ViDi AI 소량 학습 고정확도, 풍부한 산업 실적'},
+  {rank:5, name:'FANUC', flag:'🇯🇵', field:'로봇팔', reason:'CRX 6축 힘 제어, ITES 직접 참가'},
+  {rank:6, name:'Realman', flag:'🇨🇳', field:'로봇팔', reason:'7.8kg 초경량 7축, AMR 탑재 이동형 수확 최적'},
+  {rank:7, name:'SEER', flag:'🇨🇳', field:'AMR', reason:'3년+ ITES 연속, SRC 범용 제어기 맞춤 AMR'},
+  {rank:8, name:'SmartMore', flag:'🇨🇳', field:'AI선별·비전', reason:'멀티모달 대형모델, 비정형 결함 검출'},
+  {rank:9, name:'RoChU', flag:'🇨🇳', field:'로봇 그리퍼', reason:'FDA/EC 식품 인증 소프트 그리퍼'},
+  {rank:10, name:'Inovance', flag:'🇨🇳', field:'AI PLC', reason:'256축 EtherCAT, 중국 산업자동화 1위'}
 ];
 
 // Render categories
@@ -922,12 +1185,32 @@ top10.forEach((t,i) => {
 
 // Navigation scroll
 function scrollTo_(sel) {
-  document.querySelector(sel)?.scrollIntoView({behavior:'smooth', block:'start'});
+  const el = document.querySelector(sel);
+  if (!el) return;
+  const navH = document.getElementById('nav').offsetHeight;
+  const top = el.getBoundingClientRect().top + window.scrollY - navH - 8;
+  window.scrollTo({top, behavior:'smooth'});
 }
 
-// Active nav on scroll
-const sections = ['overview','env','scout','spray','harvest','move','sort','logistics','strategy','schedule'];
+// Nav scroll fade indicators
+const navScroll = document.getElementById('navScroll');
+const navFadeL = document.getElementById('navFadeL');
+const navFadeR = document.getElementById('navFadeR');
+function updateNavFades() {
+  if (!navScroll) return;
+  const sl = navScroll.scrollLeft;
+  const maxSl = navScroll.scrollWidth - navScroll.clientWidth;
+  navFadeL.classList.toggle('visible', sl > 8);
+  navFadeR.classList.toggle('visible', sl < maxSl - 8);
+}
+navScroll?.addEventListener('scroll', updateNavFades, {passive:true});
+window.addEventListener('resize', updateNavFades);
+updateNavFades();
+
+// Active nav on scroll + auto scroll nav into view
+const sections = ['overview','gripper','cobot','amr','ailogistics','aisorting','vision','aiplc','smartfarm','strategy','schedule'];
 const navBtns = document.querySelectorAll('.nav-btn');
+let lastCurrent = 0;
 window.addEventListener('scroll', () => {
   const y = window.scrollY + 120;
   let current = 0;
@@ -936,7 +1219,18 @@ window.addEventListener('scroll', () => {
     if (el && el.offsetTop <= y) current = i;
   });
   navBtns.forEach((b,i) => b.classList.toggle('active', i === current));
-});
+  // Auto scroll active nav button into view
+  if (current !== lastCurrent && navBtns[current]) {
+    navBtns[current].scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+    lastCurrent = current;
+  }
+}, {passive:true});
+
+// Scroll to top button visibility
+const scrollTopBtn = document.getElementById('scrollTopBtn');
+window.addEventListener('scroll', () => {
+  scrollTopBtn?.classList.toggle('visible', window.scrollY > 600);
+}, {passive:true});
 </script>
 
 </body>
