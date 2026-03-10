@@ -902,16 +902,6 @@ section:empty {
   </div>
 </section>
 
-<!-- 8 Category anchor sections -->
-<section id="gripper"></section>
-<section id="cobot"></section>
-<section id="amr"></section>
-<section id="ailogistics"></section>
-<section id="aisorting"></section>
-<section id="vision"></section>
-<section id="aiplc"></section>
-<section id="smartfarm"></section>
-
 <div id="categories-container"></div>
 
 <!-- Strategy -->
@@ -1175,7 +1165,7 @@ categories.forEach(cat => {
     </tr>`).join('');
 
   container.innerHTML += `
-    <section>
+    <section id="${cat.id}">
       <div class="section-header">
         <div class="section-tag" style="background:${cat.color}15;color:${cat.color};">${cat.sub}</div>
         <div class="section-title">${cat.icon} ${cat.title}</div>
