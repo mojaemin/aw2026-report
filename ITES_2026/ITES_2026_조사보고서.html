@@ -1273,7 +1273,7 @@ section:empty {
 <!-- 1. 행사개요 (Overview) -->
 <section id="overview">
   <div class="section-header">
-    <div class="section-tag" style="background:rgba(0,212,170,0.1);color:var(--accent);">1. Exhibition Overview</div>
+    <div class="section-tag" style="background:rgba(0,212,170,0.1);color:var(--accent);">1. 행사개요</div>
     <div class="section-title">행사개요</div>
     <div class="section-desc">ITES 2026은 정밀 제조 + 산업급 AI 응용 + 구현지능(Embodied Intelligence) 산업체인을 핵심 테마로, 중국 화남지역 최대 규모 산업 전시회입니다.</div>
   </div>
@@ -1312,7 +1312,7 @@ section:empty {
 <!-- 10. 주요 트렌드 (Trends) -->
 <section id="trends">
   <div class="section-header">
-    <div class="section-tag" style="background:rgba(192,132,252,0.1);color:var(--trend);">10. Key Trends</div>
+    <div class="section-tag" style="background:rgba(192,132,252,0.1);color:var(--trend);">10. 주요 트렌드</div>
     <div class="section-title">📊 주요 트렌드</div>
     <div class="section-desc">ITES 2026 참가업체 및 기술 데이터를 기반으로 도출한 스마트팜 자동화 분야 8대 핵심 트렌드</div>
   </div>
@@ -1322,7 +1322,7 @@ section:empty {
 <!-- 11. 핵심 주목 기업 (Top Companies) -->
 <section id="topcompanies">
   <div class="section-header">
-    <div class="section-tag" style="background:rgba(255,211,42,0.1);color:var(--yellow);">11. Key Companies</div>
+    <div class="section-tag" style="background:rgba(255,211,42,0.1);color:var(--yellow);">11. 핵심 주목 기업</div>
     <div class="section-title">🏆 핵심 주목 기업</div>
     <div class="section-desc">ITES 2026 참가업체 기술 기반 '로봇 자동화 스마트팜 운영 플랫폼' 기술 스택 및 TOP 10</div>
   </div>
@@ -1382,10 +1382,10 @@ section:empty {
   <div class="top10-list" id="top10"></div>
 </section>
 
-<!-- 12. 참관 일정 및 전략 (Schedule & Strategy) -->
+<!-- 12. 참관 일정 및 전략 -->
 <section id="schedule">
   <div class="section-header">
-    <div class="section-tag" style="background:rgba(79,172,254,0.1);color:var(--blue);">12. Schedule & Strategy</div>
+    <div class="section-tag" style="background:rgba(79,172,254,0.1);color:var(--blue);">12. 참관 일정 및 전략</div>
     <div class="section-title">📅 참관 일정 및 전략</div>
   </div>
   <div class="schedule-grid">
@@ -1438,7 +1438,7 @@ section:empty {
 // Data — 마크다운 보고서 전체 데이터 반영 (항목 2~9: 8개 기술 카테고리)
 const categories = [
   {
-    id:'gripper', icon:'🤏', title:'그리퍼', sub:'2. Robot Grippers', color:'var(--gripper)',
+    id:'gripper', icon:'🤏', title:'그리퍼', sub:'2. 그리퍼', color:'var(--gripper)',
     desc:'소프트 그리퍼, 진공 그리퍼, 적응형 그리퍼, 영민손(灵巧手) — 작물 손상 없는 수확 및 핸들링',
     companies:[
       {name:'Inspire Robots (因时机器人)',prod:'FTP 5지 영민손 (6DoF, 790g, 촉각센서 12모듈, 핑거팁 3kg), RH56 상용 영민손',apply:'촉각 피드백 기반 딸기/토마토 섬세 파지, 인형 로봇 수확 핸드'},
@@ -1454,7 +1454,7 @@ const categories = [
     tip:'SRT 불가사리형 소프트 그리퍼는 농업 적용 명시 타겟, 과실 무손상 수확 실증. PaXini 6D 촉각센서로 과실 숙도/경도 감지 → 선택적 수확 판단. RoChU FDA/EC 식품 안전 인증 보유.'
   },
   {
-    id:'cobot', icon:'🦾', title:'로봇팔/협동로봇', sub:'3. Robot Arms & Cobots', color:'var(--cobot)',
+    id:'cobot', icon:'🦾', title:'로봇팔/협동로봇', sub:'3. 로봇팔/협동로봇', color:'var(--cobot)',
     desc:'수확, 방제, 전정 등 농작업에 적합한 협동로봇 팔',
     companies:[
       {name:'Flexiv (非夕科技)',prod:'Rizon 4s/10 적응형 7축 (0.03N 힘 감지, IP65), 하이브리드 모션/힘 제어',apply:'7축+적응형 힘 제어 비정형 수확, IP65 온실 습윤 환경 대응'},
@@ -1470,7 +1470,7 @@ const categories = [
     tip:'FAIRINO FR20: IP66 최고 방수등급 + 1854mm 도달 → 실외/습윤 농업 최적. Flexiv Rizon: 7축+적응형 힘 제어+IP65 → 정밀 수확 최적. Realman RM75-B: 자중 7.2kg 초경량 → AMR 탑재 이동형 수확.'
   },
   {
-    id:'amr', icon:'🚗', title:'AMR/AGF/AGV', sub:'4. Autonomous Mobile Robots', color:'var(--amr)',
+    id:'amr', icon:'🚗', title:'AMR/AGF/AGV', sub:'4. AMR/AGF/AGV', color:'var(--amr)',
     desc:'온실 내 자율이동 운반 로봇, 무인 지게차, 물류 자동화',
     companies:[
       {name:'SEER Robotics (仙工智能)',prod:'SRC 범용 AMR 제어기 (글로벌 출하 1위), AMB-300 SLAM, SSR-1400 리치트럭',apply:'SRC로 농업용 맞춤 AMR 자체 개발, 옴니 이동 좁은 온실'},
@@ -1486,7 +1486,7 @@ const categories = [
     tip:'SEER Robotics: ITES 5년 연속 참가, SRC 범용 제어기로 농업용 맞춤 AMR 개발 가능. Quicktron M60: 2m/s 고속 + 컴팩트 → 온실 좁은 통로 고속 운반. HAI Robotics ACR: 12m 높이 케이스 핸들링.'
   },
   {
-    id:'ailogistics', icon:'📦', title:'AI 물류 자동화', sub:'5. AI Logistics Automation', color:'var(--ailogistics)',
+    id:'ailogistics', icon:'📦', title:'AI 물류 자동화', sub:'5. AI 물류 자동화', color:'var(--ailogistics)',
     desc:'AI 기반 물류, 팔레타이징, 콜드체인 자동화, WMS',
     companies:[
       {name:'KUKA (쿠카)',prod:'KR QUANTEC PA (40~1,300kg), Arctic (-30°C~+10°C 전용, 보호복 불필요), PalletTech',apply:'Arctic으로 냉장 창고 -25°C 팔레타이징, 콜드체인 무중단'},
@@ -1502,7 +1502,7 @@ const categories = [
     tip:'KUKA Arctic: 세계 유일 -30°C 전용 팔레타이징 → 농산물 콜드체인 핵심. Geek+ SkyCube: -18°C~+5°C 다온도 존. Siemens INTRALOG WMS + KUKA + Geek+ AMR → 수확~출하 전 과정 자동화.'
   },
   {
-    id:'aisorting', icon:'🎯', title:'AI 선별 자동화', sub:'6. AI Sorting Automation', color:'var(--aisorting)',
+    id:'aisorting', icon:'🎯', title:'AI 선별 자동화', sub:'6. AI 선별 자동화', color:'var(--aisorting)',
     desc:'AI 기반 농산물 선별, 등급 판정, 품질 검사',
     companies:[
       {name:'SmartMore (思谋科技)',prod:'SMore ViMo AI 플랫폼 (제로코드 비전검사), IndustryGPT 산업 대형모델, AI-AOI',apply:'제로코드 농산물 분류/결함 검출, 근경류 뿌리·줄기 품질 등급'},
@@ -1518,7 +1518,7 @@ const categories = [
     tip:'SmartMore IndustryGPT: 산업 대형모델 비정형 결함 검출 → 전통 비전 한계 돌파. Cognex ViDi: 수십 장 학습으로 분류 → 다품종 소량 최적. DLCV.AI: 100장→1분 학습 → 품종 변경 즉시 대응.'
   },
   {
-    id:'vision', icon:'👁️', title:'비전 선별 기술', sub:'7. Vision Sorting Technology', color:'var(--vision)',
+    id:'vision', icon:'👁️', title:'비전 선별 기술', sub:'7. 비전 선별 기술', color:'var(--vision)',
     desc:'머신비전 카메라, 하이퍼스펙트럴 이미징, 3D 스캐닝, 비전 조명',
     companies:[
       {name:'Keyence (키엔스)',prod:'라인스캔 (67MP, 6.1μs/line, 165kHz), CV-X AI 비전, LJ-X8000 3D 프로파일러',apply:'고속 컨베이어 라인스캔 농산물 연속 외관 검사, 3D 형상 계측'},
@@ -1534,7 +1534,7 @@ const categories = [
     tip:'OPT Machine Vision (ITES 2026 확인): 글로벌 비전 조명 핵심 공급사, 30,000+ 맞춤. Basler 하이퍼스펙트럴: 육안/RGB 불가 조기 병해 감지. CCS Agri-Bio LED: 농산물 검사 전용 다파장 조명.'
   },
   {
-    id:'aiplc', icon:'⚙️', title:'AI PLC 통합 플랫폼', sub:'8. AI PLC Integration Platform', color:'var(--aiplc)',
+    id:'aiplc', icon:'⚙️', title:'AI PLC 통합 플랫폼', sub:'8. AI PLC 통합 플랫폼', color:'var(--aiplc)',
     desc:'AI 기능 내장 PLC, IoT 플랫폼, SCADA, MES — 온실 통합 제어',
     companies:[
       {name:'Siemens (지멘스)',prod:'SIMATIC S7-1200/1500, IOT2050 엣지 (LoRaWAN), TIA Portal, MindSphere, WinCC',apply:'S7-1200 온실 환경제어 공식 예제 제공, IOT2050 LoRaWAN 센서 연동, CEA 전용'},
@@ -1550,7 +1550,7 @@ const categories = [
     tip:'Haiwell A8 IoT PLC: 채소 온실 IoT 관리 시스템 실증 완료 → 스마트팜 직접 레퍼런스. Advantech WISE-PaaS: 스페인 온실 물 95% 절감 실증. Siemens S7-1200 온실 환경제어 공식 예제 제공.'
   },
   {
-    id:'smartfarm', icon:'🌱', title:'스마트팜 관련 기술', sub:'9. Smart Farm Technologies', color:'var(--smartfarm)',
+    id:'smartfarm', icon:'🌱', title:'스마트팜 관련 기술', sub:'9. 스마트팜 관련 기술', color:'var(--smartfarm)',
     desc:'환경 제어, 양액 시스템, 식물공장, 드론 방제, 디지털 트윈, 센서',
     companies:[
       {name:'Siemens (지멘스)',prod:'디지털 트윈 (NX, Xcelerator), digiCEAd 디지털 온실, MindSphere IoT',apply:'온실 디지털 트윈 구축, 80 Acres Farms 수직농장 파트너, 생육 시뮬레이션 최적 제어'},
@@ -1592,6 +1592,10 @@ const top10 = [
   {rank:10, name:'Advantech', flag:'🇹🇼', field:'AI PLC·스마트팜', reason:'스페인 온실 프로젝트 실증, LoRaWAN+WISE-PaaS Edge AI'}
 ];
 
+// HEX color to rgba helper
+const colorMap = {gripper:'#00d4aa',cobot:'#4facfe',amr:'#a855f7',ailogistics:'#ff6b35',aisorting:'#ffd32a',vision:'#00e5ff',aiplc:'#ff6b9d',smartfarm:'#7bed9f'};
+function hexBg(id){const h=colorMap[id]||'#888';const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return `rgba(${r},${g},${b},0.1)`;}
+
 // Render categories (항목 2~9)
 const container = document.getElementById('categories-container');
 categories.forEach(cat => {
@@ -1605,7 +1609,7 @@ categories.forEach(cat => {
   container.innerHTML += `
     <section id="${cat.id}">
       <div class="section-header">
-        <div class="section-tag" style="background:${cat.color}15;color:${cat.color};">${cat.sub}</div>
+        <div class="section-tag" style="background:${hexBg(cat.id)};color:${cat.color};">${cat.sub}</div>
         <div class="section-title">${cat.icon} ${cat.title}</div>
         <div class="section-desc">${cat.desc}</div>
       </div>
