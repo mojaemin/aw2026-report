@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>로봇 기반 자동화 스마트팜 운영 플랫폼 — 내부 실행계획서 v12</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+
+  :root {
+    --primary: #2D6A4F;
+    --primary-light: #40916C;
+    --primary-dark: #1B4332;
+    --accent: #D4A017;
+    --bg: #F4F7F5;
+    --card: #FFFFFF;
+    --text: #2D3748;
+    --text-light: #718096;
+    --border: #E2E8F0;
+    --header-bg: linear-gradient(135deg, #1B4332 0%, #2D6A4F 50%, #40916C 100%);
+    --row-alt: #F7FAF8;
+    --tag-blue: #EBF4FF;
+    --tag-green: #F0FFF4;
+    --tag-orange: #FFFAF0;
+    --tag-purple: #FAF5FF;
+    --tag-red: #FFF5F5;
+    --tag-teal: #E6FFFA;
+    --nav-height: 52px;
+    --shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+
+  [data-theme="dark"] {
+    --primary: #52B788;
+    --primary-light: #74C69D;
+    --primary-dark: #95D5B2;
+    --accent: #F0C040;
+    --bg: #1A202C;
+    --card: #2D3748;
+    --text: #E2E8F0;
+    --text-light: #A0AEC0;
+    --border: #4A5568;
+    --header-bg: linear-gradient(135deg, #1B4332 0%, #2D6A4F 50%, #40916C 100%);
+    --row-alt: #2A3444;
+    --tag-blue: #1a365d;
+    --tag-green: #1C4532;
+    --tag-orange: #5F370E;
+    --tag-purple: #322659;
+    --tag-red: #63171B;
+    --tag-teal: #1D4044;
+    --shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-height) + 16px); }
+
+  body {
+    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 15px;
+    -webkit-text-size-adjust: 100%;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* ─── 표지 ─── */
+  .cover {
+    min-height: 100vh; min-height: 100dvh;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    background: linear-gradient(135deg, #1B4332 0%, #2D6A4F 40%, #40916C 100%);
+    color: white; text-align: center; padding: 2rem; position: relative; overflow: hidden;
+  }
+  .cover::before {
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 60%);
+    animation: pulse 8s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+  .cover-badge {
+    display: inline-block; padding: 0.5rem 1.5rem; border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50px; font-size: 0.9rem; letter-spacing: 2px; margin-bottom: 2rem;
+    position: relative; z-index: 1;
+  }
+  .cover h1 { font-size: clamp(2rem, 6vw, 3.5rem); font-weight: 900; letter-spacing: -2px; margin-bottom: 0.5rem; position: relative; z-index: 1; line-height: 1.2; }
+  .cover h2 { font-size: clamp(1rem, 2.5vw, 1.4rem); font-weight: 300; opacity: 0.9; margin-bottom: 2rem; position: relative; z-index: 1; }
+  .cover-info { display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center; position: relative; z-index: 1; }
+  .cover-info-item {
+    background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+    padding: 1rem 1.8rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.15);
+  }
+  .cover-info-item strong { display: block; font-size: 1.2rem; }
+  .cover-info-item span { font-size: 0.85rem; opacity: 0.8; }
+  .cover-confidential {
+    position: relative; z-index: 1; margin-top: 2rem; padding: 0.5rem 1.5rem;
+    background: rgba(212,160,23,0.3); border: 1px solid rgba(212,160,23,0.5);
+    border-radius: 8px; font-size: 0.85rem; letter-spacing: 1px;
+  }
+  .cover-scroll { position: absolute; bottom: 2rem; z-index: 1; animation: bounce 2s infinite; cursor: pointer; }
+  .cover-scroll svg { width: 32px; height: 32px; stroke: rgba(255,255,255,0.6); fill: none; stroke-width: 2; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
+
+  /* ─── 네비게이션 ─── */
+  .nav {
+    position: sticky; top: 0; z-index: 100; background: var(--card);
+    border-bottom: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    height: var(--nav-height); display: flex; align-items: center;
+    transition: background 0.3s, border-color 0.3s;
+  }
+  .nav-scroll {
+    flex: 1; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; mask-image: linear-gradient(90deg, transparent, black 24px, black calc(100% - 60px), transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, black 24px, black calc(100% - 60px), transparent);
+    padding-right: 60px;
+  }
+  .nav-scroll::-webkit-scrollbar { display: none; }
+  .nav-inner { display: inline-flex; gap: 0; padding: 0 0.5rem; }
+  .nav a {
+    display: inline-block; padding: 0 0.9rem; height: var(--nav-height); line-height: var(--nav-height);
+    text-decoration: none; color: var(--text-light); font-size: 0.82rem; font-weight: 500;
+    border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap;
+  }
+  .nav a:hover, .nav a.active { color: var(--primary); border-bottom-color: var(--primary); }
+  .nav-actions { display: flex; align-items: center; gap: 4px; padding: 0 8px; flex-shrink: 0; position: relative; }
+  .nav-actions::before {
+    content: ''; position: absolute; left: -20px; top: 0; bottom: 0; width: 20px;
+    background: linear-gradient(90deg, transparent, var(--card)); pointer-events: none;
+  }
+
+  /* ─── 햄버거 메뉴 ─── */
+  .hamburger {
+    display: none; background: none; border: none; cursor: pointer; padding: 8px;
+    color: var(--text); flex-shrink: 0;
+  }
+  .hamburger svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; }
+  .drawer-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .drawer-overlay.open { display: block; opacity: 1; }
+  .drawer {
+    position: fixed; top: 0; left: -280px; width: 280px; height: 100%; z-index: 201;
+    background: var(--card); box-shadow: 4px 0 20px rgba(0,0,0,0.2); transition: left 0.3s;
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
+  }
+  .drawer.open { left: 0; }
+  .drawer-header {
+    padding: 1.2rem 1.5rem; background: var(--header-bg); color: white;
+    font-weight: 700; font-size: 1rem;
+  }
+  .drawer a {
+    display: block; padding: 0.85rem 1.5rem; text-decoration: none; color: var(--text);
+    font-size: 0.9rem; border-bottom: 1px solid var(--border); transition: background 0.2s;
+  }
+  .drawer a:hover, .drawer a.active { background: var(--bg); color: var(--primary); font-weight: 600; }
+
+  /* ─── 다크모드 토글 ─── */
+  .theme-toggle {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+    width: 36px; height: 36px; cursor: pointer; display: flex; align-items: center;
+    justify-content: center; font-size: 1.1rem; transition: all 0.3s; flex-shrink: 0; color: var(--text);
+  }
+  .theme-toggle:hover { border-color: var(--primary); }
+
+  /* ─── 컨테이너 ─── */
+  .container { max-width: 1400px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  /* ─── 섹션 ─── */
+  .section { margin-bottom: 3rem; }
+  .section-header {
+    background: var(--header-bg); color: white; padding: 2rem 2.5rem;
+    border-radius: 16px 16px 0 0; position: relative;
+  }
+  .section-header h2 { font-size: clamp(1.1rem, 3vw, 1.6rem); font-weight: 700; }
+  .section-header .section-num {
+    display: inline-block; background: rgba(255,255,255,0.2); width: 40px; height: 40px;
+    line-height: 40px; text-align: center; border-radius: 10px; font-weight: 900;
+    margin-right: 1rem; font-size: 1.2rem;
+  }
+  .section-body {
+    background: var(--card); padding: 2rem 2.5rem; border-radius: 0 0 16px 16px;
+    box-shadow: var(--shadow); transition: background 0.3s;
+  }
+
+  /* ─── 서브 헤딩 ─── */
+  h3 {
+    font-size: 1.15rem; font-weight: 700; color: var(--primary); margin: 2rem 0 1rem 0;
+    padding-bottom: 0.5rem; border-bottom: 2px solid var(--primary);
+    display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+  }
+  h3:first-child { margin-top: 0; }
+  h4 { font-size: 1rem; font-weight: 600; color: var(--text); margin: 1.5rem 0 0.8rem 0; }
+
+  /* ─── 테이블 ─── */
+  .table-wrap {
+    overflow-x: auto; margin: 1rem 0 1.5rem 0; border-radius: 10px;
+    border: 1px solid var(--border); -webkit-overflow-scrolling: touch;
+    position: relative;
+  }
+  .table-wrap.has-scroll::after {
+    content: '← 좌우 스크롤 →'; position: sticky; bottom: 0; left: 0; right: 0;
+    display: block; text-align: center; font-size: 0.7rem; color: var(--text-light);
+    background: var(--bg); padding: 4px; border-top: 1px solid var(--border);
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  thead th {
+    background: var(--primary); color: white; padding: 0.75rem 1rem; text-align: left;
+    font-weight: 600; font-size: 0.82rem; white-space: nowrap; position: sticky; top: 0;
+  }
+  [data-theme="dark"] thead th { background: #1B4332; }
+  tbody td { padding: 0.65rem 1rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tbody tr:nth-child(even) { background: var(--row-alt); }
+  tbody tr:hover { background: rgba(45,106,79,0.08); }
+  td strong { color: var(--primary-dark); }
+  [data-theme="dark"] td strong { color: var(--primary); }
+
+  /* ─── 태그 ─── */
+  .tag { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 500; margin: 1px 2px; }
+  .tag-blue { background: var(--tag-blue); color: #2B6CB0; }
+  .tag-green { background: var(--tag-green); color: #276749; }
+  .tag-orange { background: var(--tag-orange); color: #C05621; }
+  .tag-purple { background: var(--tag-purple); color: #6B46C1; }
+  .tag-red { background: var(--tag-red); color: #C53030; }
+  .tag-teal { background: var(--tag-teal); color: #234E52; }
+  [data-theme="dark"] .tag-blue { color: #90CDF4; }
+  [data-theme="dark"] .tag-green { color: #9AE6B4; }
+  [data-theme="dark"] .tag-orange { color: #FBD38D; }
+  [data-theme="dark"] .tag-purple { color: #D6BCFA; }
+  [data-theme="dark"] .tag-red { color: #FEB2B2; }
+
+  /* ─── 개요 카드 ─── */
+  .overview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+  .overview-card { background: var(--bg); padding: 1.2rem 1.5rem; border-radius: 10px; border-left: 4px solid var(--primary); transition: background 0.3s; }
+  .overview-card .label { font-size: 0.8rem; color: var(--text-light); font-weight: 500; }
+  .overview-card .value { font-size: 1.05rem; font-weight: 600; margin-top: 0.3rem; }
+
+  /* ─── 트렌드 카드 ─── */
+  .trend-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+  .trend-card { background: var(--bg); padding: 1.2rem 1.5rem; border-radius: 10px; border-left: 4px solid var(--accent); transition: transform 0.2s, background 0.3s; }
+  .trend-card:hover { transform: translateY(-2px); }
+  .trend-card .trend-title { font-weight: 700; color: var(--primary-dark); margin-bottom: 0.4rem; }
+  [data-theme="dark"] .trend-card .trend-title { color: var(--primary); }
+  .trend-card .trend-desc { font-size: 0.88rem; color: var(--text-light); }
+
+  /* ─── 인용문 ─── */
+  .quote {
+    background: linear-gradient(135deg, var(--tag-green) 0%, var(--tag-teal) 100%);
+    border-left: 4px solid var(--primary); padding: 1.2rem 1.5rem;
+    border-radius: 0 10px 10px 0; margin: 1.5rem 0; font-size: 0.95rem;
+    color: var(--primary-dark); font-weight: 500; transition: background 0.3s;
+  }
+  [data-theme="dark"] .quote { color: var(--primary-light); }
+
+  /* ─── 목표 카드 ─── */
+  .goal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+  .goal-card { background: var(--bg); padding: 1.2rem 1.5rem; border-radius: 10px; text-align: center; border: 1px solid var(--border); transition: background 0.3s; }
+  .goal-card .goal-label { font-size: 0.8rem; color: var(--text-light); margin-bottom: 0.3rem; }
+  .goal-card .goal-value { font-size: 1.1rem; font-weight: 700; color: var(--primary-dark); }
+  [data-theme="dark"] .goal-card .goal-value { color: var(--primary); }
+
+  /* ─── 조직도 ─── */
+  .org-chart { background: var(--bg); padding: 1.5rem 2rem; border-radius: 10px; margin: 1.5rem 0; font-size: 0.9rem; line-height: 2; transition: background 0.3s; }
+  .org-chart .org-title { font-weight: 700; color: var(--primary-dark); font-size: 1rem; margin-bottom: 0.5rem; }
+  [data-theme="dark"] .org-chart .org-title { color: var(--primary); }
+  .org-chart .org-sub { margin-left: 1.5rem; padding-left: 1rem; border-left: 2px solid var(--primary-light); }
+  .org-chart .org-role { font-weight: 600; color: var(--primary); }
+  .org-chart .org-desc { color: var(--text-light); font-size: 0.85rem; }
+
+  /* ─── 3열 구조 그리드 ─── */
+  .structure-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+
+  /* ─── 타임라인 바 ─── */
+  .timeline-bar { display: inline-block; height: 16px; border-radius: 4px; margin-right: 4px; }
+
+  /* ─── Gate 조건 ─── */
+  .gate-box {
+    background: linear-gradient(135deg, var(--tag-green), var(--tag-teal));
+    border: 2px solid var(--primary-light); border-radius: 10px;
+    padding: 1rem 1.5rem; margin: 1.5rem 0; font-size: 0.9rem; transition: background 0.3s;
+  }
+  .gate-box strong { color: var(--primary-dark); }
+  [data-theme="dark"] .gate-box strong { color: var(--primary); }
+  .gate-box-warn { border-color: #C53030; background: linear-gradient(135deg, var(--tag-red), #FED7D7); }
+  [data-theme="dark"] .gate-box-warn { background: linear-gradient(135deg, var(--tag-red), #63171B); }
+
+  /* ─── 스크롤 탑 버튼 ─── */
+  .scroll-top {
+    position: fixed; bottom: 24px; right: 24px; z-index: 90;
+    width: 48px; height: 48px; border-radius: 50%; border: none; cursor: pointer;
+    background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; visibility: hidden; transform: translateY(16px);
+    transition: all 0.3s;
+  }
+  .scroll-top.show { opacity: 1; visibility: visible; transform: translateY(0); }
+  .scroll-top:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.4); }
+  .scroll-top svg { width: 24px; height: 24px; stroke: white; fill: none; stroke-width: 2.5; }
+
+  /* ─── 진행률 바 ─── */
+  .progress-bar {
+    position: fixed; top: 0; left: 0; height: 3px; background: var(--accent);
+    z-index: 101; width: 0%; transition: width 0.1s;
+  }
+
+  /* ══════ 반응형: 태블릿 (1024px) ══════ */
+  @media (max-width: 1024px) {
+    .container { padding: 1.5rem 1rem; }
+    .section-header { padding: 1.5rem 1.8rem; }
+    .section-body { padding: 1.5rem 1.8rem; }
+    .overview-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .trend-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    .nav a { padding: 0 0.7rem; font-size: 0.8rem; }
+  }
+
+  /* ══════ 반응형: 모바일 (768px) ══════ */
+  @media (max-width: 768px) {
+    :root { --nav-height: 48px; }
+    body { font-size: 14px; }
+    .cover { min-height: 85vh; min-height: 85dvh; padding: 2rem 1.2rem; }
+    .cover-badge { font-size: 0.75rem; padding: 0.4rem 1rem; letter-spacing: 1px; margin-bottom: 1.5rem; }
+    .cover-info { gap: 0.8rem; }
+    .cover-info-item { padding: 0.8rem 1.2rem; flex: 1; min-width: 140px; }
+    .cover-info-item strong { font-size: 1rem; }
+    .cover-info-item span { font-size: 0.78rem; }
+    .cover-confidential { font-size: 0.75rem; padding: 0.4rem 1rem; }
+    .container { padding: 0.8rem; }
+    .section { margin-bottom: 1.5rem; }
+    .section-header { padding: 1.2rem 1rem; border-radius: 12px 12px 0 0; }
+    .section-header .section-num { width: 32px; height: 32px; line-height: 32px; font-size: 1rem; margin-right: 0.6rem; }
+    .section-body { padding: 1rem; border-radius: 0 0 12px 12px; }
+    h3 { font-size: 1rem; margin: 1.5rem 0 0.8rem 0; }
+    h4 { font-size: 0.92rem; }
+
+    /* 모바일 네비: 스크롤 숨기고 햄버거 표시 */
+    .nav-scroll { display: none; }
+    .hamburger { display: flex; }
+
+    .overview-grid { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+    .overview-card { padding: 0.9rem 1rem; }
+    .overview-card .value { font-size: 0.92rem; }
+    .trend-grid { grid-template-columns: 1fr; gap: 0.8rem; }
+    .trend-card { padding: 1rem 1.2rem; }
+    .goal-grid { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+    .goal-card { padding: 0.9rem 1rem; }
+    .structure-grid { grid-template-columns: 1fr; }
+    table { font-size: 0.8rem; }
+    thead th { padding: 0.6rem 0.7rem; font-size: 0.75rem; }
+    tbody td { padding: 0.5rem 0.7rem; }
+    .table-wrap { margin: 0.8rem 0 1.2rem 0; border-radius: 8px; }
+    .quote { padding: 1rem 1.2rem; font-size: 0.9rem; }
+    .gate-box { padding: 0.8rem 1rem; font-size: 0.85rem; }
+    .org-chart { padding: 1rem 1.2rem; }
+    .org-chart .org-sub { margin-left: 0.8rem; padding-left: 0.8rem; }
+    .scroll-top { width: 42px; height: 42px; bottom: 16px; right: 16px; }
+    .nav-actions::before { background: linear-gradient(90deg, transparent, var(--card)); }
+  }
+
+  /* ══════ 반응형: 소형 모바일 (480px) ══════ */
+  @media (max-width: 480px) {
+    .cover { min-height: 75vh; min-height: 75dvh; padding: 1.5rem 1rem; }
+    .cover-info { flex-direction: column; gap: 0.6rem; align-items: stretch; }
+    .cover-info-item { text-align: center; min-width: auto; }
+    .overview-grid { grid-template-columns: 1fr; }
+    .goal-grid { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .section-body { padding: 0.8rem; }
+    .section-header { padding: 1rem 0.8rem; }
+    table { font-size: 0.75rem; }
+    thead th { padding: 0.5rem 0.5rem; font-size: 0.7rem; }
+    tbody td { padding: 0.4rem 0.5rem; }
+    .tag { font-size: 0.65rem; padding: 0.1rem 0.4rem; }
+    .overview-card { padding: 0.8rem; }
+    .trend-card { padding: 0.8rem 1rem; }
+  }
+
+  /* ─── 터치 디바이스 ─── */
+  @media (hover: none) and (pointer: coarse) {
+    tbody tr:hover { background: inherit; }
+    tbody tr:nth-child(even):hover { background: var(--row-alt); }
+    .trend-card:hover { transform: none; }
+    .scroll-top:hover { transform: translateY(0); }
+  }
+
+  /* ─── 인쇄 ─── */
+  @media print {
+    .nav, .scroll-top, .progress-bar, .theme-toggle, .hamburger, .drawer, .drawer-overlay, .cover-scroll { display: none !important; }
+    .cover { min-height: auto; padding: 3rem; page-break-after: always; }
+    .section { page-break-inside: avoid; }
+    body { font-size: 11px; background: white; color: #000; }
+    .section-body { box-shadow: none; border: 1px solid #ccc; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 진행률 바 -->
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- ═══════════════ 표지 ═══════════════ -->
+<div class="cover">
+  <div class="cover-badge">INTERNAL EXECUTION PLAN v12</div>
+  <h1>로봇 기반 자동화<br>스마트팜 운영 플랫폼</h1>
+  <h2>내부 실행계획서</h2>
+  <div class="cover-info">
+    <div class="cover-info-item"><strong>3개년 계획</strong><span>L0 → L3 무인 운영</span></div>
+    <div class="cover-info-item"><strong>1,000평 파일럿</strong><span>밀폐형 유리온실</span></div>
+    <div class="cover-info-item"><strong>플랫폼 사업</strong><span>운영 구조 자산화·복제</span></div>
+  </div>
+  <div class="cover-confidential">CONFIDENTIAL — 내부 배포용</div>
+  <a href="#s1" class="cover-scroll"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></a>
+</div>
+
+<!-- ═══════════════ 네비게이션 ═══════════════ -->
+<nav class="nav" id="mainNav">
+  <button class="hamburger" id="hamburgerBtn" aria-label="메뉴 열기">
+    <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <div class="nav-scroll">
+    <div class="nav-inner">
+      <a href="#s1">1. 사업 개요</a><a href="#s2">2. 추진 배경</a><a href="#s3">3. 글로벌 시장</a>
+      <a href="#s4">4. 기술 동향</a><a href="#s5">5. 한국 시장</a><a href="#s6">6. 운영 구조</a>
+      <a href="#s7">7. 공정·데이터</a><a href="#s8">8. 로봇 후보군</a><a href="#s9">9. 무인 기준</a>
+      <a href="#s10">10. 리스크</a><a href="#s11">11. 실행 기준</a><a href="#s12">12. 3개년 계획</a>
+      <a href="#s13">13~16. 담당자</a><a href="#s17">17. 타임라인</a><a href="#s18">18. KPI</a>
+      <a href="#s19">19. 조직</a><a href="#s20">20. 파일럿</a><a href="#s21">21. 수익 모델</a>
+      <a href="#s22">22. 경쟁사</a><a href="#s23">23. 예산</a><a href="#s24">24. 기대 효과</a>
+      <a href="#appendix">부록</a>
+    </div>
+  </div>
+  <div class="nav-actions">
+    <button class="theme-toggle" id="themeToggle" aria-label="다크모드 전환">☀</button>
+  </div>
+</nav>
+
+<!-- 모바일 드로어 -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">목차</div>
+  <a href="#s1">1. 사업 개요</a><a href="#s2">2. 추진 배경</a><a href="#s3">3. 글로벌 시장</a>
+  <a href="#s4">4. 기술 동향</a><a href="#s5">5. 한국 시장</a><a href="#s6">6. 운영 구조</a>
+  <a href="#s7">7. 공정·데이터</a><a href="#s8">8. 로봇 후보군</a><a href="#s9">9. 무인 기준</a>
+  <a href="#s10">10. 리스크</a><a href="#s11">11. 실행 기준</a><a href="#s12">12. 3개년 계획</a>
+  <a href="#s13">13~16. 담당자</a><a href="#s17">17. 타임라인</a><a href="#s18">18. KPI</a>
+  <a href="#s19">19. 조직</a><a href="#s20">20. 파일럿</a><a href="#s21">21. 수익 모델</a>
+  <a href="#s22">22. 경쟁사</a><a href="#s23">23. 예산</a><a href="#s24">24. 기대 효과</a>
+  <a href="#appendix">부록</a>
+</div>
+
+<div class="container">
+
+<!-- ═══════════════ 1. 사업 개요 ═══════════════ -->
+<div class="section" id="s1">
+  <div class="section-header"><h2><span class="section-num">1</span>사업 개요</h2></div>
+  <div class="section-body">
+    <h3>1.1 사업의 정의</h3>
+    <div class="overview-grid">
+      <div class="overview-card"><div class="label">핵심 방향</div><div class="value">외부 농업 로봇과 자동화 설비를 도입하여 스마트팜 전 공정을 자동화</div></div>
+      <div class="overview-card"><div class="label">사업 목표</div><div class="value">3년 내 상시 무인 운영이 가능한 표준 운영 구조를 완성하는 플랫폼 사업</div></div>
+    </div>
+    <h3>1.2 사업의 목표 — 우리는 무엇을 만드는가</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>구분</th><th>정의</th></tr></thead>
+      <tbody>
+        <tr><td style="color:#C53030;">&#10060; 로봇 제조 기업</td><td>장비를 개발·판매하지 않는다</td></tr>
+        <tr><td style="color:#C53030;">&#10060; 단순 농장 운영</td><td>작물 생산만을 목표로 하지 않는다</td></tr>
+        <tr><td style="color:#276749; font-weight:700;">&#10004; 운영 플랫폼 기업</td><td><strong>구조를 설계·고도화·복제한다</strong></td></tr>
+      </tbody>
+    </table></div>
+    <div class="quote">본 사업은 인건비 절감 이상의 가치 — <strong>운영 구조 자산화</strong>를 통한 장기 수익 모델 확보를 목표로 한다.</div>
+  </div>
+</div>
+
+<!-- ═══════════════ 2. 추진 배경 ═══════════════ -->
+<div class="section" id="s2">
+  <div class="section-header"><h2><span class="section-num">2</span>추진 배경</h2></div>
+  <div class="section-body">
+    <h3>2.1 왜 지금인가 — 4가지 구조적 변화</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>변화</th><th>핵심 내용</th></tr></thead>
+      <tbody>
+        <tr><td><strong>농업 인력의 구조적 감소</strong></td><td>연간 8.2만 명 감소 · 농가 인건비 5년간 42% 상승 / 2030년 농업 취업자 100만 명 이하 전망 (KREI)</td></tr>
+        <tr><td><strong>로봇·자동화 기술 상용화 완료</strong></td><td>파종·방제·수확 로봇 이미 현장 투입 단계 / 글로벌 농업 로봇 시장 $14.9B → 2030년 $45B+ 전망</td></tr>
+        <tr><td><strong>전 공정 통합 운영 사례 부재</strong></td><td>개별 장비는 많지만 전 공정을 하나로 묶은 무인 운영 구조를 완성한 사례는 아직 없음</td></tr>
+        <tr><td><strong>운영 구조 부재</strong></td><td>기술은 준비됐다 — 연결·통합·표준화가 실제 무인 운영을 막는 병목</td></tr>
+      </tbody>
+    </table></div>
+    <div class="quote">로봇·자동화 기술은 준비됐다. 그러나 전 공정을 하나로 묶는 운영 표준은 부재하다. <strong>지금은 기술 경쟁이 아니라 운영 구조 선점의 시점이다.</strong></div>
+  </div>
+</div>
+
+<!-- ═══════════════ 3. 글로벌 시장 ═══════════════ -->
+<div class="section" id="s3">
+  <div class="section-header"><h2><span class="section-num">3</span>글로벌 스마트팜·농업 로봇 시장 현황</h2></div>
+  <div class="section-body">
+    <div class="goal-grid">
+      <div class="goal-card"><div class="goal-label">글로벌 스마트팜 시장 (2024)</div><div class="goal-value">$25.1B</div><div class="goal-label">→ 2030년 $44.9B</div></div>
+      <div class="goal-card"><div class="goal-label">CAGR 2024~2030</div><div class="goal-value">10.1%</div></div>
+      <div class="goal-card"><div class="goal-label">농업 로봇 시장 (2024)</div><div class="goal-value">$14.9B</div><div class="goal-label">→ 2030년 $45B+</div></div>
+      <div class="goal-card"><div class="goal-label">한국 스마트팜 면적</div><div class="goal-value">7,340ha+</div><div class="goal-label">목표: 2027년 7만ha</div></div>
+    </div>
+    <h3>시장 주요 트렌드</h3>
+    <div class="trend-grid">
+      <div class="trend-card"><div class="trend-title">수요 급증</div><div class="trend-desc">글로벌 농업 인구 감소 및 식량 수요 증가로 스마트팜 솔루션 수요 급증</div></div>
+      <div class="trend-card"><div class="trend-title">정밀농업 AI화</div><div class="trend-desc">Computer Vision·AI 기반 작물 모니터링, 수확량 예측 기술이 주요 트렌드로 부상</div></div>
+      <div class="trend-card"><div class="trend-title">자율 로봇 확산</div><div class="trend-desc">파종·방제·수확 자율 로봇의 상업 적용 급속 확대 (John Deere, AGCO, Naïo Technologies)</div></div>
+      <div class="trend-card"><div class="trend-title">플랫폼 통합 경쟁</div><div class="trend-desc">개별 장비가 아닌 "통합 운영 플랫폼" 경쟁이 핵심 전장으로 이동</div></div>
+    </div>
+    <p style="font-size:0.8rem; color:var(--text-light); margin-top:1rem;">출처: MarketsandMarkets, Grand View Research, FAO, 농림축산식품부 (2024~2025)</p>
+  </div>
+</div>
+
+<!-- ═══════════════ 4. 기술 동향 ═══════════════ -->
+<div class="section" id="s4">
+  <div class="section-header"><h2><span class="section-num">4</span>AI·자동화 기술 동향</h2></div>
+  <div class="section-body">
+    <div class="table-wrap"><table>
+      <thead><tr><th>분야</th><th>핵심 내용</th></tr></thead>
+      <tbody>
+        <tr><td><strong>자율 농업 로봇</strong></td><td>파종·수확·방제 자율화 로봇 상용화 가속 / 2024년 시장 $5.1B → 2030년 $16B+ / 다중 로봇 협업(Swarm Robotics) 현장 적용 시작</td></tr>
+        <tr><td><strong>클라우드·엣지 컴퓨팅</strong></td><td>농장 엣지 AI로 초저지연 실시간 판단 구현 / 디지털 트윈 기반 가상 농장 시뮬레이션 확산 / 5G 연동 원격 관제 플랫폼 구축 증가</td></tr>
+        <tr><td><strong>Computer Vision & AI 진단</strong></td><td>CNN 기반 병해충 조기 감지 정확도 95%+ 달성 / 수확량 예측 AI 도입으로 손실률 20~30% 감소 / 실시간 생육 모니터링 → 자동 환경 제어 연동</td></tr>
+        <tr><td><strong>통합 운영 OS 경쟁</strong></td><td>John Deere Operations Center: 멀티 로봇 통합 관제 / Trimble Ag Software: 전 공정 디지털화 플랫폼 / 한국: 팜모닝 등 로컬 플랫폼 성장 중</td></tr>
+      </tbody>
+    </table></div>
+    <div class="quote">핵심 시사점: 기술은 준비됐다. 이제 <strong>"통합 운영 OS"를 선점하는 기업이 시장을 주도한다.</strong></div>
+  </div>
+</div>
+
+<!-- ═══════════════ 5. 한국 시장 ═══════════════ -->
+<div class="section" id="s5">
+  <div class="section-header"><h2><span class="section-num">5</span>한국 스마트팜 시장·정책 동향</h2></div>
+  <div class="section-body">
+    <div class="goal-grid">
+      <div class="goal-card"><div class="goal-label">스마트팜 보급 면적</div><div class="goal-value">7,340ha</div></div>
+      <div class="goal-card"><div class="goal-label">농업 인력 연간 감소</div><div class="goal-value">8.2만 명</div></div>
+      <div class="goal-card"><div class="goal-label">정부 스마트팜 투자</div><div class="goal-value">1조 원+</div></div>
+      <div class="goal-card"><div class="goal-label">스마트팜 혁신밸리</div><div class="goal-value">4개소</div></div>
+    </div>
+    <h3>정부 정책 동향</h3>
+    <div class="trend-grid">
+      <div class="trend-card"><div class="trend-title">스마트팜 혁신밸리 4개소 운영</div><div class="trend-desc">청년농 육성, 기술 검증, 규모화 지원 (전북·경북·전남·경남)</div></div>
+      <div class="trend-card"><div class="trend-title">농업 로봇 R&D 예산 확대</div><div class="trend-desc">농식품부 스마트농업 예산 전년 대비 30% 이상 증가 (2024년)</div></div>
+      <div class="trend-card"><div class="trend-title">스마트농업 육성법 시행</div><div class="trend-desc">"스마트농업 육성 및 지원에 관한 법률" 시행 (2023): 제도적 기반 마련</div></div>
+      <div class="trend-card"><div class="trend-title">2027년 보급 목표 70,000ha</div><div class="trend-desc">현재 7,340ha 대비 약 10배 확장 목표</div></div>
+    </div>
+    <div class="quote">정부 정책과 시장 성장이 맞물리는 지금이 <strong>플랫폼 선점의 적기</strong></div>
+    <p style="font-size:0.8rem; color:var(--text-light); margin-top:1rem;">출처: 농림축산식품부, 농촌진흥청, KREI 2024~2025</p>
+  </div>
+</div>
+
+<!-- ═══════════════ 6. 운영 구조 ═══════════════ -->
+<div class="section" id="s6">
+  <div class="section-header"><h2><span class="section-num">6</span>전체 자동화 운영 구조</h2></div>
+  <div class="section-body">
+    <div class="structure-grid">
+      <div class="overview-card" style="border-left-color: var(--accent);"><div class="label">외부 농업 로봇</div><div class="value" style="font-size:0.95rem;">파종·관리·방제<br>수확·분류·포장<br>이동·물류·유통</div></div>
+      <div class="overview-card" style="border-left-color: var(--primary);"><div class="label">로봇 통합 자동화 플랫폼</div><div class="value" style="font-size:0.95rem;">작업 오케스트레이션<br>공정 자동 연결<br>무인 운영 판단</div></div>
+      <div class="overview-card" style="border-left-color: #2B6CB0;"><div class="label">환경·설비 자동 제어</div><div class="value" style="font-size:0.95rem;">로봇 작업 안정성<br>품질 유지 및 편차 관리<br>환경 자동 정합</div></div>
+    </div>
+    <div class="quote"><strong>모든 실행의 중심은 플랫폼이다.</strong><br>로봇은 교체 가능하지만, 운영 구조는 축적된다.<br>무인 운영은 개별 장비가 아니라 "연결된 구조"에서 완성된다.</div>
+  </div>
+</div>
+
+<!-- ═══════════════ 7. 공정·데이터 ═══════════════ -->
+<div class="section" id="s7">
+  <div class="section-header"><h2><span class="section-num">7</span>핵심 구조 — 공정·데이터 흐름</h2></div>
+  <div class="section-body">
+    <h3>공정 단계</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>공정</th><th>설비</th></tr></thead>
+      <tbody>
+        <tr><td><strong>파종·육묘</strong></td><td>이식 로봇 / 파종 자동화</td></tr>
+        <tr><td><strong>생육 관리</strong></td><td>환경 제어 / 생육 모니터링</td></tr>
+        <tr><td><strong>방제·수분</strong></td><td>방제 로봇 / 진동 수분 자동화</td></tr>
+        <tr><td><strong>수확</strong></td><td>수확 로봇 / CV 품질 판별</td></tr>
+        <tr><td><strong>분류·포장</strong></td><td>분류 컨베이어 / 포장 자동화</td></tr>
+      </tbody>
+    </table></div>
+    <h3>로봇 통합 자동화 플랫폼 (운영 OS)</h3>
+    <div class="trend-grid">
+      <div class="trend-card"><div class="trend-title">작업 오케스트레이션</div><div class="trend-desc">공정 간 로봇 작업 순서·타이밍 자동 조율</div></div>
+      <div class="trend-card"><div class="trend-title">무인 운영 판단 엔진</div><div class="trend-desc">예외 감지 → 자동 복구 / 알람 분기 처리</div></div>
+      <div class="trend-card"><div class="trend-title">데이터 파이프라인</div><div class="trend-desc">센서·로봇 로그 실시간 수집 → KPI 대시보드 자동 집계</div></div>
+      <div class="trend-card"><div class="trend-title">환경 피드백 루프</div><div class="trend-desc">온도·습도·CO2·광량 → 자동 정합</div></div>
+    </div>
+    <div class="quote">핵심: 로봇이 실행하고 → 플랫폼이 판단하고 → 환경이 받쳐준다. <strong>세 축이 하나의 루프로 연결될 때 무인 운영이 완성된다.</strong></div>
+  </div>
+</div>
+
+<!-- ═══════════════ 8. 로봇 후보군 ═══════════════ -->
+<div class="section" id="s8">
+  <div class="section-header"><h2><span class="section-num">8</span>도입 로봇 후보군</h2></div>
+  <div class="section-body">
+    <div class="table-wrap"><table>
+      <thead><tr><th>공정</th><th>로봇 기종</th><th>주요 벤더</th><th>우선순위</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td><strong>수확</strong></td><td>수확 로봇 (토마토 전용)</td><td>Root AI, Energid / 엔씽, (주)로봇앤드디자인</td><td><span class="tag tag-red">최우선</span></td><td>PoC 1순위 / 수확 효율 40~60% 달성 사례</td></tr>
+        <tr><td><strong>방제</strong></td><td>레일형 방제 로봇 / AMR</td><td>Priva, Bogaerts / 그린아이, (주)해든</td><td><span class="tag tag-red">최우선</span></td><td>온실 전용 / 레일·AMR 연동 설계</td></tr>
+        <tr><td><strong>모니터링</strong></td><td>자율이동 로봇 (AMR)</td><td>Burro, Iron Ox / 로보링크</td><td><span class="tag tag-orange">2순위</span></td><td>24시간 무인 순회 운영</td></tr>
+        <tr><td><strong>물류·이송</strong></td><td>AGV / AMR (내부 물류)</td><td>Geek+, OTTO Motors / 트위니</td><td><span class="tag tag-orange">2순위</span></td><td>Year 2 도입 / 내부 물류 인력 100% 대체 목표</td></tr>
+        <tr><td><strong>파종·이식</strong></td><td>파종·이식 자동화 설비</td><td>Visser, Bouldin / 대호테크</td><td><span class="tag tag-blue">3순위</span></td><td>Year 2~3 순차 / 파종 시간 70% 단축 목표</td></tr>
+      </tbody>
+    </table></div>
+    <h3>벤더 선정 4대 기준</h3>
+    <div class="overview-grid">
+      <div class="overview-card"><div class="label">1. 연동 규격 공개</div><div class="value">API·SDK 공개 여부 / 플랫폼 통합 가능성 / 데이터 소유권 확인</div></div>
+      <div class="overview-card"><div class="label">2. 멀티벤더 교체 가능성</div><div class="value">특정 벤더 Lock-in 없이 타 기종 전환 가능 구조</div></div>
+      <div class="overview-card"><div class="label">3. 국내 서비스·A/S</div><div class="value">현장 대응 속도 / 부품 수급 안정성</div></div>
+      <div class="overview-card"><div class="label">4. PoC 협력 의향</div><div class="value">공동 실증 데이터 확보 / 비용 분담·성과 공유 구조 협의</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ 9. 무인 운영 기준 ═══════════════ -->
+<div class="section" id="s9">
+  <div class="section-header"><h2><span class="section-num">9</span>무인 운영 기준 (L0 → L3)</h2></div>
+  <div class="section-body">
+    <div class="quote">정상 상황에서 사람의 상시 투입 없이 운영되며, 예외 상황만 원격 또는 현장 대응으로 처리되는 운영 상태</div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>단계</th><th>시점</th><th>정의</th><th>운영 방식</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag tag-blue">L0</span></td><td>현재</td><td>사람 중심 운영</td><td>수작업 중심 + 자동화 일부</td></tr>
+        <tr><td><span class="tag tag-green">L1</span></td><td>Year 1 목표</td><td>자동화 보조 운영</td><td>작업 지시 자동화 + 사람 실행</td></tr>
+        <tr><td><span class="tag tag-orange">L2</span></td><td>Year 2 목표</td><td>로봇 중심 운영</td><td>로봇 실행 기본값 + 사람은 예외·보조</td></tr>
+        <tr><td><span class="tag tag-red">L3 ★</span></td><td>Year 3 목표</td><td><strong>상시 무인 운영</strong></td><td>상시 무인 운영 + 원격 관제 + 복제 가능 구조</td></tr>
+      </tbody>
+    </table></div>
+    <div class="gate-box"><strong>3개년 목표 = L0 → L3</strong> (L3는 6개월 이상 연속 무인 운영 데이터 확보를 기준)<br>안전·규정상 현장 개입이 필요한 경우는 "예외 대응"으로 분리하여 관리<br>예외는 기록·분석 후 반드시 구조에 반영</div>
+  </div>
+</div>
+
+<!-- ═══════════════ 10. 리스크 ═══════════════ -->
+<div class="section" id="s10">
+  <div class="section-header"><h2><span class="section-num">10</span>리스크 관리 방향</h2></div>
+  <div class="section-body">
+    <div class="quote">무인 자동화는 "장애 시나리오"까지 설계 대상</div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>리스크 항목</th><th>대응 방향</th><th>발생 시점</th><th>담당자</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Fail-safe & 수동 전환</strong></td><td>Fail-safe 및 수동 전환 체계 구축</td><td>Year 1</td><td>윤형주</td></tr>
+        <tr><td><strong>안전 구역 분리</strong></td><td>안전 구역 분리 및 접근 통제 적용</td><td>Year 1</td><td>여덕환</td></tr>
+        <tr><td><strong>품질 편차 관리</strong></td><td>CV 기반 품질 편차 자동 보정 로직 구현</td><td>Year 2</td><td>윤형주</td></tr>
+        <tr><td><strong>벤더 Lock-in 방지</strong></td><td>연동 규격 소유를 통한 벤더 락인 방지</td><td>Year 1</td><td>모재민</td></tr>
+        <tr><td><strong>예방 정비</strong></td><td>예방 정비 체계 구축 및 MTTR 기준 설정</td><td>Year 1~2</td><td>여덕환</td></tr>
+        <tr><td><strong>보안·네트워크</strong></td><td>원격 관제 보안·OT/IT 망분리·네트워크 이중화 설계</td><td>Year 2</td><td>윤형주</td></tr>
+        <tr><td><strong>인허가·안전 인증</strong></td><td>인허가·안전 인증 및 규정 준수 관리</td><td>Year 1</td><td>모재민</td></tr>
+      </tbody>
+    </table></div>
+    <div class="gate-box gate-box-warn"><strong style="color: #C53030;">보안 권고:</strong> 농업 제어망(OT)은 외부망(IT)과 반드시 물리적 분리 운영할 것.</div>
+  </div>
+</div>
+
+<!-- ═══════════════ 11. 실행 기준 ═══════════════ -->
+<div class="section" id="s11">
+  <div class="section-header"><h2><span class="section-num">11</span>실무진 공통 실행 기준</h2></div>
+  <div class="section-body">
+    <div class="quote">사람 없이 돌아가는 운영 구조를 완성하고, 그 구조를 복제 가능한 표준으로 고정하는 플랫폼 구축 사업을 만든다.</div>
+    <h3>협업 및 의사결정 원칙</h3>
+    <div class="overview-grid" style="grid-template-columns: 1fr;"><div class="overview-card"><div class="value" style="font-size:0.95rem;">
+      1. 무인 운영 기준에 미달하는 기능은 실행하지 않는다.<br>
+      2. 예외 처리는 구조 반영 전까지 완료로 간주하지 않는다.<br>
+      3. 개인 최적화보다 전체 운영 구조 고도화를 우선한다.<br>
+      4. 인력의 역할을 재정의하여 원격·관제·정비 중심 구조로 전환한다.<br>
+      5. 사람이 편해지는 방향보다, 사람의 의존도를 낮추는 방향을 우선한다.
+    </div></div></div>
+  </div>
+</div>
+
+<!-- ═══════════════ 12. 3개년 계획 ═══════════════ -->
+<div class="section" id="s12">
+  <div class="section-header"><h2><span class="section-num">12</span>3개년 실행 계획 (Gate 기준)</h2></div>
+  <div class="section-body">
+    <div class="table-wrap"><table>
+      <thead><tr><th>구분</th><th>Year 1 — 운영 전제 확정</th><th>Year 2 — 로봇 중심 운영 전환</th><th>Year 3 — 무인 운영 구조 고정</th></tr></thead>
+      <tbody>
+        <tr><td><strong>핵심 목표</strong></td><td>무인 운영 가능한 시설·공정·제어 기준 확정</td><td>공정 자동화 라인 구축 및 반복 오류 제거</td><td>환경–작업–제어 자동 정합 로직 고정</td></tr>
+        <tr><td><strong>Gate 조건</strong></td><td>연동 구조 확정 · 시공·동선·안전 표준 · PoC 안전·복구 시나리오 통과</td><td>로봇 실행률 70%↑ · MTTR 50%↓ · 인력 투입 30~40% 감소 · L2 달성</td><td>L3 연속 6개월+ · 복제 패키지 확정 · 신규 현장 적용 검증 완료</td></tr>
+        <tr><td><strong>주요 산출물</strong></td><td>연동 규격서 v1.0 · 시공 표준 v1.0 · 플레이북 골격 · PoC 리포트</td><td>운영 OS v1.0 · 플레이북 v1.0 · KPI 리포트 자동화 · ROI 중간 분석</td><td>복제 패키지 v1.0 · 운영 OS 최종 · 사업화 전략 최종 · 확장 준비 완료</td></tr>
+        <tr><td><strong>미달 시</strong></td><td>Year 2 자동화 확대 보류 → 기준 재정의 후 재검증</td><td>신규 도입 중단 → 병목 Top3 제거 후 재측정</td><td>확장 보류 → 예외 구조 반영 완료 후 재검증</td></tr>
+      </tbody>
+    </table></div>
+    <div class="quote">이 계획은 방향이 아니라 <strong>기준</strong>이다. 각 연차는 Gate를 통과해야 다음 단계로 넘어간다.</div>
+  </div>
+</div>
+
+<!-- ═══════════════ 13~16. 담당자 ═══════════════ -->
+<div class="section" id="s13">
+  <div class="section-header"><h2><span class="section-num">13</span>담당자 실행 계획</h2></div>
+  <div class="section-body">
+    <h3>담당자 실행 계획 (요약)</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>담당자</th><th>Year 1</th><th>Year 2</th><th>Year 3</th></tr></thead>
+      <tbody>
+        <tr><td><strong>여덕환</strong><br><span class="tag tag-green">시설·공정·인프라</span></td><td>시공·필수 시설·동선·인프라 표준 확정 / 자동화 대상·제외 공정 구분</td><td>공정 자동화 라인 구축 / 현장 운영 안정화</td><td>시설·공정 병목 제거 / 복제 가능한 시공·운영 패키지 확정</td></tr>
+        <tr><td><strong>윤형주</strong><br><span class="tag tag-blue">제어·로봇·운영 로직</span></td><td>제어·센서·로봇 연동 구조 설계 / 운영 OS 골격 정의 / 알람·복구 기준 설정</td><td>제어·로봇·설비 실연동 구현 / 관제·플레이북 가동</td><td>무인 판단 체계 완성 / 반복 오류 제거 / 환경–작업 자동 정합 로직 고정</td></tr>
+        <tr><td><strong>모재민</strong><br><span class="tag tag-orange">외부 로봇·사업·확장</span></td><td>외부 로봇·자동화 기술 조사 / 도입 기준 및 평가 프레임 수립 / 파일럿 전략 및 사업 구조 초안</td><td>도입 일정·비용·리스크 관리 / 로봇·벤더 주도권 확보</td><td>다농장 확장 모델 정리 / 운영 단위 수익 구조 검증 / 플랫폼 사업화 전략 확정</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Year 1 세부 실행계획 (M1~M12)</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>기간</th><th>여덕환 (시설·공정·인프라)</th><th>윤형주 (제어·로봇·운영 로직)</th><th>모재민 (외부 로봇·사업·확장)</th></tr></thead>
+      <tbody>
+        <tr><td><strong>M1~M3</strong></td><td>전체 공정 맵 확정 / 자동화 대상·제외 공정 구분 / 시공·동선·안전 기준 1차 확정</td><td>제어·로봇 연동 구조 설계 완료 / 데이터 흐름 정의 / 운영 OS 구조 구축</td><td>로봇 평가 기준 확정 / 벤더 Shortlist 완료 / PoC 계약 체결</td></tr>
+        <tr><td><strong>M4~M6</strong></td><td>파일럿 시공 적용 / 정비 접근성 구조 반영</td><td>알람 분류체계 확정 / 로그 수집 체계 고정 / 장애 재현 테스트 완료</td><td>PoC 성능 비교 리포트 제출 / 연동 표준 계약 반영</td></tr>
+        <tr><td><strong>M7~M9</strong></td><td>파일럿 피드백 반영 / 시공 표준 확정</td><td>로그 수집·분석 체계 구축 / KPI 리포트 자동화 1차 적용 / 장애 원인 구조 반영 완료</td><td>비용·리스크 매트릭스 확정 / 인허가·안전 검토 완료</td></tr>
+        <tr><td><strong>M10~M12</strong></td><td>시설·공정 기준 최종 점검</td><td>연동 구조 최종 확정 / 복구 시나리오 통과 테스트</td><td>Year 1 Gate 통과 보고서 제출</td></tr>
+      </tbody>
+    </table></div>
+    <div class="gate-box"><strong>Year 1 Gate 조건:</strong> 연동 구조 확정 · 시공·동선·안전 표준 확정 · PoC 안전·복구 시나리오 통과</div>
+
+    <h3>Year 2 세부 실행계획 (M13~M24)</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>기간</th><th>여덕환</th><th>윤형주</th><th>모재민</th></tr></thead>
+      <tbody>
+        <tr><td><strong>M13~M15</strong></td><td>공정 자동화 라인 구축 완료 / 안전 구역 분리 적용</td><td>제어–로봇–설비 실연동 완료 / 작업 오케스트레이션 적용</td><td>멀티벤더 운영 구조 확정</td></tr>
+        <tr><td><strong>M16~M18</strong></td><td>예방 정비 체계 적용 / 부품 표준 확정</td><td>MTTR 개선 프로그램 실행 / 네트워크 이중화 설계</td><td>운영·안정성 검증 보고서 제출</td></tr>
+        <tr><td><strong>M19~M21</strong></td><td>수동 개입 구간 축소 / 자동화 공정 80% 이상 적용</td><td>원격 관제 보안 점검 완료 / 자동 정합 로직 1차 고정</td><td>현장 인력 역할 재정의 / 인력 절감 효과 분석</td></tr>
+        <tr><td><strong>M22~M24</strong></td><td>자동화 공정 안정성 검증</td><td>로봇 실행률 70%↑ 확인 / MTTR 50%↓ 단축 확인</td><td>ROI 중간 분석 완료 / L2 달성 보고서 제출</td></tr>
+      </tbody>
+    </table></div>
+    <div class="gate-box"><strong>Year 2 Gate 조건:</strong> 로봇 실행률 70%↑ · MTTR 50%↓ 단축 · 인력 투입 30~40% 감소 · L2 달성</div>
+
+    <h3>Year 3 세부 실행계획 (M25~M36)</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>기간</th><th>여덕환</th><th>윤형주</th><th>모재민</th></tr></thead>
+      <tbody>
+        <tr><td><strong>M25~M27</strong></td><td>반복 병목 제거 완료 / 시설 최적화 적용 / 복제 시공 패키지 초안</td><td>자동 정합 로직 고정 / 무인 판단 룰셋 확정 / 예외 케이스 구조 반영</td><td>단위 면적당 운영비 분석 / 확장 모델 시뮬레이션</td></tr>
+        <tr><td><strong>M28~M30</strong></td><td>현장 인력 최소화 구조 적용</td><td>상시 무인 운영 연속 데이터 확보 / 관제 시스템 확정</td><td>운영 단위 수익 구조 확정 / 조직 구조 재정의 완료</td></tr>
+        <tr><td><strong>M31~M33</strong></td><td>타 현장 적용 테스트 완료</td><td>L3 연속 운영 검증</td><td>투자 회수 기간 분석 완료 / 플랫폼 과금 모델 확정</td></tr>
+        <tr><td><strong>M34~M36</strong></td><td>복제 시공 패키지 확정</td><td>운영 OS 최종 고정 / 무인 운영 구조 고정 선언</td><td>사업화 전략 최종 보고 / 외부 확장 준비 완료</td></tr>
+      </tbody>
+    </table></div>
+    <div class="gate-box"><strong>Year 3 Gate 조건:</strong> L3 연속 달성 · 복제 패키지 확정 · 신규 현장 적용 검증 완료 · 사업화 전략 확정</div>
+  </div>
+</div>
+
+<!-- ═══════════════ 17. 타임라인 ═══════════════ -->
+<div class="section" id="s17">
+  <div class="section-header"><h2><span class="section-num">17</span>3개년 타임라인</h2></div>
+  <div class="section-body">
+    <div class="table-wrap"><table>
+      <thead><tr><th>구분</th><th>Year 1 (M1~M12)</th><th>Year 2 (M13~M24)</th><th>Year 3 (M25~M36)</th></tr></thead>
+      <tbody>
+        <tr><td><strong>시설·인프라 구축</strong></td><td><span class="timeline-bar" style="width:100%; background:var(--primary);"></span></td><td></td><td></td></tr>
+        <tr><td><strong>로봇 도입·PoC</strong></td><td><span class="timeline-bar" style="width:100%; background:var(--primary-light);"></span></td><td></td><td></td></tr>
+        <tr><td><strong>공정 자동화 라인</strong></td><td></td><td><span class="timeline-bar" style="width:100%; background:var(--primary);"></span></td><td></td></tr>
+        <tr><td><strong>운영 OS 개발·연동</strong></td><td><span class="timeline-bar" style="width:50%; background:var(--accent);"></span></td><td><span class="timeline-bar" style="width:50%; background:var(--accent);"></span></td><td></td></tr>
+        <tr><td><strong>무인 운영 검증</strong></td><td></td><td><span class="timeline-bar" style="width:50%; background:#E53E3E;"></span></td><td><span class="timeline-bar" style="width:50%; background:#E53E3E;"></span></td></tr>
+        <tr><td><strong>KPI 측정·Gate</strong></td><td><span class="timeline-bar" style="width:25%; background:#6B46C1;"></span></td><td><span class="timeline-bar" style="width:25%; background:#6B46C1;"></span></td><td><span class="timeline-bar" style="width:25%; background:#6B46C1;"></span></td></tr>
+        <tr><td><strong>복제 패키지 개발</strong></td><td></td><td></td><td><span class="timeline-bar" style="width:100%; background:var(--primary);"></span></td></tr>
+        <tr><td><strong>사업화·확장 준비</strong></td><td></td><td></td><td><span class="timeline-bar" style="width:100%; background:var(--accent);"></span></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ═══════════════ 18. KPI ═══════════════ -->
+<div class="section" id="s18">
+  <div class="section-header"><h2><span class="section-num">18</span>성과 관리 기준 (KPI)</h2></div>
+  <div class="section-body">
+    <div class="table-wrap"><table>
+      <thead><tr><th>KPI 항목</th><th>측정 방식</th><th>Year 1</th><th>Year 2 목표</th><th>Year 3 목표</th></tr></thead>
+      <tbody>
+        <tr><td><strong>로봇 실행률</strong></td><td>로봇 작업 로그 — (성공 실행 건수 / 전체 지시 건수) x 100</td><td>측정 기준 확정</td><td><strong>70%↑</strong></td><td><strong>90%↑</strong></td></tr>
+        <tr><td><strong>MTTR</strong></td><td>장애 이력 로그 — 장애 감지 ~ 복귀 평균</td><td>Baseline 측정</td><td><strong>50% 단축</strong></td><td><strong>자동 복구 80%↑</strong></td></tr>
+        <tr><td><strong>인력 투입 시간</strong></td><td>작업 일지 — 현장 투입 인력 x 시간</td><td>Baseline 측정</td><td><strong>30~40% 감소</strong></td><td><strong>최소화 (예외만)</strong></td></tr>
+        <tr><td><strong>환경 유지율</strong></td><td>센서 로그 — 목표 범위 내 유지 시간 비율</td><td>Baseline 측정</td><td><strong>95%↑</strong></td><td><strong>98%↑</strong></td></tr>
+        <tr><td><strong>작업 성공률</strong></td><td>공정별 성과 로그 — 불량 없이 완료 비율</td><td>Baseline 측정</td><td><strong>85%↑</strong></td><td><strong>95%↑</strong></td></tr>
+        <tr><td><strong>무인 연속 운영</strong></td><td>관제 로그 — 사람 개입 없이 연속 시간</td><td>기준 정의</td><td><strong>72시간+</strong></td><td><strong>6개월+</strong></td></tr>
+        <tr><td><strong>신규 현장 적용</strong></td><td>프로젝트 이력 — 계약~안정화 기간 (월)</td><td>N/A</td><td>측정 시작</td><td><strong>50% 단축</strong></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ═══════════════ 19. 조직 ═══════════════ -->
+<div class="section" id="s19">
+  <div class="section-header"><h2><span class="section-num">19</span>조직 구조·의사결정 라인</h2></div>
+  <div class="section-body">
+    <div class="org-chart">
+      <div class="org-title">사업 총괄</div>
+      <div style="color:var(--text-light); font-size:0.85rem; margin-bottom:1rem;">최종 투자·계약 결재 / 사업 방향 승인</div>
+      <div class="org-title" style="margin-top:1rem;">Gate 위원회 (3인 공동) — 연차 Gate 통과 여부 공동 합의</div>
+      <div class="org-sub">
+        <div><span class="org-role">여덕환</span> <span class="tag tag-green">시설·공정·인프라</span></div>
+        <div class="org-desc">시공·공정 기준 최종 결정 / 설비·동선 설계 승인 / 인프라 투자 판단</div><br>
+        <div><span class="org-role">윤형주</span> <span class="tag tag-blue">제어·로봇·운영 로직</span></div>
+        <div class="org-desc">운영 OS 설계 최종 결정 / 로봇 연동 규격 승인 / 장애·복구 기준 판단</div><br>
+        <div><span class="org-role">모재민</span> <span class="tag tag-orange">외부 로봇·사업·확장</span></div>
+        <div class="org-desc">로봇 벤더 계약 최종 결정 / 사업화 전략 수립 / 외부 파트너십 관리</div>
+      </div>
+    </div>
+    <h3>의사결정 원칙</h3>
+    <div class="overview-grid">
+      <div class="overview-card"><div class="label">일상 운영</div><div class="value">각 담당자 자율 판단</div></div>
+      <div class="overview-card"><div class="label">Gate 통과</div><div class="value">3인 공동 합의</div></div>
+      <div class="overview-card"><div class="label">투자·계약</div><div class="value">사업 총괄 최종 결재</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ 20. 파일럿 ═══════════════ -->
+<div class="section" id="s20">
+  <div class="section-header"><h2><span class="section-num">20</span>파일럿 현장 정보</h2></div>
+  <div class="section-body">
+    <div class="overview-grid">
+      <div class="overview-card"><div class="label">파일럿 작물</div><div class="value">토마토 (주작물) — 연중 재배 가능, 스마트팜 보급률 1위, 고단가·고회전 수익 구조</div></div>
+      <div class="overview-card"><div class="label">운영 규모</div><div class="value">3,306㎡ = 1,000평 (1동 기준) — 단일 동 기준 파일럿 운영 후 2동 이상으로 확장 검증</div></div>
+      <div class="overview-card"><div class="label">파일럿 위치</div><div class="value">미정 — 정부 R&D 연계 및 인프라 지원 활용 가능한 입지 기준으로 검토 중</div></div>
+    </div>
+    <h3>파일럿 운영 단계별 일정</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Step</th><th>기간</th><th>내용</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Step 1</strong></td><td>M1~M3</td><td>현장 선정 및 계약</td></tr>
+        <tr><td><strong>Step 2</strong></td><td>M4~M6</td><td>시공·설비 설치 완료</td></tr>
+        <tr><td><strong>Step 3</strong></td><td>M7~M9</td><td>로봇 도입 및 PoC 가동</td></tr>
+        <tr><td><strong>Step 4</strong></td><td>M10~M12</td><td>운영 데이터 수집 및 Gate 검증</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+
+<!-- ═══════════════ 21. 수익 모델 ═══════════════ -->
+<div class="section" id="s21">
+  <div class="section-header"><h2><span class="section-num">21</span>수익 모델·사업화 전략</h2></div>
+  <div class="section-body">
+    <div class="table-wrap"><table>
+      <thead><tr><th>Phase</th><th>기간</th><th>수익 모델</th><th>세부 내용</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag tag-green">Phase 1</span></td><td>M1~M18<br>(Year 1~1.5)</td><td><strong>직접 운영 수익</strong></td><td>자사 스마트팜 직접 운영 / 생산물 판매 수익 / 운영 원가 절감분 → 이익 전환 (인건비 30~40% 절감)</td></tr>
+        <tr><td><span class="tag tag-blue">Phase 2</span></td><td>M19~M30<br>(Year 2~2.5)</td><td><strong>플랫폼 라이선스 수익</strong></td><td>농장 운영 OS·플레이북 패키지 타 농장에 라이선스 판매 / 월정액 SaaS형 관제·모니터링 구독 모델 / 로봇 연동 표준 API 사용료 과금</td></tr>
+        <tr><td><span class="tag tag-orange">Phase 3</span></td><td>M24~<br>(Year 3~)</td><td><strong>확장·프랜차이즈 수익</strong></td><td>표준화된 시공·운영 패키지 신규 농장에 턴키 공급 / 다농장 원격 관제 서비스 / 해외 스마트팜 운영 구조 수출 (동남아·중동 등)</td></tr>
+      </tbody>
+    </table></div>
+    <div class="quote"><strong>장기 수익 구조:</strong> 단기: 자사 농장 직접 운영 수익으로 사업 검증 → 중기: 운영 OS 라이선스·SaaS 구독으로 반복 수익화 → 장기: 표준 패키지 복제·수출로 스케일업</div>
+  </div>
+</div>
+
+<!-- ═══════════════ 22. 경쟁사 ═══════════════ -->
+<div class="section" id="s22">
+  <div class="section-header"><h2><span class="section-num">22</span>경쟁사 분석·차별화</h2></div>
+  <div class="section-body">
+    <div class="table-wrap"><table>
+      <thead><tr><th>구분</th><th>로봇 제조사</th><th>국내 스마트팜 플랫폼</th><th>일반 SI·솔루션사</th><th>SEED (당사)</th></tr></thead>
+      <tbody>
+        <tr><td><strong>로봇 제조·개발</strong></td><td style="color:#276749;">&#10004; 핵심</td><td style="color:#C53030;">&#10060;</td><td style="color:#C53030;">&#10060;</td><td style="color:#C53030;">&#10060;</td></tr>
+        <tr><td><strong>전 공정 운영 노하우</strong></td><td style="color:#C53030;">&#10060;</td><td>&#9651; 일부</td><td>&#9651; 일부</td><td style="color:#276749; font-weight:700;">&#10004; 핵심 자산</td></tr>
+        <tr><td><strong>무인 운영 OS 설계</strong></td><td style="color:#C53030;">&#10060;</td><td style="color:#C53030;">&#10060;</td><td>&#9651; 솔루션 단위</td><td style="color:#276749; font-weight:700;">&#10004; 핵심 자산</td></tr>
+        <tr><td><strong>멀티벤더 로봇 통합</strong></td><td style="color:#C53030;">&#10060; 자사 제품만</td><td style="color:#C53030;">&#10060;</td><td>&#9651; 부분</td><td style="color:#276749; font-weight:700;">&#10004; 설계 원칙</td></tr>
+        <tr><td><strong>운영 구조 복제·확장</strong></td><td style="color:#C53030;">&#10060;</td><td style="color:#C53030;">&#10060;</td><td style="color:#C53030;">&#10060;</td><td style="color:#276749; font-weight:700;">&#10004; 핵심 목표</td></tr>
+        <tr><td><strong>데이터 기반 고도화</strong></td><td>&#9651; 자사 제품 중심</td><td>&#9651; 농장 단위</td><td>&#9651; 시스템 단위</td><td style="color:#276749; font-weight:700;">&#10004; 전 공정 통합</td></tr>
+      </tbody>
+    </table></div>
+    <div class="quote"><strong>SEED의 핵심 차별화:</strong> "로봇을 만들지 않는다. 로봇이 일하는 구조를 만든다." — 멀티벤더 통합 OS·전 공정 플레이북·복제 가능한 운영 표준이 핵심 자산이자 진입장벽이다.</div>
+  </div>
+</div>
+
+<!-- ═══════════════ 23. 예산 ═══════════════ -->
+<div class="section" id="s23">
+  <div class="section-header"><h2><span class="section-num">23</span>투자 규모·예산 계획</h2></div>
+  <div class="section-body">
+    <h3>23-A. 1,000평 · 밀폐형 유리온실 기준 (파일럿)</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>구분</th><th>Year 1 (약 11~16억)</th><th>Year 2 (약 4~7억)</th><th>Year 3 (약 1.5~3억)</th></tr></thead>
+      <tbody>
+        <tr><td><strong>로봇·자동화</strong></td><td>설비 도입: 1~2억</td><td>추가 도입·확장: 2.5~4억</td><td>복제 패키지 표준화: 0.3~0.5억</td></tr>
+        <tr><td><strong>시설·인프라</strong></td><td>밀폐형 유리온실: 9~12억</td><td>플랫폼 고도화: 0.5~1억</td><td>신규 현장 테스트: 0.5~1억</td></tr>
+        <tr><td><strong>SW·플랫폼</strong></td><td>시스템·SW 개발: 0.5~1억</td><td>라인 증설: 0.5~1억</td><td>사업화·마케팅: 0.3~0.5억</td></tr>
+        <tr><td><strong>인건비</strong></td><td>인건비·운영: 0.5~1억</td><td>인건비·운영: 0.5~1억</td><td>인건비·운영: 0.5~1억</td></tr>
+        <tr style="background:var(--tag-green);"><td><strong>예상 수익</strong></td><td>매출 0.5~1억 / 절감 측정 시작</td><td>매출 1.5~2억 / 절감 0.1~0.2억 / 라이선스 초기</td><td>매출+라이선스 2~3억 / 복제 수익 시작</td></tr>
+      </tbody>
+    </table></div>
+    <div class="gate-box"><strong>3개년 총 투자: 약 17~26억 원</strong><br>Year 3 생산·라이선스 매출 2~3억 + 복제 수익 → <strong>7~10년 내 투자 회수 목표</strong></div>
+
+    <h3>23-B. 7,000평 · 밀폐형 유리온실 기준 (전면 확장)</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>구분</th><th>Year 1 (약 107~140억)</th><th>Year 2 (약 52~78억)</th><th>Year 3 (약 15~24억)</th></tr></thead>
+      <tbody>
+        <tr><td><strong>로봇·자동화</strong></td><td>설비 도입: 30~45억</td><td>추가 도입·확장: 30~45억</td><td>복제 패키지: 3~5억</td></tr>
+        <tr><td><strong>시설·인프라</strong></td><td>밀폐형 유리온실: 70~84억</td><td>플랫폼 고도화: 5~8억</td><td>신규 현장 테스트: 5~8억</td></tr>
+        <tr><td><strong>SW·플랫폼</strong></td><td>시스템·SW 개발: 3~5억</td><td>라인 증설: 10~15억</td><td>사업화·마케팅: 3~5억</td></tr>
+        <tr><td><strong>인건비</strong></td><td>인건비·운영: 4~6억</td><td>인건비·운영: 9~10억</td><td>인건비·운영: 4~6억</td></tr>
+        <tr style="background:var(--tag-green);"><td><strong>예상 수익</strong></td><td>매출 13~16억 (부분수확 50%)</td><td>매출 21~29억 / 절감 4~8억</td><td>매출+라이선스 30~40억 / 복제 시작</td></tr>
+      </tbody>
+    </table></div>
+    <div class="gate-box"><strong>3개년 총 투자: 약 174~242억 원</strong><br>Year 3 30~40억 + 라이선스·복제 → <strong>5~8년 내 목표</strong></div>
+    <p style="font-size:0.8rem; color:var(--text-light); margin-top:1rem;">※ 시설비 평당 100~120만원 반영. 수익은 매출 기준이며 경영비 별도. 로봇·시설 사양에 따라 변동 가능.</p>
+  </div>
+</div>
+
+<!-- ═══════════════ 24. 기대 효과 ═══════════════ -->
+<div class="section" id="s24">
+  <div class="section-header"><h2><span class="section-num">24</span>기대 효과·클로징</h2></div>
+  <div class="section-body">
+    <h3>3년 후, 무엇이 달라지는가</h3>
+    <div class="trend-grid">
+      <div class="trend-card"><div class="trend-title">인력 구조 변화</div><div class="trend-desc">상시 투입 인력 최소화 / 사람 = 예외 대응·관제 중심 / 연간 인건비 <strong>30~40% 절감</strong></div></div>
+      <div class="trend-card"><div class="trend-title">수익 구조 전환</div><div class="trend-desc">생산물 판매 + 라이선스 수익 / SaaS형 반복 수익 모델 확보 / <strong>7~10년 내 투자 회수 목표</strong></div></div>
+      <div class="trend-card"><div class="trend-title">운영 자산화</div><div class="trend-desc">운영 OS·플레이북 자산화 / 복제 가능한 표준 운영 구조 / 타 농장 적용 패키지 완성</div></div>
+      <div class="trend-card"><div class="trend-title">확장 가능성</div><div class="trend-desc">국내 다농장 복제 운영 / 동남아·중동 해외 수출 기반 / 플랫폼 사업자로의 포지셔닝</div></div>
+    </div>
+    <div class="quote" style="text-align:center; font-size:1.1rem;">
+      <strong>"로봇이 일하는 구조를 만들고, 그 구조를 자산으로 복제한다."</strong><br>
+      3년 안에 상시 무인 운영을 달성하고, 복제 가능한 플랫폼으로 스케일업한다.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ 부록 ═══════════════ -->
+<div class="section" id="appendix">
+  <div class="section-header"><h2>부록</h2></div>
+  <div class="section-body">
+    <h3>부록 A. 운영 플레이북 구조</h3>
+    <div class="quote">플레이북이란? — 무인 운영을 위한 표준 절차·판단 기준의 집합체</div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>챕터</th><th>항목</th><th>주요 내용</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Ch.1</strong></td><td>공정 표준</td><td>공정별 로봇 작업 순서 정의 / 수동 전환 기준 및 절차 / 안전 구역·접근 통제 기준 / 작업 완료 판정 기준</td></tr>
+        <tr><td><strong>Ch.2</strong></td><td>운영 절차 (SOP)</td><td>작물별 온·습도·CO2 목표 범위 / 계절·생육 단계별 환경 프리셋 / 이상 환경 감지 → 자동 조절 로직</td></tr>
+        <tr><td><strong>Ch.3</strong></td><td>환경 정합 기준표</td><td>장애 Level 정의 (L1~L4) / Level별 자동 복구 시퀀스 / 에스컬레이션 기준 (원격→현장)</td></tr>
+        <tr><td><strong>Ch.4</strong></td><td>KPI 측정 & 리뷰</td><td>일별·주별·월별 KPI 집계 기준 / Gate 판단 체크리스트 / 이상 KPI 원인 분석 프레임</td></tr>
+        <tr><td><strong>Ch.5</strong></td><td>복제 패키지 & 확장</td><td>신규 현장 적용 체크리스트 / 시공·설치 표준 스펙 시트 / 플랫폼 온보딩 절차</td></tr>
+      </tbody>
+    </table></div>
+    <div class="overview-grid">
+      <div class="overview-card"><div class="label">원칙 1</div><div class="value">예외 없는 표준화: 모든 예외는 플레이북에 반영 전까지 미완료</div></div>
+      <div class="overview-card"><div class="label">원칙 2</div><div class="value">버전 관리: 변경 이력 추적·승인 필수</div></div>
+      <div class="overview-card"><div class="label">원칙 3</div><div class="value">복제 전제 설계: 특정 현장 의존 제거</div></div>
+    </div>
+
+    <h3>부록 B. 비상·장애 대응 시나리오</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>등급</th><th>발생 조건</th><th>대응 시간</th><th>대응 행동</th><th>담당</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag tag-green">L1</span> 경미</td><td>단일 센서 이상 / 로봇 일시 정지</td><td>자동 5분</td><td>플랫폼 자동 재시도 / 알람 로그 기록</td><td>시스템 자동</td></tr>
+        <tr><td><span class="tag tag-blue">L2</span> 운영</td><td>공정 1개 중단 / MTTR 초과</td><td>원격 30분</td><td>원격 접속 / 우회 경로 / 원인 분석</td><td>윤형주</td></tr>
+        <tr><td><span class="tag tag-orange">L3</span> 중대</td><td>복수 공정 중단 / 자동 복구 실패</td><td>현장 2시간</td><td>3인 소집 / 수동 전환 / 중단 판단</td><td>3인 공동</td></tr>
+        <tr><td><span class="tag tag-red">L4</span> 비상</td><td>안전 위협 / 화재·침수·충돌</td><td>즉시 대응</td><td>Fail-safe / 대피 / 외부 신고</td><td>여덕환 + 총괄</td></tr>
+      </tbody>
+    </table></div>
+    <div class="overview-grid">
+      <div class="overview-card"><div class="label">원칙 1</div><div class="value">안전 우선: 인명·설비 안전이 생산보다 항상 우선</div></div>
+      <div class="overview-card"><div class="label">원칙 2</div><div class="value">기록 의무: 모든 장애는 로그 기록 후 구조에 반영</div></div>
+      <div class="overview-card"><div class="label">원칙 3</div><div class="value">원인 제거: 재발 방지 없이 복구 완료로 간주 불가</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ 푸터 ═══════════════ -->
+<footer style="text-align:center; padding:3rem 1rem; color:var(--text-light); font-size:0.85rem;">
+  <p>로봇 기반 자동화 스마트팜 운영 플랫폼 — 내부 실행계획서</p>
+  <p style="margin-top:0.3rem; opacity:0.6;">v12 | 최종 수정: 2026.03.11 | CONFIDENTIAL — 내부 배포용</p>
+</footer>
+
+</div><!-- .container -->
+
+<!-- 스크롤 탑 버튼 -->
+<button class="scroll-top" id="scrollTop" aria-label="맨 위로">
+  <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<script>
+(function(){
+  // 다크모드
+  const toggle = document.getElementById('themeToggle');
+  const saved = localStorage.getItem('theme');
+  if(saved === 'dark' || (!saved && matchMedia('(prefers-color-scheme:dark)').matches)){
+    document.documentElement.setAttribute('data-theme','dark');
+    toggle.textContent = '☾';
+  }
+  toggle.addEventListener('click', function(){
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    toggle.textContent = isDark ? '☀' : '☾';
+    localStorage.setItem('theme', isDark ? 'light' : 'dark');
+  });
+
+  // 햄버거 메뉴
+  const hamburger = document.getElementById('hamburgerBtn');
+  const drawer = document.getElementById('drawer');
+  const overlay = document.getElementById('drawerOverlay');
+  function openDrawer(){ drawer.classList.add('open'); overlay.classList.add('open'); document.body.style.overflow='hidden'; }
+  function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('open'); document.body.style.overflow=''; }
+  hamburger.addEventListener('click', openDrawer);
+  overlay.addEventListener('click', closeDrawer);
+  drawer.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', closeDrawer); });
+
+  // 스크롤 탑 버튼
+  const scrollBtn = document.getElementById('scrollTop');
+  // 진행률 바
+  const progressBar = document.getElementById('progressBar');
+
+  // 네비게이션 활성 섹션 추적
+  const sections = document.querySelectorAll('.section');
+  const navLinks = document.querySelectorAll('.nav-scroll .nav-inner a');
+  const drawerLinks = document.querySelectorAll('.drawer a');
+
+  function onScroll(){
+    var st = window.scrollY || document.documentElement.scrollTop;
+    // 스크롤 탑 표시
+    scrollBtn.classList.toggle('show', st > 600);
+    // 진행률
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    progressBar.style.width = h > 0 ? (st/h*100)+'%' : '0%';
+    // 활성 섹션
+    var current = '';
+    sections.forEach(function(sec){
+      if(sec.offsetTop - 100 <= st){ current = sec.id; }
+    });
+    navLinks.forEach(function(a){
+      a.classList.toggle('active', a.getAttribute('href') === '#'+current);
+    });
+    drawerLinks.forEach(function(a){
+      a.classList.toggle('active', a.getAttribute('href') === '#'+current);
+    });
+    // 활성 네비 링크 스크롤
+    var activeNav = document.querySelector('.nav-scroll .nav-inner a.active');
+    if(activeNav){
+      var container = document.querySelector('.nav-scroll');
+      var left = activeNav.offsetLeft - container.offsetWidth/2 + activeNav.offsetWidth/2;
+      container.scrollTo({left: left, behavior:'smooth'});
+    }
+  }
+  var ticking = false;
+  window.addEventListener('scroll', function(){
+    if(!ticking){ requestAnimationFrame(function(){ onScroll(); ticking=false; }); ticking=true; }
+  });
+
+  scrollBtn.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); });
+
+  // 테이블 스크롤 힌트
+  document.querySelectorAll('.table-wrap').forEach(function(wrap){
+    function checkScroll(){ wrap.classList.toggle('has-scroll', wrap.scrollWidth > wrap.clientWidth + 8); }
+    checkScroll();
+    new ResizeObserver(checkScroll).observe(wrap);
+  });
+})();
+</script>
+</body>
+</html>

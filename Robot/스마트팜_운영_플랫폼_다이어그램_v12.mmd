@@ -1,0 +1,157 @@
+%% ============================================================
+%% 로봇 기반 자동화 스마트팜 운영 플랫폼 — Mermaid 다이어그램 모음
+%% v12 | 2026.03.11
+%% ============================================================
+
+
+%% ────────────────────────────────────────────────────────────
+%% 다이어그램 1: 3개년 타임라인 간트차트
+%% ────────────────────────────────────────────────────────────
+
+gantt
+    title 3개년 실행 타임라인 — 로봇 기반 스마트팜 운영 플랫폼
+    dateFormat  YYYY-MM
+    axisFormat  %Y-%m
+
+    section Year 1 (운영 전제 확정)
+    시설·인프라 구축          :active, y1a, 2026-01, 12M
+    로봇 도입·PoC             :active, y1b, 2026-01, 12M
+    운영 OS 구조 설계         :active, y1c, 2026-01, 12M
+    KPI Baseline 측정         :milestone, y1d, 2026-06, 0
+    Year 1 Gate 검증          :crit, y1g, 2026-12, 1M
+
+    section Year 2 (로봇 중심 운영 전환)
+    공정 자동화 라인 구축      :y2a, 2027-01, 6M
+    운영 OS v1.0 완성         :y2b, 2027-01, 9M
+    MTTR 50% 단축 달성        :milestone, y2c, 2027-09, 0
+    로봇 실행률 70%↑ 달성     :milestone, y2d, 2027-10, 0
+    L2 달성 · Year 2 Gate     :crit, y2g, 2027-12, 1M
+
+    section Year 3 (무인 운영 구조 고정)
+    복제 패키지 개발           :y3a, 2028-01, 6M
+    L3 연속 운영 검증 (6개월+) :y3b, 2028-01, 6M
+    사업화 전략 확정           :y3c, 2028-07, 5M
+    외부 확장 준비 완료        :milestone, y3d, 2028-12, 0
+    Year 3 Gate · 무인 운영 선언 :crit, y3g, 2028-12, 1M
+
+
+%% ────────────────────────────────────────────────────────────
+%% 다이어그램 2: 전체 자동화 운영 구조 플로우차트
+%% ────────────────────────────────────────────────────────────
+
+flowchart TD
+    subgraph ROBOTS["🤖 외부 농업 로봇"]
+        R1[파종·이식 로봇]
+        R2[방제 로봇 레일·AMR]
+        R3[모니터링 AMR]
+        R4[수확 로봇]
+        R5[AGV 내부 물류]
+    end
+
+    subgraph PLATFORM["⚙️ 로봇 통합 자동화 플랫폼 (운영 OS)"]
+        P1[작업 오케스트레이션\n공정 간 순서·타이밍 자동 조율]
+        P2[무인 운영 판단 엔진\n예외 감지 → 자동 복구·알람]
+        P3[데이터 파이프라인\n센서·로봇 로그 수집 → KPI 대시보드]
+    end
+
+    subgraph ENV["🌿 환경·설비 자동 제어"]
+        E1[복합환경 모니터링\n온·습도·CO₂·광량]
+        E2[스마트팜 제어\n환경 자동 정합]
+        E3[설비 안정성\n예방 정비·MTTR 관리]
+        E4[보안·네트워크\nOT망 분리·이중화]
+    end
+
+    subgraph PROCESS["🌱 공정 흐름"]
+        C1[파종·육묘] --> C2[생육 관리] --> C3[방제·수분] --> C4[수확] --> C5[분류·포장]
+    end
+
+    ROBOTS -->|실행 명령 수신| PLATFORM
+    PLATFORM -->|작업 지시·제어| ROBOTS
+    PLATFORM -->|환경 제어 명령| ENV
+    ENV -->|환경 센서 데이터| PLATFORM
+    PLATFORM -->|공정 자동 연결| PROCESS
+    PROCESS -->|센서·로그 데이터| PLATFORM
+
+    style PLATFORM fill:#1a3a1a,stroke:#3cb93c,color:#ffffff
+    style ROBOTS fill:#0d1b3e,stroke:#3cb93c,color:#ffffff
+    style ENV fill:#0d1b3e,stroke:#3cb93c,color:#ffffff
+    style PROCESS fill:#132340,stroke:#5dd45d,color:#ffffff
+
+
+%% ────────────────────────────────────────────────────────────
+%% 다이어그램 3: 무인 운영 단계 L0 → L3
+%% ────────────────────────────────────────────────────────────
+
+stateDiagram-v2
+    direction LR
+
+    [*] --> L0
+
+    L0 : L0 사람 중심 운영\n(현재)
+    L1 : L1 자동화 보조 운영\n(Year 1 목표)
+    L2 : L2 로봇 중심 운영\n(Year 2 목표)
+    L3 : L3 상시 무인 운영 ★\n(Year 3 목표)
+
+    L0 --> L1 : Year 1 Gate 통과\n연동 구조 확정·PoC 통과
+    L1 --> L2 : Year 2 Gate 통과\n로봇 실행률 70%↑·L2 달성
+    L2 --> L3 : Year 3 Gate 통과\nL3 연속 6개월+·복제 패키지 확정
+
+    note right of L0
+        수작업 중심
+        + 자동화 일부
+    end note
+
+    note right of L1
+        작업 지시 자동화
+        + 사람 실행
+    end note
+
+    note right of L2
+        로봇 실행 기본값
+        + 사람은 예외·보조
+    end note
+
+    note right of L3
+        상시 무인 운영
+        + 원격 관제
+        + 복제 가능 구조
+    end note
+
+
+%% ────────────────────────────────────────────────────────────
+%% 다이어그램 4: 수익 모델 Phase 흐름도
+%% ────────────────────────────────────────────────────────────
+
+flowchart LR
+    subgraph PH1["Phase 1\nM1~M18 · Year 1~1.5"]
+        A1[자사 스마트팜\n직접 운영]
+        A2[생산물 판매 수익\n토마토·파프리카 등]
+        A3[인건비 절감\n30~40% 절감분 이익화]
+    end
+
+    subgraph PH2["Phase 2\nM19~M30 · Year 2~2.5"]
+        B1[운영 OS·플레이북\n라이선스 판매]
+        B2[SaaS형 구독\n월정액 관제·모니터링]
+        B3[로봇 연동 표준\nAPI 사용료 과금]
+    end
+
+    subgraph PH3["Phase 3\nM24~ · Year 3~"]
+        C1[시공·운영 패키지\n턴키 공급]
+        C2[다농장 원격 관제\n관제 대행 수수료]
+        C3[해외 수출\n동남아·중동]
+    end
+
+    PH1 -->|실증 데이터 축적\n운영 구조 자산화| PH2
+    PH2 -->|플랫폼 고도화\n복제 패키지 완성| PH3
+
+    A1 & A2 & A3 --> PH1
+    B1 & B2 & B3 --> PH2
+    C1 & C2 & C3 --> PH3
+
+    GOAL["🏆 장기 목표\n플랫폼 사업자 포지셔닝\n국내외 스케일업"]
+    PH3 --> GOAL
+
+    style PH1 fill:#0d1b3e,stroke:#3cb93c,color:#ffffff
+    style PH2 fill:#132340,stroke:#3cb93c,color:#ffffff
+    style PH3 fill:#1a2a3a,stroke:#5dd45d,color:#ffffff
+    style GOAL fill:#1a3a1a,stroke:#5dd45d,color:#ffffff
